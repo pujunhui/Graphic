@@ -4,13 +4,13 @@
 
 /*
 * class FrameBuffer:
-* 存储当前画布对应的bmp的内存指针，作为当前绘图画板
+* 瀛樺偍褰撳墠鐢诲竷瀵瑰簲鐨刡mp鐨勫唴瀛樻寚閽堬紝浣滀负褰撳墠缁樺浘鐢绘澘
 */
 class FrameBuffer {
 public:
     FrameBuffer(uint32_t width, uint32_t height, void* buffer = nullptr);
     ~FrameBuffer();
-    FrameBuffer(const FrameBuffer&) = delete; //不准拷贝复制
+    FrameBuffer(const FrameBuffer&) = delete; //涓嶅噯鎷疯礉澶嶅埗
 
     uint32_t mWidth{ 0 };
     uint32_t mHeight{ 0 };

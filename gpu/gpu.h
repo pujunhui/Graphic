@@ -7,23 +7,25 @@
 
 /*
 *class GPU:
-* Ä£ÄâGPUµÄ»æÍ¼ĞĞÎªÒÔ¼°Ëã·¨µÈ
+* æ¨¡æ‹ŸGPUçš„ç»˜å›¾è¡Œä¸ºä»¥åŠç®—æ³•ç­‰
 */
 class GPU {
 public:
     static GPU* getInstance();
     ~GPU();
 
-    //½ÓÊÕÍâ½ç´«ÈëµÄbmp¶ÔÓ¦µÄÄÚ´æÖ¸ÕëÒÔ¼°´°ÌåµÄ¿í/¸ß
+    //æ¥æ”¶å¤–ç•Œä¼ å…¥çš„bmpå¯¹åº”çš„å†…å­˜æŒ‡é’ˆä»¥åŠçª—ä½“çš„å®½/é«˜
     void initSurface(const uint32_t& width, const uint32_t& height, void* buffer = nullptr);
 
-    //Çå³ı»­²¼ÄÚÈİ
+    //æ¸…é™¤ç”»å¸ƒå†…å®¹
     void clear();
 
-    //´«ÈëÏñËØÎ»ÖÃ£¬»æÖÆ³ÉÄ³ÖÖÑÕÉ«
+    //ä¼ å…¥åƒç´ ä½ç½®ï¼Œç»˜åˆ¶æˆæŸç§é¢œè‰²
     void drawPoint(const uint32_t& x, const uint32_t& y, const RGBA& color);
 
     void drawLine(const Point& p1, const Point& p2);
+
+    void drawTriangle(const Point& p1, const Point& p2, const Point& p3);
 
 private:
     static GPU* mInstance;

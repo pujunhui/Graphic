@@ -4,7 +4,7 @@
 
 /*
 * class Raster:
-* 对外提供静态函数接口，传入离散的图元点，返回光栅化后的像素数组
+* 瀵瑰鎻愪緵闈欐�佸嚱鏁版帴鍙ｏ紝浼犲叆绂绘暎鐨勫浘鍏冪偣锛岃繑鍥炲厜鏍呭寲鍚庣殑鍍忕礌鏁扮粍
 */
 class Raster
 {
@@ -18,5 +18,23 @@ public:
         const Point& v1
     );
 
-    static void interpolantLine(const Point& v0, const Point& v1, Point& target);
+    static void interpolantLine(
+        const Point& v0,
+        const Point& v1,
+        Point& target
+    );
+
+    static void rasterizeTriangle(
+        std::vector<Point>& results, 
+        const Point& v0,
+        const Point& v1,
+        const Point& v2
+    );
+
+    static void interpolantTriangle(
+        const Point& v0,
+        const Point& v1,
+        const Point& v2,
+        Point& target
+    );
 };

@@ -1,4 +1,5 @@
 #include "raster.h"
+#include "../math/math.h"
 
 Raster::Raster()
 {
@@ -16,7 +17,7 @@ void Raster::rasterizeLine(
     Point start = v0;
     Point end = v1;
 
-    //1 ±£Ö¤x·½ÏòÊÇ´ÓĞ¡µ½´óµÄ
+    //1 ä¿è¯xæ–¹å‘æ˜¯ä»å°åˆ°å¤§çš„
     if (start.x > end.x) {
         auto tmp = start;
         start = end;
@@ -25,7 +26,7 @@ void Raster::rasterizeLine(
 
     results.push_back(start);
 
-    //2 ±£Ö¤y·½ÏòÒ²ÊÇ´ÓĞ¡µ½´ó£¬Èç¹ûĞèÒª·­×ª£¬±ØĞë¼ÇÂ¼
+    //2 ä¿è¯yæ–¹å‘ä¹Ÿæ˜¯ä»å°åˆ°å¤§ï¼Œå¦‚æœéœ€è¦ç¿»è½¬ï¼Œå¿…é¡»è®°å½•
     bool flipY = false;
     if (start.y > end.y) {
         start.y *= -1.0f;
@@ -33,7 +34,7 @@ void Raster::rasterizeLine(
         flipY = true;
     }
 
-    //3 ±£Ö¤Ğ±ÂÊÔÚ0~1Ö®¼ä£¬Èç¹ûĞèÒªµ÷Õû£¬±ØĞë¼ÇÂ¼
+    //3 ä¿è¯æ–œç‡åœ¨0~1ä¹‹é—´ï¼Œå¦‚æœéœ€è¦è°ƒæ•´ï¼Œå¿…é¡»è®°å½•
     int deltaX = static_cast<int>(end.x - start.x);
     int deltaY = static_cast<int>(end.y - start.y);
 
@@ -64,7 +65,7 @@ void Raster::rasterizeLine(
         currentX += 1;
         p += 2 * deltaY;
 
-        //´¦ÀíĞÂxy£¬flip and swap
+        //å¤„ç†æ–°xyï¼Œflip and swap
         resultX = currentX;
         resultY = currentY;
         if (swapXY) {
@@ -75,7 +76,7 @@ void Raster::rasterizeLine(
             resultY *= -1;
         }
 
-        //²úÉúĞÂ¶¥µã
+        //äº§ç”Ÿæ–°é¡¶ç‚¹
         currentPoint.x = resultX;
         currentPoint.y = resultY;
 
@@ -88,22 +89,22 @@ void Raster::rasterizeLine(
 void Raster::interpolantLine(const Point& v0, const Point& v1, Point& target) {
     float weight = 1.0f;
     //if (v1.x != v0.x) {
-    //    //ÓÃx×ö±ÈÀı
+    //    //ç”¨xåšæ¯”ä¾‹
     //    weight = (float)(target.x - v0.x) / (float)(v1.x - v0.x);
     //}
     //else if (v1.y != v0.y) {
-    //    //ÓÃy×ö±ÈÀı
+    //    //ç”¨yåšæ¯”ä¾‹
     //    weight = (float)(target.y - v0.y) / (float)(v1.y - v0.y);
     //}
 
     int deltaX = static_cast<int>(v1.x - v0.x);
     int deltaY = static_cast<int>(v1.y - v0.y);
     if (abs(deltaX) >= abs(deltaY)) {
-        //ÓÃx×ö±ÈÀı
+        //ç”¨xåšæ¯”ä¾‹
         weight = (float)(target.x - v0.x) / deltaX;
     }
     else {
-        //ÓÃy×ö±ÈÀı
+        //ç”¨yåšæ¯”ä¾‹
         weight = (float)(target.y - v0.y) / deltaY;
     }
 
@@ -114,5 +115,78 @@ void Raster::interpolantLine(const Point& v0, const Point& v1, Point& target) {
     result.mA = static_cast<byte>(weight * static_cast<float>(v1.color.mA) + (1.0f - weight) * static_cast<float>(v0.color.mA));
 
     //std::cout << "weight=" << weight << "--" << static_cast<float>(result.mR) << "--" << static_cast<float>(result.mG) << "--" << static_cast<float>(result.mB) << std::endl;
+    target.color = result;
+}
+
+void Raster::rasterizeTriangle(
+    std::vector<Point>& results,
+    const Point& v0,
+    const Point& v1,
+    const Point& v2
+) {
+    int maxX = static_cast<int>(std::max(v0.x, (std::max(v1.x, v2.x))));
+    int minX = static_cast<int>(std::min(v0.x, (std::min(v1.x, v2.x))));
+    int maxY = static_cast<int>(std::max(v0.y, (std::max(v1.y, v2.y))));
+    int minY = static_cast<int>(std::min(v0.y, (std::min(v1.y, v2.y))));
+
+    math::vec2f pv0, pv1, pv2;
+    Point result;
+    for (int i = minX; i <= maxX; ++i) {
+        for (int j = minY;j <= maxY;++j) {
+            pv0 = math::vec2f(v0.x - i, v0.y - j);
+            pv1 = math::vec2f(v1.x - i, v1.y - j);
+            pv2 = math::vec2f(v2.x - i, v2.y - j);
+
+            auto crossl = math::cross(pv0, pv1);
+            auto cross2 = math::cross(pv1, pv2);
+            auto cross3 = math::cross(pv2, pv0);
+
+            bool negativeAll = crossl < 0 && cross2 < 0 && cross3 < 0;
+            bool positiveAll = crossl > 0 && cross2 > 0 && cross3 > 0;
+
+            if (negativeAll || positiveAll) {
+                result.x = i;
+                result.y = j;
+                interpolantTriangle(v0, v1, v2, result);
+
+                results.push_back(result);
+            }
+        }
+    }
+}
+
+void Raster::interpolantTriangle(
+    const Point& v0,
+    const Point& v1,
+    const Point& v2,
+    Point& target
+) {
+    auto e1 = math::vec2f(v1.x - v0.x, v1.y - v0.y);
+    auto e2 = math::vec2f(v2.x - v0.x, v2.y - v0.y);
+    float sumArea = std::abs(math::cross(e1, e2));
+
+    auto pv0 = math::vec2f(v0.x - target.x, v0.y - target.y);
+    auto pv1 = math::vec2f(v1.x - target.x, v1.y - target.y);
+    auto pv2 = math::vec2f(v2.x - target.x, v2.y - target.y);
+
+    //è®¡ç®—v0çš„æƒé‡
+    float vOArea = std::abs(math::cross(pv1, pv2));
+    float v1Area = std::abs(math::cross(pv0, pv2));
+    float v2Area = std::abs(math::cross(pv0, pv1));
+
+    float weight0 = vOArea / sumArea;
+    float weight1 = v1Area / sumArea;
+    float weight2 = v2Area / sumArea;
+
+    RGBA result;
+    auto c0 = v0.color;
+    auto c1 = v1.color;
+    auto c2 = v2.color;
+
+    result.mR = static_cast<float>(c0.mR) * weight0 + static_cast<float>(c1.mR) * weight1 + static_cast<float>(c2.mR) * weight2;
+    result.mG = static_cast<float>(c0.mG) * weight0 + static_cast<float>(c1.mG) * weight1 + static_cast<float>(c2.mG) * weight2;
+    result.mB = static_cast<float>(c0.mB) * weight0 + static_cast<float>(c1.mB) * weight1 + static_cast<float>(c2.mB) * weight2;
+    result.mA = static_cast<float>(c0.mA) * weight0 + static_cast<float>(c1.mA) * weight1 + static_cast<float>(c2.mA) * weight2;
+
     target.color = result;
 }

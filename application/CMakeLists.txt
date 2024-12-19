@@ -1,5 +1,5 @@
-#µÝ¹é½«±¾ÎÄ¼þ¼ÐÏÂËùÓÐcpp·Åµ½FUNCSÖÐ
+#é€’å½’å°†æœ¬æ–‡ä»¶å¤¹ä¸‹æ‰€æœ‰cppæ”¾åˆ°FUNCSä¸­
 file(GLOB_RECURSE APP ./  *.cpp)
 
-#½«FUNCSÖÐËùÓÐcpp±àÒëÎªfuncsÕâ¸ölib¿â
+#å°†FUNCSä¸­æ‰€æœ‰cppç¼–è¯‘ä¸ºfuncsè¿™ä¸ªlibåº“
 add_library(app ${APP} )

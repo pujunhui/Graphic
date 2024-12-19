@@ -1,16 +1,18 @@
-#需求的最低cmake程序版本
+#闇�姹傜殑鏈�浣巆make绋嬪簭鐗堟湰
 cmake_minimum_required(VERSION 3.12)
 
-#本工程的名称
+#鏈伐绋嬬殑鍚嶇О
 project(Graphic)
 
-#本工程支持的C++版本
+#鏈伐绋嬫敮鎸佺殑C++鐗堟湰
 set(CMAKE_CXX_STANDARD 17)
 
 add_subdirectory(application)
 add_subdirectory(gpu)
 
-#本工程所有cpp文件编译链接，生成exe
+#鏈伐绋嬫墍鏈塩pp鏂囦欢缂栬瘧閾炬帴锛岀敓鎴恊xe
 add_executable(Graphic "main.cpp")
+
+add_executable(testMath "testMath.cpp")
 
 target_link_libraries(Graphic app gpu)

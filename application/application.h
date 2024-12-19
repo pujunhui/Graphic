@@ -9,16 +9,16 @@ class Application {
 public:
 	~Application();
 	
-	//ÓÃÓÚ·ÃÎÊÊµÀıµÄ¾²Ì¬º¯Êı
+	//ç”¨äºè®¿é—®å®ä¾‹çš„é™æ€å‡½æ•°
 	static Application* getInstance();
 
-    //×¢²á´°ÌåÀà£¬´´½¨Ò»¸ö´°Ìå£¬ÏÔÊ¾
+    //æ³¨å†Œçª—ä½“ç±»ï¼Œåˆ›å»ºä¸€ä¸ªçª—ä½“ï¼Œæ˜¾ç¤º
 	bool initApplication(HINSTANCE hInstance, const uint32_t& width = 800, const uint32_t& height = 600);
 
-    //ÍĞ¹ÜÁËwndProc²¶»ñµÄÏûÏ¢£¬²¢ÇÒ½øĞĞ´¦Àí
+    //æ‰˜ç®¡äº†wndProcæ•è·çš„æ¶ˆæ¯ï¼Œå¹¶ä¸”è¿›è¡Œå¤„ç†
     void handleMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
-    //Ã¿Ò»Ö¡/Ã¿Ò»´ÎÑ­»·£¬¶¼»áµ÷ÓÃ£¬²¶»ñÒÔ¼°·Ö·¢´°ÌåÏûÏ¢
+    //æ¯ä¸€å¸§/æ¯ä¸€æ¬¡å¾ªç¯ï¼Œéƒ½ä¼šè°ƒç”¨ï¼Œæ•è·ä»¥åŠåˆ†å‘çª—ä½“æ¶ˆæ¯
 	bool peekMessage();
 
     void show();
@@ -32,11 +32,11 @@ private:
     ATOM registerWindowClass(HINSTANCE hInstance);
 
 private:
-	//È«¾ÖÎ¨Ò»µÄ¾²Ì¬±äÁ¿ÊµÀı
+	//å…¨å±€å”¯ä¸€çš„é™æ€å˜é‡å®ä¾‹
 	static Application* mInstance;
 
-    //Îªtrue±íÊ¾µ±Ç°´°ÌåÈÔÈ»ÔÚ¼ÌĞøÏÔÊ¾£¬³ÌĞòÒ»Ö±ÔÚÅÜ
-    //Îªfalse±íÊ¾´°ÌåÒÑ¾­±»ÃüÁî¹Ø±Õ£¬³ÌĞòĞèÒªÍË³ö
+    //ä¸ºtrueè¡¨ç¤ºå½“å‰çª—ä½“ä»ç„¶åœ¨ç»§ç»­æ˜¾ç¤ºï¼Œç¨‹åºä¸€ç›´åœ¨è·‘
+    //ä¸ºfalseè¡¨ç¤ºçª—ä½“å·²ç»è¢«å‘½ä»¤å…³é—­ï¼Œç¨‹åºéœ€è¦é€€å‡º
     bool mAlive{ true };
     HINSTANCE mWindowInst;
     WCHAR mWindowClassName[100] = L"AppWindow";
@@ -45,9 +45,9 @@ private:
 	uint32_t mWidth{ 0 };
 	uint32_t mHeight{ 0 };
 
-    HDC mhDC;         //µ±Ç°´°¿ÚÖ÷dc
-    HDC mCanvasDC;    //´´½¨µÄÓëmhDCÏà¼æÈİµÄ»æÍ¼ÓÃµÄdc
-    HBITMAP mhBmpl;   //mCanvasDCÄÚ²¿Éú³ÉµÄbitmap
-    void* mCanvasBuffer{ nullptr }; //mhBmpl¶ÔÓ¦µÄÄÚ´æÆğÊ¼Î»ÖÃÖ¸Õë
+    HDC mhDC;         //å½“å‰çª—å£ä¸»dc
+    HDC mCanvasDC;    //åˆ›å»ºçš„ä¸mhDCç›¸å…¼å®¹çš„ç»˜å›¾ç”¨çš„dc
+    HBITMAP mhBmpl;   //mCanvasDCå†…éƒ¨ç”Ÿæˆçš„bitmap
+    void* mCanvasBuffer{ nullptr }; //mhBmplå¯¹åº”çš„å†…å­˜èµ·å§‹ä½ç½®æŒ‡é’ˆ
 	Application();
 };

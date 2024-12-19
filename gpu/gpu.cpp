@@ -1,11 +1,11 @@
 #include "gpu.h"
 #include "raster.h"
 
-//³õÊ¼»¯GPUµÄ¾²Ì¬±äÁ¿
+//åˆå§‹åŒ–GPUçš„é™æ€å˜é‡
 GPU* GPU::mInstance = nullptr;
 GPU* GPU::getInstance() {
-    //Èç¹ûmInstanceÒÑ¾­ÊµÀý»¯ÁË£¨new³öÀ´ÁË£©£¬¾ÍÖ±½Ó·µ»Ø
-    //·ñÔòÐèÒªÏÈnew³öÀ´£¬ÔÙ·µ»Ø
+    //å¦‚æžœmInstanceå·²ç»å®žä¾‹åŒ–äº†ï¼ˆnewå‡ºæ¥äº†ï¼‰ï¼Œå°±ç›´æŽ¥è¿”å›ž
+    //å¦åˆ™éœ€è¦å…ˆnewå‡ºæ¥ï¼Œå†è¿”å›ž
     if (mInstance == nullptr) {
         mInstance = new GPU();
     }
@@ -37,7 +37,7 @@ void GPU::drawPoint(const uint32_t& x, const uint32_t& y, const RGBA& color) {
         return;
     }
 
-    //´Ó´°¿Ú×óÏÂ½Ç¿ªÊ¼¼ÆËã
+    //ä»Žçª—å£å·¦ä¸‹è§’å¼€å§‹è®¡ç®—
     uint32_t pxielPos = y * mFrameBuffer->mWidth + x;
     mFrameBuffer->mColorBuffer[pxielPos] = color;
 }
@@ -46,6 +46,15 @@ void GPU::drawLine(const Point& p1, const Point& p2) {
     std::vector<Point> pixels;
     Raster::rasterizeLine(pixels, p1, p2);
     
+    for (auto p : pixels) {
+        drawPoint(p.x, p.y, p.color);
+    }
+}
+
+void GPU::drawTriangle(const Point& p1, const Point& p2, const Point& p3) {
+    std::vector<Point> pixels;
+    Raster::rasterizeTriangle(pixels, p1, p2, p3);
+
     for (auto p : pixels) {
         drawPoint(p.x, p.y, p.color);
     }

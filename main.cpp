@@ -7,15 +7,16 @@
 //#pragma comment(linker, "/subsystem:windows /entry:wWinMainCRTStartup")
 //#pragma comment(linker, "/subsystem:console /entry:mainCRTStartup")
 
-float step = 0.1f;
 void render() {
     sgl->clear();
 
+    //sample1: ç”»ç›´çº¿
     //for (uint32_t i = 0; i < app->getWidth(); i++)
     //{
     //    sgl->drawPoint(i, 100, RGBA(255, 0, 0));
     //}
-     
+
+    //sample2: ç”»é›ªèŠ±ç‚¹
     /*for (uint32_t i = 0; i < app->getWidth(); i++)
     {
         for (uint32_t j = 0; j < app->getHeight(); j++)
@@ -26,13 +27,16 @@ void render() {
         }
     }*/
 
+    //sample3: ç”»æ¸å˜æ–œçº¿
     /*Point p1{ 200, 400, RGBA(255, 0 ,0, 255) };
     Point p2{ 200, 200, RGBA(0, 255 ,0, 255) };
     sgl->drawLine(p1, p2);*/
 
+
+    //sample4: ç”»æ¸å˜æ”¾å°„åœ†
+    /*static float step = 0.1f;
     int r = 200;
     Point c{ 400, 300, RGBA(255, 0 ,0, 255) };
-
     for (float i = 0; i < 360; i+=10)
     {
         float radian = DEG2RAD(i + step);
@@ -42,20 +46,27 @@ void render() {
         Point pt{ x, y, RGBA(0, 255 ,0, 255) };
         sgl->drawLine(c, pt);
     }
-    step += 0.01f;
+    step += 0.01f;*/
+
+    //sample5: ç”»ä¸‰è§’å½¢
+    Point p1{ 100,100, RGBA(255, 0 ,0, 255) };
+    Point p2{ 500,300, RGBA(0, 255 ,0, 255) };
+    Point p3{ 250,500, RGBA(0, 0 ,255, 255) };
+    sgl->drawTriangle(p1, p2, p3);
+
 }
 
 int APIENTRY wWinMain(
-    _In_ HINSTANCE hInstance,            //±¾Ó¦ÓÃ³ÌĞòÊµÀı¾ä±ú£¬Î¨Ò»Ö¸´úµ±Ç°³ÌĞò
-    _In_opt_ HINSTANCE hPrevInstance,    //±¾³ÌĞòÇ°Ò»¸öÊµÀı£¬Ò»°ãÊÇnull
-    _In_ LPWSTR lpCmdLine,               //Ó¦ÓÃ³ÌĞòÔËĞĞ²ÎÊı
-    _In_ int nCmdShow)                   //´°¿ÚÈçºÎÏÔÊ¾(×î´ó»¯¡¢×îĞ¡»¯¡¢Òş²Ø)£¬²»ĞèÀí»á
+    _In_ HINSTANCE hInstance,            //æœ¬åº”ç”¨ç¨‹åºå®ä¾‹å¥æŸ„ï¼Œå”¯ä¸€æŒ‡ä»£å½“å‰ç¨‹åº
+    _In_opt_ HINSTANCE hPrevInstance,    //æœ¬ç¨‹åºå‰ä¸€ä¸ªå®ä¾‹ï¼Œä¸€èˆ¬æ˜¯null
+    _In_ LPWSTR lpCmdLine,               //åº”ç”¨ç¨‹åºè¿è¡Œå‚æ•°
+    _In_ int nCmdShow)                   //çª—å£å¦‚ä½•æ˜¾ç¤º(æœ€å¤§åŒ–ã€æœ€å°åŒ–ã€éšè—)ï¼Œä¸éœ€ç†ä¼š
 {
     if (!app->initApplication(hInstance, 800, 600)) {
         return -1;
     }
 
-    //½«bmpÖ¸ÏòµÄÄÚ´æÅäÖÃµ½sglµ±ÖĞ
+    //å°†bmpæŒ‡å‘çš„å†…å­˜é…ç½®åˆ°sglå½“ä¸­
     sgl->initSurface(app->getWidth(), app->getHeight(), app->getCanvas());
 
     bool alive = true;
@@ -69,6 +80,6 @@ int APIENTRY wWinMain(
 }
 
 int main() {
-	std::cout << "Hello World" << std::endl;
+    std::cout << "Hello World" << std::endl;
     return 0;
 }
