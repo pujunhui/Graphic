@@ -2,6 +2,7 @@
 #include "../global/base.h"
 #include "frameBuffer.h"
 #include "../application/application.h"
+#include "../application/image.h"
 
 #define sgl GPU::getInstance()
 
@@ -27,10 +28,19 @@ public:
 
     void drawTriangle(const Point& p1, const Point& p2, const Point& p3);
 
+    void drawImage(Image* image);
+
+    void drawImageWithAlpha(Image* image, const uint32_t& alpha);
+
+    //设置状态
+    void setBlending(bool enable);
+
 private:
     static GPU* mInstance;
 
     GPU();
+
+    bool mEnabelBlending{ false };
 
     FrameBuffer* mFrameBuffer{ nullptr };
 };

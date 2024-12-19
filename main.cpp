@@ -2,21 +2,50 @@
 #include <iostream>
 #include "application/application.h"
 #include "gpu/gpu.h"
+#include "application/image.h"
+
+#include <time.h>
 
 #pragma comment(linker, "/subsystem:console /entry:wWinMainCRTStartup")
 //#pragma comment(linker, "/subsystem:windows /entry:wWinMainCRTStartup")
 //#pragma comment(linker, "/subsystem:console /entry:mainCRTStartup")
 
+void printFps() {
+    static int frameCount = 0;  // 静态变量，保持帧数
+    static clock_t startTime = 0; // 静态变量，保持开始时间
+    clock_t currentTime;
+
+    // 初始化开始时间
+    if (startTime == 0) {
+        startTime = clock();
+    }
+
+    // 模拟渲染帧
+    frameCount++;
+
+    // 计算时间
+    currentTime = clock();
+    double elapsedTime = (double)(currentTime - startTime) / CLOCKS_PER_SEC;
+
+    // 每一秒计算一次FPS
+    if (elapsedTime >= 1.0) {
+        printf("FPS: %d\n", frameCount);
+        frameCount = 0; // 重置帧计数
+        startTime = clock(); // 重置开始时间
+    }
+}
+
 void render() {
     sgl->clear();
 
-    //sample1: 画直线
+    printFps();
+    //sample1: 绘制水平直线
     //for (uint32_t i = 0; i < app->getWidth(); i++)
     //{
     //    sgl->drawPoint(i, 100, RGBA(255, 0, 0));
     //}
 
-    //sample2: 画雪花点
+    //sample2: 绘制雪花点
     /*for (uint32_t i = 0; i < app->getWidth(); i++)
     {
         for (uint32_t j = 0; j < app->getHeight(); j++)
@@ -27,14 +56,14 @@ void render() {
         }
     }*/
 
-    //sample3: 画渐变斜线
+    //sample3: 绘制渐变斜线
     /*Point p1{ 200, 400, RGBA(255, 0 ,0, 255) };
     Point p2{ 200, 200, RGBA(0, 255 ,0, 255) };
     sgl->drawLine(p1, p2);*/
 
 
-    //sample4: 画渐变放射圆
-    /*static float step = 0.1f;
+    //sample4: 绘制渐变放射圆
+    static float step = 0.1f;
     int r = 200;
     Point c{ 400, 300, RGBA(255, 0 ,0, 255) };
     for (float i = 0; i < 360; i+=10)
@@ -46,14 +75,24 @@ void render() {
         Point pt{ x, y, RGBA(0, 255 ,0, 255) };
         sgl->drawLine(c, pt);
     }
-    step += 0.01f;*/
+    step += 0.1f;
 
-    //sample5: 画三角形
+    //sample5: 绘制三角形
     Point p1{ 100,100, RGBA(255, 0 ,0, 255) };
     Point p2{ 500,300, RGBA(0, 255 ,0, 255) };
     Point p3{ 250,500, RGBA(0, 0 ,255, 255) };
     sgl->drawTriangle(p1, p2, p3);
 
+    //sample6: 绘制图片
+    /*static Image* image = Image::createImage("assets/textures/goku.jpg");
+    sgl->drawImage(image);*/
+
+    //sample6: 半透明图片绘制
+    static Image* image1 = Image::createImage("assets/textures/goku.jpg");
+    static Image* image2 = Image::createImage("assets/textures/grass.jpg");
+    sgl->setBlending(true);
+    sgl->drawImage(image1);
+    sgl->drawImageWithAlpha(image2, 100);
 }
 
 int APIENTRY wWinMain(

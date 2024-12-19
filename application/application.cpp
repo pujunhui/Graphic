@@ -149,6 +149,16 @@ BOOL Application::createWindow(HINSTANCE hInstance) {
 void Application::handleMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
     switch (message)
     {
+    case WM_SIZE: {
+        // 获取新窗口大小
+        int width = LOWORD(lParam);
+        int height = HIWORD(lParam);
+
+        char buffer[100];
+        sprintf(buffer, "Width: %d, Height: %d", width, height);
+        std::cout << buffer << std::endl;
+        break;
+    }
     case WM_CLOSE: {
         DestroyWindow(hWnd);//此处销毁窗体,会自动发出WM DESTROY
         break;

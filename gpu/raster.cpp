@@ -124,6 +124,7 @@ void Raster::rasterizeTriangle(
     const Point& v1,
     const Point& v2
 ) {
+    //获取三角形最小包围矩形
     int maxX = static_cast<int>(std::max(v0.x, (std::max(v1.x, v2.x))));
     int minX = static_cast<int>(std::min(v0.x, (std::min(v1.x, v2.x))));
     int maxY = static_cast<int>(std::max(v0.y, (std::max(v1.y, v2.y))));
