@@ -35,12 +35,24 @@ public:
     //设置状态
     void setBlending(bool enable);
 
+    void setBilinear(bool enable);
+
+    void setTexture(Image* image);
+
+private:
+    RGBA sampleNearest(const math::vec2f& uv);
+    RGBA sampleBilinear(const math::vec2f& uv);
+
 private:
     static GPU* mInstance;
 
     GPU();
 
     bool mEnabelBlending{ false };
+    bool mEnabelBilinear{ false };
 
     FrameBuffer* mFrameBuffer{ nullptr };
+
+    //纹理贴图
+    Image* mImage{ nullptr };
 };

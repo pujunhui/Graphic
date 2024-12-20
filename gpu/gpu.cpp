@@ -47,10 +47,7 @@ void GPU::drawPoint(const uint32_t& x, const uint32_t& y, const RGBA& color) {
         auto dst = mFrameBuffer->mColorBuffer[pxielPos];
         float weight = static_cast<float>(src.mA) / 255.0f;
 
-        result.mR = static_cast<float>(src.mR) * weight + static_cast<float>(dst.mR) * (1.0f - weight);
-        result.mG = static_cast<float>(src.mG) * weight + static_cast<float>(dst.mG) * (1.0f - weight);
-        result.mB = static_cast<float>(src.mB) * weight + static_cast<float>(dst.mB) * (1.0f - weight);
-        result.mA = static_cast<float>(src.mA) * weight + static_cast<float>(dst.mA) * (1.0f - weight);
+        result = Raster::lerpRGBA(dst, src, weight);
     }
 
     mFrameBuffer->mColorBuffer[pxielPos] = result;
@@ -60,7 +57,7 @@ void GPU::drawLine(const Point& p1, const Point& p2) {
     std::vector<Point> pixels;
     Raster::rasterizeLine(pixels, p1, p2);
     
-    for (auto p : pixels) {
+    for (auto& p : pixels) {
         drawPoint(p.x, p.y, p.color);
     }
 }
@@ -69,8 +66,15 @@ void GPU::drawTriangle(const Point& p1, const Point& p2, const Point& p3) {
     std::vector<Point> pixels;
     Raster::rasterizeTriangle(pixels, p1, p2, p3);
 
-    for (auto p : pixels) {
-        drawPoint(p.x, p.y, p.color);
+    RGBA resultColor;
+    for (auto& p : pixels) {
+        if (mImage) {
+            resultColor = mEnabelBilinear ? sampleBilinear(p.uv) : sampleNearest(p.uv);
+        }
+        else {
+            resultColor = p.color;
+        }
+        drawPoint(p.x, p.y, resultColor);
     }
 }
 
@@ -95,4 +99,67 @@ void GPU::drawImageWithAlpha(Image* image, const uint32_t& alpha) {
 
 void GPU::setBlending(bool enable) {
     mEnabelBlending = enable;
+}
+
+void GPU::setBilinear(bool enable) {
+    mEnabelBilinear = enable;
+}
+
+void GPU::setTexture(Image* image) {
+    mImage = image;
+}
+
+RGBA GPU::sampleNearest(const math::vec2f& uv) {
+    auto myUV = uv;
+
+    //四舍五入到最近整数
+    //u = 0 对应 x = 0, u = 1 对应 x = width - 1
+    //v = 0 对应 y = 0, v = 1 对应 y = height - 1
+    int x = std::round(myUV.x * (mImage->mWidth - 1));
+    int y = std::round(myUV.y * (mImage->mHeight - 1));
+
+    int position = y * mImage->mWidth + x;
+    return mImage->mData[position];
+}
+
+RGBA GPU::sampleBilinear(const math::vec2f& uv) {
+    RGBA resultColor;
+
+    float x = uv.x * static_cast<float>(mImage->mWidth - 1);
+    float y = uv.y * static_cast<float>(mImage->mHeight - 1);
+
+    int left = std::floor(x);
+    int right = std::ceil(x);
+    int bottom = std::floor(y);
+    int top = std::ceil(y);
+
+    //对上下差值，得到左右
+    float yScale = 0.0f;
+    if (top == bottom) {
+        yScale = 1.0f;
+    }
+    else {
+        yScale = (y - static_cast<float>(bottom)) / static_cast<float>(top - bottom);
+    }
+
+    int positionLeftTop = top * mImage->mWidth + left;
+    int positionLeftBottom = bottom * mImage->mWidth + left;
+    int positionRightTop = top * mImage->mWidth + right;
+    int positionRightBottom = bottom * mImage->mWidth + right;
+
+    RGBA leftColor = Raster::lerpRGBA(mImage->mData[positionLeftBottom], mImage->mData[positionLeftTop], yScale);
+    RGBA rightColor = Raster::lerpRGBA(mImage->mData[positionRightBottom], mImage->mData[positionRightTop], yScale);
+
+    //对左右差值，得到结果
+    float xScale = 0.0f;
+    if (right == left) {
+        xScale = 1.0f;
+    }
+    else {
+        xScale = (x - static_cast<float>(left)) / static_cast<float>(right - left);
+    }
+
+    resultColor = Raster::lerpRGBA(leftColor, rightColor, xScale);
+
+    return resultColor;
 }

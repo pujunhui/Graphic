@@ -40,10 +40,10 @@ void render() {
 
     printFps();
     //sample1: 绘制水平直线
-    //for (uint32_t i = 0; i < app->getWidth(); i++)
-    //{
-    //    sgl->drawPoint(i, 100, RGBA(255, 0, 0));
-    //}
+    /*for (uint32_t i = 0; i < app->getWidth(); i++)
+    {
+        sgl->drawPoint(i, 100, RGBA(255, 0, 0));
+    }*/
 
     //sample2: 绘制雪花点
     /*for (uint32_t i = 0; i < app->getWidth(); i++)
@@ -57,15 +57,15 @@ void render() {
     }*/
 
     //sample3: 绘制渐变斜线
-    /*Point p1{ 200, 400, RGBA(255, 0 ,0, 255) };
-    Point p2{ 200, 200, RGBA(0, 255 ,0, 255) };
+    /*static Point p1{ 200, 200, RGBA(255, 0 ,0, 255) };
+    static Point p2{ 201, 400, RGBA(0, 255 ,0, 255) };
     sgl->drawLine(p1, p2);*/
 
 
     //sample4: 绘制渐变放射圆
-    static float step = 0.1f;
-    int r = 200;
-    Point c{ 400, 300, RGBA(255, 0 ,0, 255) };
+    /*static float step = 0.1f;
+    static int r = 200;
+    static Point c{ 400, 300, RGBA(255, 0 ,0, 255) };
     for (float i = 0; i < 360; i+=10)
     {
         float radian = DEG2RAD(i + step);
@@ -75,24 +75,43 @@ void render() {
         Point pt{ x, y, RGBA(0, 255 ,0, 255) };
         sgl->drawLine(c, pt);
     }
-    step += 0.1f;
+    step += 0.1f;*/
 
     //sample5: 绘制三角形
-    Point p1{ 100,100, RGBA(255, 0 ,0, 255) };
-    Point p2{ 500,300, RGBA(0, 255 ,0, 255) };
-    Point p3{ 250,500, RGBA(0, 0 ,255, 255) };
-    sgl->drawTriangle(p1, p2, p3);
+    /*static Point p1{ 100,100, RGBA(255, 0 ,0, 255) };
+    static Point p2{ 500,300, RGBA(0, 255 ,0, 255) };
+    static Point p3{ 250,500, RGBA(0, 0 ,255, 255) };
+    sgl->drawTriangle(p1, p2, p3);*/
 
     //sample6: 绘制图片
     /*static Image* image = Image::createImage("assets/textures/goku.jpg");
     sgl->drawImage(image);*/
 
     //sample6: 半透明图片绘制
-    static Image* image1 = Image::createImage("assets/textures/goku.jpg");
-    static Image* image2 = Image::createImage("assets/textures/grass.jpg");
+    /*static Image* image1 = Image::createImage("assets/textures/grass.jpg");
+    static Image* image2 = Image::createImage("assets/textures/goku.jpg");
     sgl->setBlending(true);
     sgl->drawImage(image1);
-    sgl->drawImageWithAlpha(image2, 100);
+    sgl->drawImageWithAlpha(image2, 100);*/
+
+    //sample7: 绘制uv三角形
+    static Point p1{ 100,100, RGBA(), math::vec2f(0.0f,0.0f)};
+    static Point p2{ 400,100, RGBA(), math::vec2f(1.0f,0.0f) };
+    static Point p3{ 400,400, RGBA(), math::vec2f(1.0f,1.0f) };
+    static Point p4{ 100,400, RGBA(), math::vec2f(0.0f,1.0f) };
+    static Image* image = Image::createImage("assets/textures/goku.jpg");
+    sgl->setTexture(image);
+    sgl->setBilinear(false);
+    sgl->drawTriangle(p1, p2, p3);
+    sgl->drawTriangle(p3, p4, p1);
+
+    static Point p5{ 400,100, RGBA(), math::vec2f(0.0f,0.0f) };
+    static Point p6{ 700,100, RGBA(), math::vec2f(1.0f,0.0f) };
+    static Point p7{ 700,400, RGBA(), math::vec2f(1.0f,1.0f) };
+    static Point p8{ 400,400, RGBA(), math::vec2f(0.0f,1.0f) };
+    sgl->setBilinear(true);
+    sgl->drawTriangle(p5, p6, p7);
+    sgl->drawTriangle(p7, p8, p5);
 }
 
 int APIENTRY wWinMain(

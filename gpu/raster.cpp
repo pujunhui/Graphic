@@ -108,14 +108,8 @@ void Raster::interpolantLine(const Point& v0, const Point& v1, Point& target) {
         weight = (float)(target.y - v0.y) / deltaY;
     }
 
-    RGBA result;
-    result.mR = static_cast<byte>(weight * static_cast<float>(v1.color.mR) + (1.0f - weight) * static_cast<float>(v0.color.mR));
-    result.mG = static_cast<byte>(weight * static_cast<float>(v1.color.mG) + (1.0f - weight) * static_cast<float>(v0.color.mG));
-    result.mB = static_cast<byte>(weight * static_cast<float>(v1.color.mB) + (1.0f - weight) * static_cast<float>(v0.color.mB));
-    result.mA = static_cast<byte>(weight * static_cast<float>(v1.color.mA) + (1.0f - weight) * static_cast<float>(v0.color.mA));
-
     //std::cout << "weight=" << weight << "--" << static_cast<float>(result.mR) << "--" << static_cast<float>(result.mG) << "--" << static_cast<float>(result.mB) << std::endl;
-    target.color = result;
+    target.color = lerpRGBA(v0.color, v1.color, weight);
 }
 
 void Raster::rasterizeTriangle(
@@ -179,15 +173,39 @@ void Raster::interpolantTriangle(
     float weight1 = v1Area / sumArea;
     float weight2 = v2Area / sumArea;
 
-    RGBA result;
-    auto c0 = v0.color;
-    auto c1 = v1.color;
-    auto c2 = v2.color;
+    //对于颜色的插值
+    target.color = lerpRGBA(v0.color, v1.color, v2.color, weight0, weight1, weight2);
 
+    //对于uv坐标的差值
+    target.uv = lerpUV(v0.uv, v1.uv, v2.uv, weight0, weight1, weight2);
+}
+
+RGBA Raster::lerpRGBA(const RGBA& c0, const RGBA& c1, float weight) {
+    RGBA result;
+    result.mR = static_cast<byte>(static_cast<float>(c0.mR) * (1.0f - weight) + static_cast<float>(c1.mR) * weight);
+    result.mG = static_cast<byte>(static_cast<float>(c0.mG) * (1.0f - weight) + static_cast<float>(c1.mG) * weight);
+    result.mB = static_cast<byte>(static_cast<float>(c0.mB) * (1.0f - weight) + static_cast<float>(c1.mB) * weight);
+    result.mA = static_cast<byte>(static_cast<float>(c0.mA) * (1.0f - weight) + static_cast<float>(c1.mA) * weight);
+    return result;
+}
+
+RGBA Raster::lerpRGBA(
+    const RGBA& c0, const RGBA& c1, const RGBA& c2,
+    float weight0, float weight1, float weight2
+) {
+    RGBA result;
     result.mR = static_cast<float>(c0.mR) * weight0 + static_cast<float>(c1.mR) * weight1 + static_cast<float>(c2.mR) * weight2;
     result.mG = static_cast<float>(c0.mG) * weight0 + static_cast<float>(c1.mG) * weight1 + static_cast<float>(c2.mG) * weight2;
     result.mB = static_cast<float>(c0.mB) * weight0 + static_cast<float>(c1.mB) * weight1 + static_cast<float>(c2.mB) * weight2;
     result.mA = static_cast<float>(c0.mA) * weight0 + static_cast<float>(c1.mA) * weight1 + static_cast<float>(c2.mA) * weight2;
+    return result;
+}
 
-    target.color = result;
+math::vec2f Raster::lerpUV(
+    const math::vec2f& uv0, const math::vec2f& uv1, const math::vec2f& uv2,
+    float weight0, float weight1, float weight2
+) {
+    math::vec2f uv;
+    uv = uv0 * weight0 + uv1 * weight1 + uv2 * weight2;
+    return uv;
 }
