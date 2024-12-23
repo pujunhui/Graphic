@@ -11,9 +11,13 @@
 * 模拟GPU的绘图行为以及算法等
 */
 class GPU {
+private:
+    GPU();
+
 public:
-    static GPU* getInstance();
     ~GPU();
+
+    static GPU* getInstance();
 
     //接收外界传入的bmp对应的内存指针以及窗体的宽/高
     void initSurface(const uint32_t& width, const uint32_t& height, void* buffer = nullptr);
@@ -39,17 +43,19 @@ public:
 
     void setTexture(Image* image);
 
+    void setTextureWrap(uint32_t wrap);
+
 private:
     RGBA sampleNearest(const math::vec2f& uv);
     RGBA sampleBilinear(const math::vec2f& uv);
+    void checkWrap(float& n);
 
 private:
     static GPU* mInstance;
 
-    GPU();
-
     bool mEnabelBlending{ false };
     bool mEnabelBilinear{ false };
+    uint32_t mWrap{ TEXTURE_WRAP_REPEAT };
 
     FrameBuffer* mFrameBuffer{ nullptr };
 

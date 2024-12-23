@@ -3,13 +3,13 @@
 //初始化Application的静态变量
 Application* Application::mInstance = nullptr;
 Application* Application::getInstance() {
-	//如果mInstance已经实例化了（new出来了），就直接返回
-	//否则需要先new出来，再返回
-	if (mInstance == nullptr) {
-		mInstance = new Application();
-	}
+    //如果mInstance已经实例化了（new出来了），就直接返回
+    //否则需要先new出来，再返回
+    if (mInstance == nullptr) {
+        mInstance = new Application();
+    }
 
-	return mInstance;
+    return mInstance;
 }
 
 Application::Application() {
@@ -31,8 +31,8 @@ LRESULT CALLBACK Wndproc(
 }
 
 bool Application::initApplication(HINSTANCE hInstance, const uint32_t& width, const uint32_t& height) {
-	mWidth = width;
-	mHeight = height;
+    mWidth = width;
+    mHeight = height;
 
     //初始化窗口类型，并且注册
     registerWindowClass(hInstance);
@@ -70,13 +70,17 @@ bool Application::initApplication(HINSTANCE hInstance, const uint32_t& width, co
         (void**)&mCanvasBuffer,
         0, 0);
 
+    if (!bmp) {
+        return false;
+    }
+
     //每个HDC虚拟设备都可以分配出来多个位图/画刷等资源，本操作是将bmp作为当前hDC2的操作对象，将来所有对hDC2的拷贝操作都是再拷贝bmp的数据
     //一个设备可以创建多个位图，本设备使用mhBmp作为激活位图，对mCanvasDc的内存拷出，其实就是拷出了mhBmp的数据
     SelectObject(mCanvasDC, bmp);
 
     memset(mCanvasBuffer, 0, mWidth * mHeight * 4); //清空buffer为0
 
-	return true;
+    return true;
 }
 
 ATOM Application::registerWindowClass(HINSTANCE hInstance) {
@@ -103,13 +107,13 @@ BOOL Application::createWindow(HINSTANCE hInstance) {
     /*
     * WS_POPUP : 不需要标题栏，则不需要边框
     * WS_OVERLAPPEDWINDOW : 拥有普通程序主窗口的所有特点，必须有标题且有边框
-    * 
+    *
     * WS_CLIPSIBLINGS : 被兄弟窗口挡住区域不绘制
     * WS_CLIPCHILDREN : 被子窗口遮挡住的区域不绘制
     */
     auto dwExStyle = WS_EX_APPWINDOW;
     auto dwStyle = WS_OVERLAPPEDWINDOW | WS_CLIPSIBLINGS | WS_CLIPCHILDREN;
-     
+
     //由于存在标题栏等，所以需要计算中间显示区域的大小,比如PopUp的窗体，就没有标题栏，则不会改变
     RECT windowRect;
     windowRect.left = 0L;
@@ -144,7 +148,6 @@ BOOL Application::createWindow(HINSTANCE hInstance) {
 
     return TRUE;
 }
-
 
 void Application::handleMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
     switch (message)
@@ -183,7 +186,7 @@ bool Application::peekMessage() {
         TranslateMessage(&msg);      //构建消息体
         DispatchMessage(&msg);       //分发消息
     }
-    
+
     return mAlive;
 }
 

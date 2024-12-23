@@ -56,7 +56,7 @@ void GPU::drawPoint(const uint32_t& x, const uint32_t& y, const RGBA& color) {
 void GPU::drawLine(const Point& p1, const Point& p2) {
     std::vector<Point> pixels;
     Raster::rasterizeLine(pixels, p1, p2);
-    
+
     for (auto& p : pixels) {
         drawPoint(p.x, p.y, p.color);
     }
@@ -109,8 +109,15 @@ void GPU::setTexture(Image* image) {
     mImage = image;
 }
 
+void GPU::setTextureWrap(uint32_t wrap) {
+    mWrap = wrap;
+}
+
 RGBA GPU::sampleNearest(const math::vec2f& uv) {
     auto myUV = uv;
+
+    checkWrap(myUV.x);
+    checkWrap(myUV.y);
 
     //四舍五入到最近整数
     //u = 0 对应 x = 0, u = 1 对应 x = width - 1
@@ -125,8 +132,13 @@ RGBA GPU::sampleNearest(const math::vec2f& uv) {
 RGBA GPU::sampleBilinear(const math::vec2f& uv) {
     RGBA resultColor;
 
-    float x = uv.x * static_cast<float>(mImage->mWidth - 1);
-    float y = uv.y * static_cast<float>(mImage->mHeight - 1);
+    auto myUV = uv;
+
+    checkWrap(myUV.x);
+    checkWrap(myUV.y);
+
+    float x = myUV.x * static_cast<float>(mImage->mWidth - 1);
+    float y = myUV.y * static_cast<float>(mImage->mHeight - 1);
 
     int left = std::floor(x);
     int right = std::ceil(x);
@@ -162,4 +174,22 @@ RGBA GPU::sampleBilinear(const math::vec2f& uv) {
     resultColor = Raster::lerpRGBA(leftColor, rightColor, xScale);
 
     return resultColor;
+}
+
+void GPU::checkWrap(float& n) {
+    if (n > 1.0f || n < 0.0f) {
+        n = FRACTION(n);
+        auto m = FRACTION(n + 1);
+        switch (mWrap)
+        {
+        case TEXTURE_WRAP_REPEAT:
+            n = m;
+            break;
+        case TEXTURE_WRAP_MIRROR:
+            n = 1.0f - m;
+            break;
+        default:
+            break;
+        }
+    }
 }

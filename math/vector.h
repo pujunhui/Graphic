@@ -152,11 +152,10 @@ namespace math
             return Vector2(-x, -y);
         }
 
-        void print()
-        {
-            std::cout << "Vector2 is:" << std::endl;
-            std::cout << "x = " << x << ", y = " << y << std::endl;
-            std::cout << std::endl;
+        // 重载<<运算符
+        friend std::ostream& operator<<(std::ostream& os, const Vector2& v) {
+            os << "Vector2(" << x << ", " << y << ")" << std::endl;
+            return os;
         }
 
     public:
@@ -310,11 +309,9 @@ namespace math
             return Vector3(-x, -y, -z);
         }
 
-        void print()
-        {
-            std::cout << "Vector3 is:" << std::endl;
-            std::cout << "x = " << x << ", y = " << y << ", z = " << z << std::endl;
-            std::cout << std::endl;
+        friend std::ostream& operator<<(std::ostream& os, const Vector3& v) {
+            os << "Vector3(" << x << ", " << y << ", " << z << ")" << std::endl;
+            return os;
         }
 
     public:
@@ -473,11 +470,9 @@ namespace math
             return Vector4(-x, -y, -z, -w);
         }
 
-        void print()
-        {
-            std::cout << "Vector4 is:" << std::endl;
-            std::cout << "x = " << x << ", y = " << y << ", z = " << z << ", w = " << w << std::endl;
-            std::cout << std::endl;
+        friend std::ostream& operator<<(std::ostream& os, const Vector4& v) {
+            os << "Vector4(" << x << ", " << y << ", " << z << ", " << w << ")" << std::endl;
+            return os;
         }
 
     public:

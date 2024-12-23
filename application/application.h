@@ -6,6 +6,9 @@
 #define app Application::getInstance()
 
 class Application {
+private:
+    Application();
+
 public:
 	~Application();
 	
@@ -28,12 +31,15 @@ public:
     void* getCanvas() const { return mCanvasBuffer; }
 
 private:
-    BOOL createWindow(HINSTANCE hInstance);
     ATOM registerWindowClass(HINSTANCE hInstance);
+    BOOL createWindow(HINSTANCE hInstance);
 
 private:
 	//全局唯一的静态变量实例
 	static Application* mInstance;
+
+    uint32_t mWidth{ 0 };
+    uint32_t mHeight{ 0 };
 
     //为true表示当前窗体仍然在继续显示，程序一直在跑
     //为false表示窗体已经被命令关闭，程序需要退出
@@ -42,12 +48,8 @@ private:
     WCHAR mWindowClassName[100] = L"AppWindow";
     HWND  mHwnd;
 
-	uint32_t mWidth{ 0 };
-	uint32_t mHeight{ 0 };
-
     HDC mhDC;         //当前窗口主dc
     HDC mCanvasDC;    //创建的与mhDC相兼容的绘图用的dc
     HBITMAP mhBmpl;   //mCanvasDC内部生成的bitmap
     void* mCanvasBuffer{ nullptr }; //mhBmpl对应的内存起始位置指针
-	Application();
 };

@@ -80,6 +80,7 @@ void Raster::rasterizeLine(
         currentPoint.x = resultX;
         currentPoint.y = resultY;
 
+        //这里不能传入start和end，因为currentPoint点是需要绘制的点，它一定在原始直线v0,v1上，而start,end是从v0,v1变换而来
         interpolantLine(v0, v1, currentPoint);
 
         results.push_back(currentPoint);

@@ -39,3 +39,14 @@ struct Point
     RGBA color;
     math::vec2f uv;
 };
+
+
+inline Point offset(const Point& p, const int32_t offsetX, const int32_t offsetY) {
+    Point result = p;
+    result.x += offsetX;
+    result.y += offsetY;
+    return result;
+}
+
+#define TEXTURE_WRAP_REPEAT 0
+#define TEXTURE_WRAP_MIRROR 1

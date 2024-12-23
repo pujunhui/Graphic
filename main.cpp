@@ -72,7 +72,7 @@ void render() {
         int x = r * sin(radian) + c.x;
         int y = r * cos(radian) + c.y;
 
-        Point pt{ x, y, RGBA(0, 255 ,0, 255) };
+        Point pt{ x, y, RGBA(0, 255, 0, 255) };
         sgl->drawLine(c, pt);
     }
     step += 0.1f;*/
@@ -94,21 +94,23 @@ void render() {
     sgl->drawImage(image1);
     sgl->drawImageWithAlpha(image2, 100);*/
 
-    //sample7: 绘制uv三角形
-    static Point p1{ 100,100, RGBA(), math::vec2f(0.0f,0.0f)};
-    static Point p2{ 400,100, RGBA(), math::vec2f(1.0f,0.0f) };
-    static Point p3{ 400,400, RGBA(), math::vec2f(1.0f,1.0f) };
-    static Point p4{ 100,400, RGBA(), math::vec2f(0.0f,1.0f) };
+    //sample7: 绘制uv三角形(有bug，2个三角形之间有间隙)
+    static Point p1{ 100,100, RGBA(255,   0,   0, 255), math::vec2f(0.0f,0.0f)};
+    static Point p2{ 400,100, RGBA(  0, 255,   0, 255), math::vec2f(2.0f,0.0f) };
+    static Point p3{ 400,400, RGBA(  0,   0, 255, 255), math::vec2f(2.0f,2.0f) };
+    static Point p4{ 100,400, RGBA(  0,   0,   0, 255), math::vec2f(0.0f,2.0f) };
     static Image* image = Image::createImage("assets/textures/goku.jpg");
     sgl->setTexture(image);
+    sgl->setTextureWrap(TEXTURE_WRAP_REPEAT);
     sgl->setBilinear(false);
     sgl->drawTriangle(p1, p2, p3);
     sgl->drawTriangle(p3, p4, p1);
 
-    static Point p5{ 400,100, RGBA(), math::vec2f(0.0f,0.0f) };
-    static Point p6{ 700,100, RGBA(), math::vec2f(1.0f,0.0f) };
-    static Point p7{ 700,400, RGBA(), math::vec2f(1.0f,1.0f) };
-    static Point p8{ 400,400, RGBA(), math::vec2f(0.0f,1.0f) };
+    static Point p5{ 400,100, RGBA(255,   0,   0, 255), math::vec2f(0.0f,0.0f) };
+    static Point p6{ 700,100, RGBA(  0, 255,   0, 255), math::vec2f(2.0f,0.0f) };
+    static Point p7{ 700,400, RGBA(  0,   0, 255, 255), math::vec2f(2.0f,2.0f) };
+    static Point p8{ 400,400, RGBA(  0,   0,   0, 255), math::vec2f(0.0f,2.0f) };
+    sgl->setTextureWrap(TEXTURE_WRAP_MIRROR);
     sgl->setBilinear(true);
     sgl->drawTriangle(p5, p6, p7);
     sgl->drawTriangle(p7, p8, p5);
@@ -123,6 +125,18 @@ int APIENTRY wWinMain(
     if (!app->initApplication(hInstance, 800, 600)) {
         return -1;
     }
+
+    math::Mat4f src;
+    src.set(
+        4.0f, 3.0f, 2.0f, 1.0f,
+        3.0f, 2.0f, 1.0f, 0.0f,
+        2.0f, 1.0f, 0.0f, 1.0f,
+        1.0f, 0.0f, 1.0f, 2.0f
+    );
+    
+    math::Mat4f dst = inverse(src);
+
+    std::cout << dst << std::endl;
 
     //将bmp指向的内存配置到sgl当中
     sgl->initSurface(app->getWidth(), app->getHeight(), app->getCanvas());
