@@ -3,6 +3,7 @@
 #include "frameBuffer.h"
 #include "../application/application.h"
 #include "../application/image.h"
+#include "dataStructures.h"
 
 #define sgl GPU::getInstance()
 

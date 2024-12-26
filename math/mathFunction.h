@@ -1,7 +1,7 @@
 #pragma once
 
-#include "vector.h"
 #include "../global/base.h"
+#include "vector.h"
 #include "matrix.h"
 
 
@@ -229,7 +229,7 @@ namespace math
         auto m2Col3 = m2.getColumn(3);
 
         //使用列视图进行计算
-        Vector3<T> rCol0, rCol1, rCol2, rCol3;
+        Vector4<T> rCol0, rCol1, rCol2, rCol3;
         rCol0 = m1Col0 * m2Col0[0] + m1Col1 * m2Col0[1] + m1Col2 * m2Col0[2] + m1Col3 * m2Col0[3];
         rCol1 = m1Col0 * m2Col1[0] + m1Col1 * m2Col1[1] + m1Col2 * m2Col1[2] + m1Col3 * m2Col1[3];
         rCol2 = m1Col0 * m2Col2[0] + m1Col1 * m2Col2[1] + m1Col2 * m2Col2[2] + m1Col3 * m2Col2[3];
@@ -325,5 +325,153 @@ namespace math
         T oneOverDeterminant = static_cast<T>(1) / determinant;
 
         return result * oneOverDeterminant;
+    }
+
+    //空间变换功能
+    //scale translate rotate
+    //变换操作作用于某一坐标基，即变换是在当前模型坐标系内
+    //第一个参数是哪个矩阵操作（即当前模型坐标系）
+    //随后即各自相关参数
+
+    template<typename T, typename V>
+    Matrix44<T> scale(const Matrix44<T>& src, V x, V y, V z) {
+        Matrix44<T> result;
+
+        auto col0 = src.getColumn(0);
+        auto col1 = src.getColumn(1);
+        auto col2 = src.getColumn(2);
+        auto col3 = src.getColumn(3);
+
+        col0 *= x;
+        col1 *= y;
+        col2 *= z;
+
+        result.setColumn(0, col0);
+        result.setColumn(1, col1);
+        result.setColumn(2, col2);
+        result.setColumn(3, col3);
+
+        return result;
+    }
+
+    template<typename T, typename V>
+    Matrix44<T> translate(const Matrix44<T>& src, V x, V y, V z) {
+        Matrix44<T> result(src);
+
+        auto col0 = src.getColumn(0);
+        auto col1 = src.getColumn(1);
+        auto col2 = src.getColumn(2);
+        auto col3 = src.getColumn(3);
+
+        Vector4<T> dstCol3 = col0 * x + col1 * y + col2 * z + col3;
+        result.setColumn(3, dstCol3);
+
+        return result;
+    }
+
+    template<typename T, typename V>
+    Matrix44<T> translate(const Matrix44<T>& src, const Vector3<V>& v) {
+        return translate(src, v.x, v.y, v.z);
+    }
+    /*
+    * 旋转函数，会把纯旋转矩阵放在右边，默认先做完所有旋转，再加上原来的平移
+    * 在当前模型坐标系内旋转，所以先在原点旋转完毕，再乘以src
+    * angle为弧度
+    */
+    template<typename T>
+    Matrix44<T> rotate(const Matrix44<T>& src, float angle, const Vector3<T>& v) {
+        T const c = std::cos(angle);
+        T const s = std::sin(angle);
+
+        Vector3<T> axis = normalize(v);
+        Vector3<T> temp((T(1) - c) * axis);
+
+        Matrix44<T> Rotate;
+        Rotate.set(0, 0, c + temp[0] * axis[0]);
+        Rotate.set(1, 0, temp[0] * axis[1] + s * axis[2]);
+        Rotate.set(2, 0, temp[0] * axis[2] - s * axis[1]);
+
+        Rotate.set(0, 1, temp[1] * axis[0] - s * axis[2]);
+        Rotate.set(1, 1, c + temp[1] * axis[1]);
+        Rotate.set(2, 1, temp[1] * axis[2] + s * axis[0]);
+
+        Rotate.set(0, 2, temp[2] * axis[0] + s * axis[1]);
+        Rotate.set(1, 2, temp[2] * axis[1] - s * axis[0]);
+        Rotate.set(2, 2, c + temp[2] * axis[2]);
+
+        //接下来计算 src * rotate
+        auto rCol0 = Rotate.getColumn(0);
+        auto rCol1 = Rotate.getColumn(1);
+        auto rCol2 = Rotate.getColumn(2);
+        auto rCol3 = Rotate.getColumn(3);
+
+        auto srcCol0 = src.getColumn(0);
+        auto srcCol1 = src.getColumn(1);
+        auto srcCol2 = src.getColumn(2);
+        auto srcCol3 = src.getColumn(3);
+
+        auto col0 = srcCol0 * rCol0[0] + srcCol1 * rCol0[1] + srcCol2 * rCol0[2];
+        auto col1 = srcCol0 * rCol1[0] + srcCol1 * rCol1[1] + srcCol2 * rCol1[2];
+        auto col2 = srcCol0 * rCol2[0] + srcCol1 * rCol2[1] + srcCol2 * rCol2[2];
+        auto col3 = srcCol3;
+
+        Matrix44<T> result;
+        result.setColumn(0, col0);
+        result.setColumn(1, col1);
+        result.setColumn(2, col2);
+        result.setColumn(3, col3);
+
+        return result;
+    }
+
+    //正交投影函数
+    template<typename T>
+    Matrix44<T> orthograhpic(T left, T right, T bottom, T top, T near, T far) {
+        Matrix44<T> result(static_cast<T>(1));
+
+        result.set(0, 0, static_cast<T>(2) / (right - left));
+        result.set(0, 3, -(right + left) / (right - left));
+        result.set(1, 1, static_cast<T>(2) / (top - bottom));
+        result.set(1, 3, -(top + bottom) / (top - bottom));
+        result.set(2, 2, -static_cast<T>(2) / (far - near));
+        result.set(1, 3, -(far + near) / (far - near));
+
+        return result;
+    }
+
+    //透视投影函数
+    //这里fov是y方向的fov
+    template<typename T>
+    Matrix44<T> perspective(T fovy, T aspect, T n, T f) {
+        const T tanHalfFovy = std::tan(DEG2RAD(fovy / static_cast<T>(2)));
+
+        Matrix44<T> result(static_cast<T>(0));
+        result.set(0, 0, static_cast<T>(1) / (aspect * tanHalfFovy));
+        result.set(1, 1, static_cast<T>(1) / tanHalfFovy);
+        result.set(2, 2, -(f + n) / (f - n));
+        result.set(2, 3, -static_cast<T>(2) * f * n / (f - n));
+        result.set(3, 2, -static_cast<T>(1));
+
+        return result;
+    }
+
+    //屏幕空间变换函数
+    template<typename T>
+    Matrix44<T> screenMatrix(const uint32_t& width, const uint32_t& height) {
+        Matrix44<T> result(static_cast<T>(1));
+
+        //x
+        result.set(0, 0, static_cast<T>(width) / static_cast<T>(2));
+        result.set(0, 3, static_cast<T>(width) / static_cast<T>(2));
+
+        //y
+        result.set(1, 1, static_cast<T>(height) / static_cast<T>(2));
+        result.set(1, 3, static_cast<T>(height) / static_cast<T>(2));
+
+        //z
+        result.set(2, 2, 0.5f);
+        result.set(2, 3, 0.5f);
+
+        return result;
     }
 }

@@ -154,7 +154,7 @@ namespace math
 
         // 重载<<运算符
         friend std::ostream& operator<<(std::ostream& os, const Vector2& v) {
-            os << "Vector2(" << x << ", " << y << ")" << std::endl;
+            os << "Vector2(" << v.x << ", " << v.y << ")" << std::endl;
             return os;
         }
 
@@ -310,7 +310,7 @@ namespace math
         }
 
         friend std::ostream& operator<<(std::ostream& os, const Vector3& v) {
-            os << "Vector3(" << x << ", " << y << ", " << z << ")" << std::endl;
+            os << "Vector3(" << v.x << ", " << v.y << ", " << v.z << ")" << std::endl;
             return os;
         }
 
@@ -471,7 +471,7 @@ namespace math
         }
 
         friend std::ostream& operator<<(std::ostream& os, const Vector4& v) {
-            os << "Vector4(" << x << ", " << y << ", " << z << ", " << w << ")" << std::endl;
+            os << "Vector4(" << v.x << ", " << v.y << ", " << v.z << ", " << v.w << ")" << std::endl;
             return os;
         }
 

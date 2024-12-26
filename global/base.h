@@ -5,7 +5,6 @@
 #include <map>
 #include <cmath>
 #include <assert.h>
-#include "../math/math.h"
 
 #define PI              3.14159265358979323
 #define DEG2RAD(theta)  (0.01745329251994329 * (theta))
@@ -31,22 +30,6 @@ struct RGBA {
         mA = a;
     }
 };
-
-struct Point
-{
-    int32_t x;
-    int32_t y;
-    RGBA color;
-    math::vec2f uv;
-};
-
-
-inline Point offset(const Point& p, const int32_t offsetX, const int32_t offsetY) {
-    Point result = p;
-    result.x += offsetX;
-    result.y += offsetY;
-    return result;
-}
 
 #define TEXTURE_WRAP_REPEAT 0
 #define TEXTURE_WRAP_MIRROR 1

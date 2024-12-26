@@ -1,7 +1,7 @@
 #pragma once
 
 #include<iostream>
-#include <iomanip>
+#include<iomanip>
 #include<assert.h>
 #include"vector.h"
 
@@ -152,10 +152,10 @@ namespace math {
 
         Vector4<T> operator*(const Vector4<T>& v) {
             return Vector4<T>(
-                v.x * m[0] + v.y * m[4], v.z * m[8], v.w * m[12],
-                v.x * m[1] + v.y * m[5], v.z * m[9], v.w * m[13],
-                v.x * m[2] + v.y * m[6], v.z * m[10], v.w * m[14],
-                v.x * m[3] + v.y * m[7], v.z * m[11], v.w * m[15],
+                v.x * m[0] + v.y * m[4] + v.z * m[8] + v.w * m[12],
+                v.x * m[1] + v.y * m[5] + v.z * m[9] + v.w * m[13],
+                v.x * m[2] + v.y * m[6] + v.z * m[10] + v.w * m[14],
+                v.x * m[3] + v.y * m[7] + v.z * m[11] + v.w * m[15]
                 );
         }
 
@@ -232,7 +232,7 @@ namespace math {
         };
     };
 
-    using Mat3f = Matrix33<float>;
-    using Mat4f = Matrix44<float>;
+    using mat3f = Matrix33<float>;
+    using mat4f = Matrix44<float>;
 }
 
