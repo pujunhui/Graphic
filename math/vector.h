@@ -45,14 +45,14 @@ namespace math
         /*
          * 等号运算符重载
          */
-        Vector2<T> operator=(const Vector3<T>& v)
+        Vector2<T>& operator=(const Vector3<T>& v)
         {
             x = v.x;
             y = v.y;
             return *this;
         }
 
-        Vector2<T> operator=(const Vector4<T>& v)
+        Vector2<T>& operator=(const Vector4<T>& v)
         {
             x = v.x;
             y = v.y;
@@ -63,7 +63,7 @@ namespace math
          * 加法
          * v = v1 + v2
          */
-        Vector2<T> operator+(const Vector2<T>& v) const
+        Vector2<T>& operator+(const Vector2<T>& v) const
         {
             return Vector2(x + v.x, y + v.y);
         }
@@ -72,7 +72,7 @@ namespace math
          * 加法并赋值
          * v += v1
          */
-        Vector2<T> operator+=(const Vector2<T>& v)
+        Vector2<T>& operator+=(const Vector2<T>& v)
         {
             x += v.x;
             y += v.y;
@@ -83,7 +83,7 @@ namespace math
          * 减法
          * v = v1 - v2
          */
-        Vector2<T> operator-(const Vector2<T>& v) const
+        Vector2<T>& operator-(const Vector2<T>& v) const
         {
             return Vector2(x - v.x, y - v.y);
         }
@@ -92,7 +92,7 @@ namespace math
          * 减法并赋值
          * v -= v1
          */
-        Vector2<T> operator-=(const Vector2<T>& v)
+        Vector2<T>& operator-=(const Vector2<T>& v)
         {
             x -= v.x;
             y -= v.y;
@@ -103,7 +103,7 @@ namespace math
          * 乘法
          * v = v * s
          */
-        Vector2<T> operator*(T s) const
+        Vector2<T>& operator*(T s) const
         {
             return Vector2(x * s, y * s);
         }
@@ -112,7 +112,7 @@ namespace math
          * 乘法并赋值
          * v *= s
          */
-        Vector2<T> operator*=(T s)
+        Vector2<T>& operator*=(T s)
         {
             x *= s;
             y *= s;
@@ -123,7 +123,7 @@ namespace math
          * 除法
          * v = v / f
          */
-        Vector2<T> operator/(T f) const
+        Vector2<T>& operator/(T f) const
         {
             assert(f != 0);
             float inv = static_cast<T>(1) / f;
@@ -134,7 +134,7 @@ namespace math
          * 除法并赋值
          * v /= f
          */
-        Vector2<T> operator/=(T f)
+        Vector2<T>& operator/=(T f)
         {
             assert(f != 0);
             float inv = static_cast<T>(1) / f;
@@ -147,7 +147,7 @@ namespace math
          * 负号操作
          * v = -v1
          */
-        Vector2<T> operator-()
+        Vector2<T>& operator-()
         {
             return Vector2(-x, -y);
         }
@@ -198,14 +198,14 @@ namespace math
         /*
          * 等号运算符重载
          */
-        Vector3<T> operator=(const Vector2<T>& v)
+        Vector3<T>& operator=(const Vector2<T>& v)
         {
             x = v.x;
             y = v.y;
             return *this;
         }
 
-        Vector3<T> operator=(const Vector4<T>& v)
+        Vector3<T>& operator=(const Vector4<T>& v)
         {
             x = v.x;
             y = v.y;
@@ -217,7 +217,7 @@ namespace math
          * 加法
          * v = v1 + v2
          */
-        Vector3<T> operator+(const Vector3<T>& v) const
+        Vector3<T>& operator+(const Vector3<T>& v) const
         {
             return Vector3(x + v.x, y + v.y, z + v.z);
         }
@@ -226,7 +226,7 @@ namespace math
          * 加法并赋值
          * v += v1
          */
-        Vector3<T> operator+=(const Vector3<T>& v)
+        Vector3<T>& operator+=(const Vector3<T>& v)
         {
             x += v.x;
             y += v.y;
@@ -238,7 +238,7 @@ namespace math
          * 减法
          * v = v1 - v2
          */
-        Vector3<T> operator-(const Vector3<T>& v) const
+        Vector3<T>& operator-(const Vector3<T>& v) const
         {
             return Vector3(x - v.x, y - v.y, z - v.z);
         }
@@ -247,7 +247,7 @@ namespace math
          * 减法并赋值
          * v -= v1
          */
-        Vector3<T> operator-=(const Vector3<T>& v)
+        Vector3<T>& operator-=(const Vector3<T>& v)
         {
             x -= v.x;
             y -= v.y;
@@ -258,7 +258,7 @@ namespace math
          * 乘法
          * v = v * s
          */
-        Vector3<T> operator*(T s) const
+        Vector3<T>& operator*(T s) const
         {
             return Vector3(x * s, y * s, z * s);
         }
@@ -267,7 +267,7 @@ namespace math
          * 乘法并赋值
          * v *= s
          */
-        Vector3<T> operator*=(T s)
+        Vector3<T>& operator*=(T s)
         {
             x *= s;
             y *= s;
@@ -279,7 +279,7 @@ namespace math
          * 除法
          * v = v / f
          */
-        Vector3<T> operator/(T f) const
+        Vector3<T>& operator/(T f) const
         {
             assert(f != 0);
             float inv = static_cast<T>(1) / f;
@@ -290,7 +290,7 @@ namespace math
          * 除法并赋值
          * v /= f
          */
-        Vector3<T> operator/=(T f)
+        Vector3<T>& operator/=(T f)
         {
             assert(f != 0);
             float inv = static_cast<T>(1) / f;
@@ -304,7 +304,7 @@ namespace math
          * 负号操作
          * v = -v1
          */
-        Vector3<T> operator-()
+        Vector3<T>& operator-()
         {
             return Vector3(-x, -y, -z);
         }
@@ -355,14 +355,14 @@ namespace math
         /*
          * 等号运算符重载
          */
-        Vector4<T> operator=(const Vector2<T>& v)
+        Vector4<T>& operator=(const Vector2<T>& v)
         {
             x = v.x;
             y = v.y;
             return *this;
         }
 
-        Vector4<T> operator=(const Vector3<T>& v)
+        Vector4<T>& operator=(const Vector3<T>& v)
         {
             x = v.x;
             y = v.y;
@@ -374,7 +374,7 @@ namespace math
          * 加法
          * v = v1 + v2
          */
-        Vector4<T> operator+(const Vector4<T>& v) const
+        Vector4<T>& operator+(const Vector4<T>& v) const
         {
             return Vector4(x + v.x, y + v.y, z + v.z, w + v.w);
         }
@@ -383,7 +383,7 @@ namespace math
          * 加法并赋值
          * v += v1
          */
-        Vector4<T> operator+=(const Vector4<T>& v)
+        Vector4<T>& operator+=(const Vector4<T>& v)
         {
             x += v.x;
             y += v.y;
@@ -396,7 +396,7 @@ namespace math
          * 减法
          * v = v1 - v2
          */
-        Vector4<T> operator-(const Vector4<T>& v) const
+        Vector4<T>& operator-(const Vector4<T>& v) const
         {
             return Vector4(x - v.x, y - v.y, z - v.z, w - v.w);
         }
@@ -405,7 +405,7 @@ namespace math
          * 减法并赋值
          * v -= v1
          */
-        Vector4<T> operator-=(const Vector4<T>& v)
+        Vector4<T>& operator-=(const Vector4<T>& v)
         {
             x -= v.x;
             y -= v.y;
@@ -417,7 +417,7 @@ namespace math
          * 乘法
          * v = v * s
          */
-        Vector4<T> operator*(T s) const
+        Vector4<T>& operator*(T s) const
         {
             return Vector4(x * s, y * s, z * s, w * s);
         }
@@ -426,7 +426,7 @@ namespace math
          * 乘法并赋值
          * v *= s
          */
-        Vector4<T> operator*=(T s)
+        Vector4<T>& operator*=(T s)
         {
             x *= s;
             y *= s;
@@ -439,7 +439,7 @@ namespace math
          * 除法
          * v = v / f
          */
-        Vector4<T> operator/(T f) const
+        Vector4<T>& operator/(T f) const
         {
             assert(f != 0);
             float inv = static_cast<T>(1) / f;
@@ -450,7 +450,7 @@ namespace math
          * 除法并赋值
          * v /= f
          */
-        Vector4<T> operator/=(T f)
+        Vector4<T>& operator/=(T f)
         {
             assert(f != 0);
             float inv = static_cast<T>(1) / f;
@@ -465,7 +465,7 @@ namespace math
          * 负号操作
          * v = -v1
          */
-        Vector4<T> operator-()
+        Vector4<T>& operator-()
         {
             return Vector4(-x, -y, -z, -w);
         }

@@ -31,7 +31,7 @@ namespace math {
             m[2] = src.m[2]; m[5] = src.m[6]; m[8] = src.m[10];
         }
 
-        Matrix33<T> operator*(const T& s) {
+        Matrix33<T>& operator*(const T& s) {
             Matrix33<T> result;
 
             auto col0 = this->getColumn(0) * s;
@@ -45,7 +45,7 @@ namespace math {
             return result;
         }
 
-        Vector3<T> operator*(const Vector3<T>& v) {
+        Vector3<T>& operator*(const Vector3<T>& v) {
             return Vector3<T>(
                 v.x * m[0] + v.y * m[3], v.z * m[6],
                 v.x * m[1] + v.y * m[4], v.z * m[7],
@@ -73,7 +73,7 @@ namespace math {
             m[2] = m20; m[5] = m21; m[8] = m22;
         }
 
-        Matrix33<T> indentity() {
+        Matrix33<T>& indentity() {
             set(
                 1, 0, 0,
                 0, 1, 0,
@@ -82,7 +82,7 @@ namespace math {
             return *this;
         }
 
-        Vector3<T> getColumn(const uint32_t& col) const {
+        Vector3<T>& getColumn(const uint32_t& col) const {
             assert(col >= 0 && col < 3);
             return Vector3<T>(m[col * 3], m[col * 3 + 1], m[col * 3 + 2]);
         }
@@ -134,7 +134,7 @@ namespace math {
             memcpy((void*)m, (void*)src.m, sizeof(T) * 16);
         }
 
-        Matrix44<T> operator*(const T& s) {
+        Matrix44<T>& operator*(const T& s) {
             Matrix44<T> result;
 
             auto col0 = this->getColumn(0) * s;
@@ -150,7 +150,7 @@ namespace math {
             return result;
         }
 
-        Vector4<T> operator*(const Vector4<T>& v) {
+        Vector4<T>& operator*(const Vector4<T>& v) {
             return Vector4<T>(
                 v.x * m[0] + v.y * m[4] + v.z * m[8] + v.w * m[12],
                 v.x * m[1] + v.y * m[5] + v.z * m[9] + v.w * m[13],
@@ -181,7 +181,7 @@ namespace math {
             m[3] = m30; m[7] = m31; m[11] = m32; m[15] = m33;
         }
 
-        Matrix33<T> indentity() {
+        Matrix33<T>& indentity() {
             set(
                 1, 0, 0, 0,
                 0, 1, 0, 0,
@@ -191,7 +191,7 @@ namespace math {
             return *this;
         }
 
-        Vector4<T> getColumn(const uint32_t& col) const {
+        Vector4<T>& getColumn(const uint32_t& col) const {
             assert(col >= 0 && col < 4);
             return Vector4<T>(
                 m[col * 4],

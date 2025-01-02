@@ -7,6 +7,57 @@
 
 namespace math
 {
+    //各类lerp函数
+    static float lerp(const float& v1, const float& v2, float weight) {
+        return v2 * weight + v1 * (1.0f - weight);
+    }
+
+    static vec2f lerp(const vec2f& v1, const vec2f& v2, float weight) {
+        return v2 * weight + v1 * (1.0f - weight);
+    }
+
+    static vec3f lerp(const vec3f& v1, const vec3f& v2, float weight) {
+        return v2 * weight + v1 * (1.0f - weight);
+    }
+
+    static vec4f lerp(const vec4f& v1, const vec4f& v2, float weight) {
+        return v2 * weight + v1 * (1.0f - weight);
+    }
+
+    static RGBA lerp(const RGBA& v1, const RGBA& v2, float weight) {
+        RGBA result;
+        result.mR = static_cast<byte>(static_cast<float>(v2.mR) * weight + static_cast<float>(v1.mR) * (1.0f - weight));
+        result.mG = static_cast<byte>(static_cast<float>(v2.mG) * weight + static_cast<float>(v1.mG) * (1.0f - weight));
+        result.mB = static_cast<byte>(static_cast<float>(v2.mB) * weight + static_cast<float>(v1.mB) * (1.0f - weight));
+        result.mA = static_cast<byte>(static_cast<float>(v2.mA) * weight + static_cast<float>(v1.mA) * (1.0f - weight));
+        return result;
+    }
+
+    static float lerp(const float& v1, const float& v2, const float& v3, float weight1, float weight2, float weight3) {
+        return v1 * weight1 + v2 * weight2 + v3 * weight3;
+    }
+
+    static vec2f lerp(const vec2f& v1, const vec2f& v2, const vec2f& v3, float weight1, float weight2, float weight3) {
+        return v1 * weight1 + v2 * weight2 + v3 * weight3;
+    }
+
+    static vec3f lerp(const vec3f& v1, const vec3f& v2, const vec3f& v3, float weight1, float weight2, float weight3) {
+        return v1 * weight1 + v2 * weight2 + v3 * weight3;
+    }
+
+    static vec4f lerp(const vec4f& v1, const vec4f& v2, const vec4f& v3, float weight1, float weight2, float weight3) {
+        return v1 * weight1 + v2 * weight2 + v3 * weight3;
+    }
+
+    static RGBA lerp(const RGBA& v1, const RGBA& v2, const RGBA& v3, float weight1, float weight2, float weight3) {
+        RGBA result;
+        result.mR = static_cast<byte>(static_cast<float>(v1.mR) * weight1 + static_cast<float>(v2.mR) * weight2 + static_cast<float>(v3.mR) * weight3);
+        result.mG = static_cast<byte>(static_cast<float>(v1.mG) * weight1 + static_cast<float>(v2.mG) * weight2 + static_cast<float>(v3.mG) * weight3);
+        result.mB = static_cast<byte>(static_cast<float>(v1.mB) * weight1 + static_cast<float>(v2.mB) * weight2 + static_cast<float>(v3.mB) * weight3);
+        result.mA = static_cast<byte>(static_cast<float>(v1.mA) * weight1 + static_cast<float>(v2.mA) * weight2 + static_cast<float>(v3.mA) * weight3);
+        return result;
+    }
+
     /*
     * 标量与向量
     * v = s * v1
@@ -164,7 +215,7 @@ namespace math
     * m2 m5 m8
     */
     template<typename T>
-    Matrix33<T> transpose(const Matrix33<T>& m) {
+    Matrix33<T>& transpose(const Matrix33<T>& m) {
         Matrix33<T> result;
         auto dst = result.m;
         auto src = m.m;
@@ -181,7 +232,7 @@ namespace math
     * m3 m7 m11 m15
     */
     template<typename T>
-    Matrix44<T> transpose(const Matrix44<T>& m) {
+    Matrix44<T>& transpose(const Matrix44<T>& m) {
         Matrix44<T> result;
         auto dst = result.m;
         auto src = m.m;
@@ -193,7 +244,7 @@ namespace math
     }
 
     template<typename T>
-    Matrix33<T> operator*(const Matrix33<T>& m1, const Matrix33<T>& m2) {
+    Matrix33<T>& operator*(const Matrix33<T>& m1, const Matrix33<T>& m2) {
         auto m1Col0 = m1.getColumn(0);
         auto m1Col1 = m1.getColumn(1);
         auto m1Col2 = m1.getColumn(2);
@@ -217,7 +268,7 @@ namespace math
     }
 
     template<typename T>
-    Matrix44<T> operator*(const Matrix44<T>& m1, const Matrix44<T>& m2) {
+    Matrix44<T>& operator*(const Matrix44<T>& m1, const Matrix44<T>& m2) {
         auto m1Col0 = m1.getColumn(0);
         auto m1Col1 = m1.getColumn(1);
         auto m1Col2 = m1.getColumn(2);
@@ -252,7 +303,7 @@ namespace math
     * m3 m7 m11 m15
     */
     template<typename T>
-    Matrix44<T> inverse(const Matrix44<T>& src) {
+    Matrix44<T>& inverse(const Matrix44<T>& src) {
         Matrix44<T> result(static_cast<T>(1));
 
         //计算每一个必须的2*2矩阵行列式，下标是左上角到右下角
@@ -334,7 +385,7 @@ namespace math
     //随后即各自相关参数
 
     template<typename T, typename V>
-    Matrix44<T> scale(const Matrix44<T>& src, V x, V y, V z) {
+    Matrix44<T>& scale(const Matrix44<T>& src, V x, V y, V z) {
         Matrix44<T> result;
 
         auto col0 = src.getColumn(0);
@@ -355,7 +406,7 @@ namespace math
     }
 
     template<typename T, typename V>
-    Matrix44<T> translate(const Matrix44<T>& src, V x, V y, V z) {
+    Matrix44<T>& translate(const Matrix44<T>& src, V x, V y, V z) {
         Matrix44<T> result(src);
 
         auto col0 = src.getColumn(0);
@@ -370,7 +421,7 @@ namespace math
     }
 
     template<typename T, typename V>
-    Matrix44<T> translate(const Matrix44<T>& src, const Vector3<V>& v) {
+    Matrix44<T>& translate(const Matrix44<T>& src, const Vector3<V>& v) {
         return translate(src, v.x, v.y, v.z);
     }
     /*
@@ -379,7 +430,7 @@ namespace math
     * angle为弧度
     */
     template<typename T>
-    Matrix44<T> rotate(const Matrix44<T>& src, float angle, const Vector3<T>& v) {
+    Matrix44<T>& rotate(const Matrix44<T>& src, float angle, const Vector3<T>& v) {
         T const c = std::cos(angle);
         T const s = std::sin(angle);
 
@@ -426,7 +477,7 @@ namespace math
 
     //正交投影函数
     template<typename T>
-    Matrix44<T> orthograhpic(T left, T right, T bottom, T top, T near, T far) {
+    Matrix44<T>& orthograhpic(T left, T right, T bottom, T top, T near, T far) {
         Matrix44<T> result(static_cast<T>(1));
 
         result.set(0, 0, static_cast<T>(2) / (right - left));
@@ -442,7 +493,7 @@ namespace math
     //透视投影函数
     //这里fov是y方向的fov
     template<typename T>
-    Matrix44<T> perspective(T fovy, T aspect, T n, T f) {
+    Matrix44<T>& perspective(T fovy, T aspect, T n, T f) {
         const T tanHalfFovy = std::tan(DEG2RAD(fovy / static_cast<T>(2)));
 
         Matrix44<T> result(static_cast<T>(0));
@@ -457,7 +508,7 @@ namespace math
 
     //屏幕空间变换函数
     template<typename T>
-    Matrix44<T> screenMatrix(const uint32_t& width, const uint32_t& height) {
+    Matrix44<T>& screenMatrix(const uint32_t& width, const uint32_t& height) {
         Matrix44<T> result(static_cast<T>(1));
 
         //x
