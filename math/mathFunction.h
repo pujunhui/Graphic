@@ -7,6 +7,57 @@
 
 namespace math
 {
+    //各类lerp函数
+    static float lerp(const float& v1, const float& v2, float weight) {
+        return v2 * weight + v1 * (1.0f - weight);
+    }
+
+    static vec2f lerp(const vec2f& v1, const vec2f& v2, float weight) {
+        return v2 * weight + v1 * (1.0f - weight);
+    }
+
+    static vec3f lerp(const vec3f& v1, const vec3f& v2, float weight) {
+        return v2 * weight + v1 * (1.0f - weight);
+    }
+
+    static vec4f lerp(const vec4f& v1, const vec4f& v2, float weight) {
+        return v2 * weight + v1 * (1.0f - weight);
+    }
+
+    static RGBA lerp(const RGBA& v1, const RGBA& v2, float weight) {
+        RGBA result;
+        result.mR = static_cast<byte>(static_cast<float>(v2.mR) * weight + static_cast<float>(v1.mR) * (1.0f - weight));
+        result.mG = static_cast<byte>(static_cast<float>(v2.mG) * weight + static_cast<float>(v1.mG) * (1.0f - weight));
+        result.mB = static_cast<byte>(static_cast<float>(v2.mB) * weight + static_cast<float>(v1.mB) * (1.0f - weight));
+        result.mA = static_cast<byte>(static_cast<float>(v2.mA) * weight + static_cast<float>(v1.mA) * (1.0f - weight));
+        return result;
+    }
+
+    static float lerp(const float& v1, const float& v2, const float& v3, float weight1, float weight2, float weight3) {
+        return v1 * weight1 + v2 * weight2 + v3 * weight3;
+    }
+
+    static vec2f lerp(const vec2f& v1, const vec2f& v2, const vec2f& v3, float weight1, float weight2, float weight3) {
+        return v1 * weight1 + v2 * weight2 + v3 * weight3;
+    }
+
+    static vec3f lerp(const vec3f& v1, const vec3f& v2, const vec3f& v3, float weight1, float weight2, float weight3) {
+        return v1 * weight1 + v2 * weight2 + v3 * weight3;
+    }
+
+    static vec4f lerp(const vec4f& v1, const vec4f& v2, const vec4f& v3, float weight1, float weight2, float weight3) {
+        return v1 * weight1 + v2 * weight2 + v3 * weight3;
+    }
+
+    static RGBA lerp(const RGBA& v1, const RGBA& v2, const RGBA& v3, float weight1, float weight2, float weight3) {
+        RGBA result;
+        result.mR = static_cast<byte>(static_cast<float>(v1.mR) * weight1 + static_cast<float>(v2.mR) * weight2 + static_cast<float>(v3.mR) * weight3);
+        result.mG = static_cast<byte>(static_cast<float>(v1.mG) * weight1 + static_cast<float>(v2.mG) * weight2 + static_cast<float>(v3.mG) * weight3);
+        result.mB = static_cast<byte>(static_cast<float>(v1.mB) * weight1 + static_cast<float>(v2.mB) * weight2 + static_cast<float>(v3.mB) * weight3);
+        result.mA = static_cast<byte>(static_cast<float>(v1.mA) * weight1 + static_cast<float>(v2.mA) * weight2 + static_cast<float>(v3.mA) * weight3);
+        return result;
+    }
+
     /*
     * 标量与向量
     * v = s * v1
