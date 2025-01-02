@@ -6,11 +6,13 @@
 #include <cmath>
 #include <assert.h>
 
+#define NOMINMAX 
+#include <algorithm> 
+#include <windows.h>
+
 #define PI              3.14159265358979323
 #define DEG2RAD(theta)  (0.01745329251994329 * (theta))
 #define FRACTION(v)     ((v)-(int)(v))
-
-using byte = unsigned char;
 
 struct RGBA {
     byte mB;
@@ -31,5 +33,5 @@ struct RGBA {
     }
 };
 
-#define TEXTURE_WRAP_REPEAT 0
-#define TEXTURE_WRAP_MIRROR 1
+#define ARRAY_BUFFER 0
+#define ELEMENT_ARRAY_BUFFER 1

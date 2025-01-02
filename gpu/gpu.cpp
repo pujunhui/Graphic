@@ -32,164 +32,95 @@ void GPU::clear() {
     std::fill_n(mFrameBuffer->mColorBuffer, pixelSize, RGBA(0, 0, 0, 0));
 }
 
-void GPU::drawPoint(const uint32_t& x, const uint32_t& y, const RGBA& color) {
-    if (x >= mFrameBuffer->mWidth || y >= mFrameBuffer->mHeight) {
+void GPU::printVAO(const uint32_t& vaoId) {
+    auto iter = mVaoMap.find(vaoId);
+    if (iter != mVaoMap.end()) {
+        iter->second->print();
+    }
+}
+
+uint32_t GPU::genBuffer() {
+    mBufferCounter++;
+    mBufferMap.insert(std::make_pair(mBufferCounter, new BufferObject()));
+
+    return mBufferCounter;
+}
+
+void GPU::deleteBuffer(const uint32_t& bufferId) {
+    auto iter = mBufferMap.find(bufferId);
+    if (iter != mBufferMap.end()) {
+        delete iter->second;
+    }
+    else {
         return;
     }
 
-    //从窗口左下角开始计算
-    uint32_t pxielPos = y * mFrameBuffer->mWidth + x;
-
-    RGBA result = color;
-    if (mEnabelBlending) {
-        //加入blending
-        auto src = color;
-        auto dst = mFrameBuffer->mColorBuffer[pxielPos];
-        float weight = static_cast<float>(src.mA) / 255.0f;
-
-        result = Raster::lerpRGBA(dst, src, weight);
-    }
-
-    mFrameBuffer->mColorBuffer[pxielPos] = result;
+    mBufferMap.erase(iter);
 }
 
-void GPU::drawLine(const Point& p1, const Point& p2) {
-    std::vector<Point> pixels;
-    Raster::rasterizeLine(pixels, p1, p2);
-
-    for (auto& p : pixels) {
-        drawPoint(p.x, p.y, p.color);
+void GPU::bindBuffer(const uint32_t& bufferType, const uint32_t& bufferId) {
+    if (bufferType == ARRAY_BUFFER) {
+        mCurrentVBO = bufferId;
+    }
+    else if (bufferType == ELEMENT_ARRAY_BUFFER) {
+        mCurrentEBO = bufferId;
     }
 }
 
-void GPU::drawTriangle(const Point& p1, const Point& p2, const Point& p3) {
-    std::vector<Point> pixels;
-    Raster::rasterizeTriangle(pixels, p1, p2, p3);
-
-    RGBA resultColor;
-    for (auto& p : pixels) {
-        if (mImage) {
-            resultColor = mEnabelBilinear ? sampleBilinear(p.uv) : sampleNearest(p.uv);
-        }
-        else {
-            resultColor = p.color;
-        }
-        drawPoint(p.x, p.y, resultColor);
+void GPU::bufferData(const uint32_t& bufferType, size_t dataSize, void* data) {
+    uint32_t bufferId = 0;
+    if (bufferType == ARRAY_BUFFER) {
+        bufferId = mCurrentVBO;
     }
-}
-
-void GPU::drawImage(Image* image) {
-    for (uint32_t y = 0; y < image->mHeight; y++) {
-        for (uint32_t x = 0; x < image->mWidth; x++) {
-            drawPoint(x, y, image->mData[y * image->mWidth + x]);
-        }
-    }
-}
-
-void GPU::drawImageWithAlpha(Image* image, const uint32_t& alpha) {
-    RGBA color;
-    for (uint32_t y = 0; y < image->mHeight; y++) {
-        for (uint32_t x = 0; x < image->mWidth; x++) {
-            color = image->mData[y * image->mWidth + x];
-            color.mA = alpha;
-            drawPoint(x, y, color);
-        }
-    }
-}
-
-void GPU::setBlending(bool enable) {
-    mEnabelBlending = enable;
-}
-
-void GPU::setBilinear(bool enable) {
-    mEnabelBilinear = enable;
-}
-
-void GPU::setTexture(Image* image) {
-    mImage = image;
-}
-
-void GPU::setTextureWrap(uint32_t wrap) {
-    mWrap = wrap;
-}
-
-RGBA GPU::sampleNearest(const math::vec2f& uv) {
-    auto myUV = uv;
-
-    checkWrap(myUV.x);
-    checkWrap(myUV.y);
-
-    //四舍五入到最近整数
-    //u = 0 对应 x = 0, u = 1 对应 x = width - 1
-    //v = 0 对应 y = 0, v = 1 对应 y = height - 1
-    int x = std::round(myUV.x * (mImage->mWidth - 1));
-    int y = std::round(myUV.y * (mImage->mHeight - 1));
-
-    int position = y * mImage->mWidth + x;
-    return mImage->mData[position];
-}
-
-RGBA GPU::sampleBilinear(const math::vec2f& uv) {
-    RGBA resultColor;
-
-    auto myUV = uv;
-
-    checkWrap(myUV.x);
-    checkWrap(myUV.y);
-
-    float x = myUV.x * static_cast<float>(mImage->mWidth - 1);
-    float y = myUV.y * static_cast<float>(mImage->mHeight - 1);
-
-    int left = std::floor(x);
-    int right = std::ceil(x);
-    int bottom = std::floor(y);
-    int top = std::ceil(y);
-
-    //对上下差值，得到左右
-    float yScale = 0.0f;
-    if (top == bottom) {
-        yScale = 1.0f;
+    else if (bufferType == ELEMENT_ARRAY_BUFFER) {
+        bufferId = mCurrentEBO;
     }
     else {
-        yScale = (y - static_cast<float>(bottom)) / static_cast<float>(top - bottom);
+        assert(false);
     }
 
-    int positionLeftTop = top * mImage->mWidth + left;
-    int positionLeftBottom = bottom * mImage->mWidth + left;
-    int positionRightTop = top * mImage->mWidth + right;
-    int positionRightBottom = bottom * mImage->mWidth + right;
-
-    RGBA leftColor = Raster::lerpRGBA(mImage->mData[positionLeftBottom], mImage->mData[positionLeftTop], yScale);
-    RGBA rightColor = Raster::lerpRGBA(mImage->mData[positionRightBottom], mImage->mData[positionRightTop], yScale);
-
-    //对左右差值，得到结果
-    float xScale = 0.0f;
-    if (right == left) {
-        xScale = 1.0f;
-    }
-    else {
-        xScale = (x - static_cast<float>(left)) / static_cast<float>(right - left);
+    auto iter = mBufferMap.find(bufferId);
+    if (iter == mBufferMap.end()) {
+        assert(false);
     }
 
-    resultColor = Raster::lerpRGBA(leftColor, rightColor, xScale);
-
-    return resultColor;
+    BufferObject* bufferObject = iter->second;
+    bufferObject->setBufferData(dataSize, data);
 }
 
-void GPU::checkWrap(float& n) {
-    if (n > 1.0f || n < 0.0f) {
-        n = FRACTION(n);
-        auto m = FRACTION(n + 1);
-        switch (mWrap)
-        {
-        case TEXTURE_WRAP_REPEAT:
-            n = m;
-            break;
-        case TEXTURE_WRAP_MIRROR:
-            n = 1.0f - m;
-            break;
-        default:
-            break;
-        }
+uint32_t GPU::genVertexArray() {
+    mVaoCounter++;
+    mVaoMap.insert(std::make_pair(mVaoCounter, new VertexArrayObject()));
+
+    return mVaoCounter;
+}
+
+void GPU::deleteVertexArray(const uint32_t& vaoId) {
+    auto iter = mVaoMap.find(vaoId);
+    if (iter == mVaoMap.end()) {
+        delete iter->second;
     }
+    else {
+        return;
+    }
+
+    mVaoMap.erase(iter);
+}
+
+void GPU::bindVertexArray(const uint32_t& vaoId) {
+    mCurrentVAO = vaoId;
+}
+
+void GPU::vertexAttributePointer(
+    const uint32_t& binding,
+    const uint32_t& itemSize,
+    const uint32_t& stride,
+    const uint32_t& offset) {
+    auto iter = mVaoMap.find(mCurrentVAO);
+    if (iter == mVaoMap.end()) {
+        assert(false);
+    }
+
+    auto vao = iter->second;
+    vao->set(binding, mCurrentVBO, itemSize, stride, offset);
 }
