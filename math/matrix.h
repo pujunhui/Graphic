@@ -31,7 +31,7 @@ namespace math {
             m[2] = src.m[2]; m[5] = src.m[6]; m[8] = src.m[10];
         }
 
-        Matrix33<T>& operator*(const T& s) {
+        Matrix33<T> operator*(const T& s) {
             Matrix33<T> result;
 
             auto col0 = this->getColumn(0) * s;
@@ -45,7 +45,7 @@ namespace math {
             return result;
         }
 
-        Vector3<T>& operator*(const Vector3<T>& v) {
+        Vector3<T> operator*(const Vector3<T>& v) {
             return Vector3<T>(
                 v.x * m[0] + v.y * m[3], v.z * m[6],
                 v.x * m[1] + v.y * m[4], v.z * m[7],
@@ -55,7 +55,7 @@ namespace math {
 
         T get(const uint32_t& row, const uint32_t& col) const {
             assert(row >= 0 && row < 3 && col >= 0 && col < 3);
-            return  m[col * 3 + row];
+            return m[col * 3 + row];
         }
 
         void set(const uint32_t& row, const uint32_t& col, T t) {
@@ -82,7 +82,7 @@ namespace math {
             return *this;
         }
 
-        Vector3<T>& getColumn(const uint32_t& col) const {
+        Vector3<T> getColumn(const uint32_t& col) const {
             assert(col >= 0 && col < 3);
             return Vector3<T>(m[col * 3], m[col * 3 + 1], m[col * 3 + 2]);
         }
@@ -96,14 +96,17 @@ namespace math {
 
         friend std::ostream& operator<<(std::ostream& os, const Matrix33& mat) {
             os << "Matrix33 is:" << std::endl;
-            for (size_t i = 0; i < 9; i++) {
-                os << std::setw(8) << std::setprecision(2) << std::fixed << mat.m[i];
-                if (i % 4 == 2) {
-                    os << std::endl;
+            for (size_t row = 0; row < 3; row++) {
+                for (size_t col = 0; col < 3; col++) {
+                    os << std::setw(8) << std::setprecision(2) << std::fixed << mat.get(row, col);
+                    if (col == 2) {
+                        os << ", ";
+                    }
+                    else {
+                        os << ", ";
+                    }
                 }
-                else {
-                    os << ", ";
-                }
+                os << std::endl;
             }
             return os;
         }
@@ -134,7 +137,7 @@ namespace math {
             memcpy((void*)m, (void*)src.m, sizeof(T) * 16);
         }
 
-        Matrix44<T>& operator*(const T& s) {
+        Matrix44<T> operator*(const T& s) {
             Matrix44<T> result;
 
             auto col0 = this->getColumn(0) * s;
@@ -150,7 +153,7 @@ namespace math {
             return result;
         }
 
-        Vector4<T>& operator*(const Vector4<T>& v) {
+        Vector4<T> operator*(const Vector4<T>& v) {
             return Vector4<T>(
                 v.x * m[0] + v.y * m[4] + v.z * m[8] + v.w * m[12],
                 v.x * m[1] + v.y * m[5] + v.z * m[9] + v.w * m[13],
@@ -161,7 +164,7 @@ namespace math {
 
         T get(const uint32_t& row, const uint32_t& col) const {
             assert(row >= 0 && row < 4 && col >= 0 && col < 4);
-            return  m[col * 4 + row];
+            return m[col * 4 + row];
         }
 
         void set(const uint32_t& row, const uint32_t& col, T t) {
@@ -191,7 +194,7 @@ namespace math {
             return *this;
         }
 
-        Vector4<T>& getColumn(const uint32_t& col) const {
+        Vector4<T> getColumn(const uint32_t& col) const {
             assert(col >= 0 && col < 4);
             return Vector4<T>(
                 m[col * 4],
@@ -211,14 +214,17 @@ namespace math {
 
         friend std::ostream& operator<<(std::ostream& os, const Matrix44& mat) {
             os << "Matrix44 is:" << std::endl;
-            for (size_t i = 0; i < 16; i++) {
-                os << std::setw(8) << std::setprecision(2) << std::fixed << mat.m[i] ;
-                if (i % 4 == 3) {
-                    os << std::endl;
+            for (size_t row = 0; row < 4; row++) {
+                for (size_t col = 0; col < 4; col++) {
+                    os << std::setw(8) << std::setprecision(2) << std::fixed << mat.get(row, col);
+                    if (col == 3) {
+                        os << ", ";
+                    }
+                    else {
+                        os << ", ";
+                    }
                 }
-                else {
-                    os << ", ";
-                }
+                os << std::endl;
             }
             return os;
         }

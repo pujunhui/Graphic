@@ -63,7 +63,7 @@ namespace math
          * 加法
          * v = v1 + v2
          */
-        Vector2<T>& operator+(const Vector2<T>& v) const
+        Vector2<T> operator+(const Vector2<T>& v) const
         {
             return Vector2(x + v.x, y + v.y);
         }
@@ -83,7 +83,7 @@ namespace math
          * 减法
          * v = v1 - v2
          */
-        Vector2<T>& operator-(const Vector2<T>& v) const
+        Vector2<T> operator-(const Vector2<T>& v) const
         {
             return Vector2(x - v.x, y - v.y);
         }
@@ -103,7 +103,7 @@ namespace math
          * 乘法
          * v = v * s
          */
-        Vector2<T>& operator*(T s) const
+        Vector2<T> operator*(T s) const
         {
             return Vector2(x * s, y * s);
         }
@@ -123,7 +123,7 @@ namespace math
          * 除法
          * v = v / f
          */
-        Vector2<T>& operator/(T f) const
+        Vector2<T> operator/(T f) const
         {
             assert(f != 0);
             float inv = static_cast<T>(1) / f;
@@ -147,14 +147,14 @@ namespace math
          * 负号操作
          * v = -v1
          */
-        Vector2<T>& operator-()
+        Vector2<T> operator-()
         {
             return Vector2(-x, -y);
         }
 
         // 重载<<运算符
         friend std::ostream& operator<<(std::ostream& os, const Vector2& v) {
-            os << "Vector2(" << v.x << ", " << v.y << ")" << std::endl;
+            os << "Vector2(" << v.x << ", " << v.y << ")";
             return os;
         }
 
@@ -217,7 +217,7 @@ namespace math
          * 加法
          * v = v1 + v2
          */
-        Vector3<T>& operator+(const Vector3<T>& v) const
+        Vector3<T> operator+(const Vector3<T>& v) const
         {
             return Vector3(x + v.x, y + v.y, z + v.z);
         }
@@ -238,7 +238,7 @@ namespace math
          * 减法
          * v = v1 - v2
          */
-        Vector3<T>& operator-(const Vector3<T>& v) const
+        Vector3<T> operator-(const Vector3<T>& v) const
         {
             return Vector3(x - v.x, y - v.y, z - v.z);
         }
@@ -258,7 +258,7 @@ namespace math
          * 乘法
          * v = v * s
          */
-        Vector3<T>& operator*(T s) const
+        Vector3<T> operator*(T s) const
         {
             return Vector3(x * s, y * s, z * s);
         }
@@ -279,7 +279,7 @@ namespace math
          * 除法
          * v = v / f
          */
-        Vector3<T>& operator/(T f) const
+        Vector3<T> operator/(T f) const
         {
             assert(f != 0);
             float inv = static_cast<T>(1) / f;
@@ -304,13 +304,13 @@ namespace math
          * 负号操作
          * v = -v1
          */
-        Vector3<T>& operator-()
+        Vector3<T> operator-()
         {
             return Vector3(-x, -y, -z);
         }
 
         friend std::ostream& operator<<(std::ostream& os, const Vector3& v) {
-            os << "Vector3(" << v.x << ", " << v.y << ", " << v.z << ")" << std::endl;
+            os << "Vector3(" << v.x << ", " << v.y << ", " << v.z << ")";
             return os;
         }
 
@@ -374,7 +374,7 @@ namespace math
          * 加法
          * v = v1 + v2
          */
-        Vector4<T>& operator+(const Vector4<T>& v) const
+        Vector4<T> operator+(const Vector4<T>& v) const
         {
             return Vector4(x + v.x, y + v.y, z + v.z, w + v.w);
         }
@@ -396,7 +396,7 @@ namespace math
          * 减法
          * v = v1 - v2
          */
-        Vector4<T>& operator-(const Vector4<T>& v) const
+        Vector4<T> operator-(const Vector4<T>& v) const
         {
             return Vector4(x - v.x, y - v.y, z - v.z, w - v.w);
         }
@@ -417,7 +417,7 @@ namespace math
          * 乘法
          * v = v * s
          */
-        Vector4<T>& operator*(T s) const
+        Vector4<T> operator*(T s) const
         {
             return Vector4(x * s, y * s, z * s, w * s);
         }
@@ -439,7 +439,7 @@ namespace math
          * 除法
          * v = v / f
          */
-        Vector4<T>& operator/(T f) const
+        Vector4<T> operator/(T f) const
         {
             assert(f != 0);
             float inv = static_cast<T>(1) / f;
@@ -465,13 +465,13 @@ namespace math
          * 负号操作
          * v = -v1
          */
-        Vector4<T>& operator-()
+        Vector4<T> operator-()
         {
             return Vector4(-x, -y, -z, -w);
         }
 
         friend std::ostream& operator<<(std::ostream& os, const Vector4& v) {
-            os << "Vector4(" << v.x << ", " << v.y << ", " << v.z << ", " << v.w << ")" << std::endl;
+            os << "Vector4(" << v.x << ", " << v.y << ", " << v.z << ", " << v.w << ")";
             return os;
         }
 

@@ -35,3 +35,6 @@ struct RGBA {
 
 #define ARRAY_BUFFER 0
 #define ELEMENT_ARRAY_BUFFER 1
+
+#define DRAW_LINES 0
+#define DRAW_TRIANGLE 1

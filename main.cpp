@@ -6,6 +6,8 @@
 
 #include <time.h>
 
+#include "gpu/shader/defaultShader.h"
+
 #pragma comment(linker, "/subsystem:console /entry:wWinMainCRTStartup")
 //#pragma comment(linker, "/subsystem:windows /entry:wWinMainCRTStartup")
 //#pragma comment(linker, "/subsystem:console /entry:mainCRTStartup")
@@ -35,12 +37,8 @@ void printFps() {
     }
 }
 
-void render() {
-    sgl->clear();
-
-    printFps();
-
-}
+uint32_t WIDTH = 800;
+uint32_t HEIGHT = 600;
 
 //三个属性对应的vbo
 uint32_t positionVbo = 0;
@@ -53,7 +51,45 @@ uint32_t ebo;
 //三角形专属vao
 uint32_t vao;
 
+//使用Shader
+DefaultShader* shader = nullptr;
+
+//mvp变换矩阵
+math::mat4f modelMatrix;
+math::mat4f viewMatrix;
+math::mat4f perspectiveMatrix;
+
+float angle = 0.0f;
+
+void transform() {
+    angle += 0.01f;
+    //模型变换
+    modelMatrix = math::rotate(math::mat4f(1.0f), angle, math::vec3f{ 0.0f, 1.0f, 0.0f });
+}
+
+void render() {
+    printFps();
+
+    transform();
+    shader->mModelMatrix = modelMatrix;
+    shader->mViewMatrix = viewMatrix;
+    shader->mProjectionMatrix = perspectiveMatrix;
+
+    sgl->clear();
+    sgl->useProgram(shader);
+    sgl->bindVertexArray(vao);
+    sgl->bindBuffer(ELEMENT_ARRAY_BUFFER, ebo);
+    sgl->drawElement(DRAW_TRIANGLE, 0, 3);
+}
+
 void prepare() {
+    shader = new DefaultShader();
+
+    perspectiveMatrix = math::perspective(60.0f, (float)WIDTH / (float)HEIGHT, 0.1f, 100.0f);
+
+    auto cameraModelMatrix = math::translate(math::mat4f(1.0f), math::vec3f{ 0.0f, 0.0f, 3.0f });
+    viewMatrix = math::inverse(cameraModelMatrix);
+
     float positions[] = {
         -0.5f, -0.5f, 0.0f,
         -0.5f, 0.5f, 0.0f,
@@ -97,13 +133,13 @@ void prepare() {
 
     uvVbo = sgl->sgl->genBuffer();
     sgl->bindBuffer(ARRAY_BUFFER, uvVbo);
-    sgl->bufferData(ARRAY_BUFFER, sizeof(float) * 6, colors);
+    sgl->bufferData(ARRAY_BUFFER, sizeof(float) * 6, uvs);
     sgl->vertexAttributePointer(2, 2, 2 * sizeof(float), 0);
 
     sgl->bindBuffer(ARRAY_BUFFER, 0);
     sgl->bindVertexArray(0);
 
-    sgl->printVAO(vao);
+    //sgl->printVAO(vao);
 }
 
 
@@ -113,7 +149,7 @@ int APIENTRY wWinMain(
     _In_ LPWSTR lpCmdLine,               //应用程序运行参数
     _In_ int nCmdShow)                   //窗口如何显示(最大化、最小化、隐藏)，不需理会
 {
-    if (!app->initApplication(hInstance, 800, 600)) {
+    if (!app->initApplication(hInstance, WIDTH, HEIGHT)) {
         return -1;
     }
 
@@ -128,6 +164,8 @@ int APIENTRY wWinMain(
         render();
         app->show();
     }
+
+    delete shader;
 
     return 0;
 }

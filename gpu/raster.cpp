@@ -8,6 +8,21 @@ Raster::Raster()
 Raster::~Raster()
 {
 }
+void Raster::rasterize(
+	std::vector<VsOutput>& results,
+	const uint32_t& drawMode,
+	const std::vector<VsOutput>& inputs
+) {
+	if (drawMode == DRAW_LINES) {
+		for (uint32_t i = 0; i < inputs.size(); i+=2) {
+			rasterizeLine(results, inputs[i], inputs[i + 1]);
+		}
+	}else if (drawMode == DRAW_TRIANGLE) {
+		for (uint32_t i = 0; i < inputs.size(); i += 3) {
+			rasterizeTriangle(results, inputs[i], inputs[i + 1], inputs[i + 2]);
+		}
+	}
+}
 
 void Raster::rasterizeLine(
 	std::vector<VsOutput>& results,

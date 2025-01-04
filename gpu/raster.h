@@ -13,6 +13,13 @@ public:
     Raster();
     ~Raster();
 
+    static void rasterize(
+        std::vector<VsOutput>& results,
+        const uint32_t& drawMode,
+        const std::vector<VsOutput>& inputs
+    );
+
+private:
     static void rasterizeLine(
         std::vector<VsOutput>& results,
         const VsOutput& v0,
