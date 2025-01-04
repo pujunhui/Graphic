@@ -60,11 +60,18 @@ math::mat4f viewMatrix;
 math::mat4f perspectiveMatrix;
 
 float angle = 0.0f;
+float cameraZ = 3;
 
 void transform() {
-    angle += 0.01f;
+    angle += 0.1f;
+    cameraZ -= 0.01f;
+
     //模型变换
     modelMatrix = math::rotate(math::mat4f(1.0f), angle, math::vec3f{ 0.0f, 1.0f, 0.0f });
+
+    //视图变换
+    auto cameraModelMatrix = math::translate(math::mat4f(1.0f), math::vec3f{ 0.0f, 0.0f, cameraZ });
+    viewMatrix = math::inverse(cameraModelMatrix);
 }
 
 void render() {
@@ -86,9 +93,6 @@ void prepare() {
     shader = new DefaultShader();
 
     perspectiveMatrix = math::perspective(60.0f, (float)WIDTH / (float)HEIGHT, 0.1f, 100.0f);
-
-    auto cameraModelMatrix = math::translate(math::mat4f(1.0f), math::vec3f{ 0.0f, 0.0f, 3.0f });
-    viewMatrix = math::inverse(cameraModelMatrix);
 
     float positions[] = {
         -0.5f, -0.5f, 0.0f,

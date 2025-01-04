@@ -1,5 +1,6 @@
 #include "gpu.h"
 #include "raster.h"
+#include "clipper.h"
 
 //初始化GPU的静态变量
 GPU* GPU::mInstance = nullptr;
@@ -25,7 +26,7 @@ GPU::~GPU() {
 
 void GPU::initSurface(const uint32_t& width, const uint32_t& height, void* buffer) {
     mFrameBuffer = new FrameBuffer(width, height, buffer);
-    mScreenMatrix = math::screenMatrix<float>(width, height);
+    mScreenMatrix = math::screenMatrix<float>(width - 1, height - 1);
 }
 
 void GPU::clear() {
@@ -160,11 +161,24 @@ void GPU::drawElement(const uint32_t& drawMode, const uint32_t& first, const uin
     }
 
     /*
+    * Clip Space处理阶段
+    * 作用：
+    *   在剪裁空间，对所有输出的图元进行剪裁拼接等
+    */
+    std::vector<VsOutput> clipOutputs;
+    Clipper::doClipSpace(drawMode, vsOutputs, clipOutputs);
+    if (clipOutputs.empty()) {
+        return;
+    }
+
+    vsOutputs.clear();
+
+    /*
     * NDC处理阶段
     * 作用：
     *   将顶点转化到NDC下
     */
-    for (auto& output : vsOutputs) {
+    for (auto& output : clipOutputs) {
         perspectiveDivision(output);
     }
 
@@ -173,7 +187,7 @@ void GPU::drawElement(const uint32_t& drawMode, const uint32_t& first, const uin
     * 作用：
     *   将NDC下的点，通过screenMatrix，转化为屏幕空间
     */
-    for (auto& output : vsOutputs) {
+    for (auto& output : clipOutputs) {
         screenMapping(output);
     }
 
@@ -183,7 +197,7 @@ void GPU::drawElement(const uint32_t& drawMode, const uint32_t& first, const uin
     *   离散出所有需要的Fragment
     */
     std::vector<VsOutput> rasterOutputs;
-    Raster::rasterize(rasterOutputs, drawMode, vsOutputs);
+    Raster::rasterize(rasterOutputs, drawMode, clipOutputs);
     if (rasterOutputs.empty()) {
         return;
     }
