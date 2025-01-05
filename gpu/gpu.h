@@ -55,6 +55,9 @@ public:
     void frontFace(const uint32_t& value);
     void cullFace(const uint32_t& value);
 
+    //depth test
+    void depthFunc(const uint32_t& depthFunc);
+
     void drawElement(const uint32_t& drawMode, const uint32_t& first, const uint32_t& conut);
 
 private:
@@ -71,6 +74,8 @@ private:
     void screenMapping(VsOutput& vsOutput);
 
     void trim(VsOutput& vsOutput);
+
+    bool depthTest(const FsOutput& output);
 
 private:
     static GPU* mInstance;
@@ -94,4 +99,8 @@ private:
     bool mEnableCullFace{ true };
     uint32_t mForntFace{ FRONT_FACE_CCW };
     uint32_t mCullFace{ BACK_FACE };
+
+    //depth
+    bool mEnableDepthTest{ true };
+    uint32_t mDepthFunc{ DEPTH_LESS };
 };

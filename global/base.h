@@ -38,8 +38,12 @@ struct RGBA {
 #define DRAW_TRIANGLES 1
 
 #define CULL_FACE 1
+#define DEPTH_TEST 2
 
 #define FRONT_FACE 0
 #define BACK_FACE 1
 #define FRONT_FACE_CW 0
 #define FRONT_FACE_CCW 1
+
+#define DEPTH_LESS 0
+#define DEPTH_GREATER 1
