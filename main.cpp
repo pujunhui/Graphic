@@ -8,6 +8,7 @@
 
 #include "gpu/shader/defaultShader.h"
 #include "gpu/shader/textureShader.h"
+#include "application/camera.h"
 
 #pragma comment(linker, "/subsystem:console /entry:wWinMainCRTStartup")
 //#pragma comment(linker, "/subsystem:windows /entry:wWinMainCRTStartup")
@@ -41,6 +42,8 @@ void printFps() {
 uint32_t WIDTH = 800;
 uint32_t HEIGHT = 600;
 
+Camera* camera = nullptr;
+
 //两个三角形专属vao
 uint32_t vao0 = 0;
 uint32_t vao1 = 0;
@@ -58,31 +61,23 @@ uint32_t texture = 0;
 
 //mvp变换矩阵
 math::mat4f modelMatrix;
-math::mat4f viewMatrix;
-math::mat4f perspectiveMatrix;
 
 float angle = 0.0f;
-float cameraZ = 1;
 
 void transform() {
     angle += 0.01f;
-    //cameraZ -= 0.01f;
 
     //模型变换
     modelMatrix = math::rotate(math::mat4f(1.0f), angle, math::vec3f{ 0.0f, 1.0f, 0.0f });
-
-    //视图变换
-    auto cameraModelMatrix = math::translate(math::mat4f(1.0f), math::vec3f{ 0.0f, 0.0f, cameraZ });
-    viewMatrix = math::inverse(cameraModelMatrix);
 }
 
 void render() {
-    printFps();
+    //printFps();
 
     transform();
-    shader->mModelMatrix = modelMatrix; 
-    shader->mViewMatrix = viewMatrix;
-    shader->mProjectionMatrix = perspectiveMatrix;
+    shader->mModelMatrix = modelMatrix;
+    shader->mViewMatrix = camera->getViewMatrix();
+    shader->mProjectionMatrix = camera->getProjectionMatrix();
     shader->mDiffuseTexture = texture;
 
     sgl->clear();
@@ -98,8 +93,12 @@ void render() {
 }
 
 void prepare() {
+    camera = new Camera(60.0f, (float)WIDTH / (float)HEIGHT, 0.1f, 100.0f, math::vec3f(0.0f, 1.0f, 0.0f));
+    app->setCamera(camera);
+
     shader = new TextureShader();
 
+    //制造纹理
     texture = sgl->genTexture();
     sgl->bindTexture(texture);
 
@@ -111,8 +110,6 @@ void prepare() {
     sgl->texParameter(TEXTURE_WRAP_U, TEXTURE_WRAP_REPEAT);
     sgl->texParameter(TEXTURE_WRAP_V, TEXTURE_WRAP_REPEAT);
     sgl->bindTexture(0);
-
-    perspectiveMatrix = math::perspective(60.0f, (float)WIDTH / (float)HEIGHT, 0.1f, 100.0f);
 
     sgl->disable(CULL_FACE);
     sgl->frontFace(FRONT_FACE_CCW);
@@ -163,7 +160,6 @@ void prepare() {
     sgl->vertexAttributePointer(2, 2, 9 * sizeof(float), 7 * sizeof(float));
 
 
-
     //生成vao并绑定
     vao1 = sgl->genVertexArray();
     sgl->bindVertexArray(vao1);
@@ -204,12 +200,14 @@ int APIENTRY wWinMain(
     bool alive = true;
     while (alive) {
         alive = app->peekMessage();
+        camera->update();
         render();
         app->show();
     }
 
     delete shader;
     sgl->deleteTexture(texture);
+    delete camera;
 
     return 0;
 }

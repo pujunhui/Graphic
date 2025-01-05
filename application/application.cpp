@@ -1,4 +1,5 @@
 #include "application.h"
+#include <windowsx.h>
 
 //初始化Application的静态变量
 Application* Application::mInstance = nullptr;
@@ -162,6 +163,36 @@ void Application::handleMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
         std::cout << buffer << std::endl;
         break;
     }
+    case WM_KEYDOWN: {
+        if (mCamera) {
+            mCamera->onKeyDown(wParam);
+        }
+        break;
+    }
+    case WM_KEYUP: {
+        if (mCamera) {
+            mCamera->onKeyUp(wParam);
+        }
+        break;
+    }
+    case WM_RBUTTONDOWN: {
+        if (mCamera) {
+            mCamera->onRMouseDown(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+        }
+        break;
+    }
+    case WM_RBUTTONUP: {
+        if (mCamera) {
+            mCamera->onRMouseUp(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+        }
+        break;
+    }
+    case WM_MOUSEMOVE: {
+        if (mCamera) {
+            mCamera->onMouseMove(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+        }
+        break;
+    }
     case WM_CLOSE: {
         DestroyWindow(hWnd);//此处销毁窗体,会自动发出WM DESTROY
         break;
@@ -193,4 +224,8 @@ bool Application::peekMessage() {
 void Application::show() {
     //把hDC2对应内存的数据拷贝到hDC
     BitBlt(mhDC, 0, 0, mWidth, mHeight, mCanvasDC, 0, 0, SRCCOPY);
+}
+
+void Application::setCamera(Camera* camera) {
+    mCamera = camera;
 }

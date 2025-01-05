@@ -2,6 +2,7 @@
 
 #include "../global/base.h"
 #include <Windows.h>
+#include "camera.h"
 
 #define app Application::getInstance()
 
@@ -30,6 +31,8 @@ public:
     uint32_t getHeight() const { return mHeight; }
     void* getCanvas() const { return mCanvasBuffer; }
 
+    void setCamera(Camera* camera);
+
 private:
     ATOM registerWindowClass(HINSTANCE hInstance);
     BOOL createWindow(HINSTANCE hInstance);
@@ -37,6 +40,8 @@ private:
 private:
 	//全局唯一的静态变量实例
 	static Application* mInstance;
+
+    Camera* mCamera{ nullptr };
 
     uint32_t mWidth{ 0 };
     uint32_t mHeight{ 0 };
