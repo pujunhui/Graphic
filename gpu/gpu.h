@@ -45,7 +45,8 @@ public:
         const uint32_t& binding,
         const uint32_t& itemSize,
         const uint32_t& stride,
-        const uint32_t& offset);
+        const uint32_t& offset
+    );
 
     void useProgram(Shader* shader);
 
@@ -106,7 +107,7 @@ private:
     math::mat4f mScreenMatrix;
 
     //cull face
-    bool mEnableCullFace{ true };
+    bool mEnableCullFace{ false };
     uint32_t mForntFace{ FRONT_FACE_CCW };
     uint32_t mCullFace{ BACK_FACE };
 

@@ -32,18 +32,18 @@ math::vec4f Texture::getColor(float u, float v) {
     checkWrap(v, mWrapV);
 
     if (mFilter == TEXTURE_FILTER_NEAREST) {
-        int x = std::round(u * (mWidth - 1));
+        int x = std::round(u * (mWidth - 1)); //std::round四舍五入取最近整数
         int y = std::round(v * (mHeight - 1));
 
         int position = y * mWidth + x;
         resultColor = mBuffer[position];
     }
     else if (mFilter == TEXTURE_FILTER_LINEAR) {
-        float x = u * static_cast<float>(mWidth - 1);
-        float y = v * static_cast<float>(mHeight - 1);
+        float x = u * (mWidth - 1);
+        float y = v * (mHeight - 1);
 
-        int left = std::floor(x);
-        int right = std::ceil(x);
+        int left = std::floor(x);  //std::floor向下取整
+        int right = std::ceil(x);  //std::ceil向上取整
         int bottom = std::floor(y);
         int top = std::ceil(y);
 
@@ -77,10 +77,10 @@ math::vec4f Texture::getColor(float u, float v) {
     }
 
     math::vec4f result;
-    result.x = static_cast<float>(resultColor.mR) / 255.0;
-    result.y = static_cast<float>(resultColor.mG) / 255.0;
-    result.z = static_cast<float>(resultColor.mB) / 255.0;
-    result.w = static_cast<float>(resultColor.mA) / 255.0;
+    result.x = static_cast<float>(resultColor.mR) / 255.0f;
+    result.y = static_cast<float>(resultColor.mG) / 255.0f;
+    result.z = static_cast<float>(resultColor.mB) / 255.0f;
+    result.w = static_cast<float>(resultColor.mA) / 255.0f;
 
     return result;
 }

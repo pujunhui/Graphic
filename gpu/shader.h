@@ -3,12 +3,13 @@
 #include "dataStructures.h"
 #include "bufferObject.h"
 #include "texture.h"
+#include <algorithm>
 
 class Shader {
 public:
     Shader();
     ~Shader();
-    virtual VsOutput& vertexShader(
+    virtual VsOutput vertexShader(
         //VAO当中的bindingMap
         const std::map<uint32_t, BindingDescription>& bindingMap,
 
@@ -32,14 +33,23 @@ public:
         const std::map<uint32_t, BindingDescription>& bindingMap,
         const std::map<uint32_t, BufferObject*>& bufferMap,
         const uint32_t& attributeLocation, //当前属性的编号
-        const uint32_t& index); //当前顶点编号
+        const uint32_t& index //当前顶点编号
+    );
 
     RGBA vectorToRGBA(const math::vec4f& v) {
+        //防止颜色越界
+        math::vec4f c = v;
+        c.x = std::clamp(c.x, 0.0f, 1.0f);
+        c.y = std::clamp(c.y, 0.0f, 1.0f);
+        c.z = std::clamp(c.z, 0.0f, 1.0f);
+        c.w = std::clamp(c.w, 0.0f, 1.0f);
+
         RGBA color;
-        color.mR = v.x * 255.0;
-        color.mG = v.y * 255.0;
-        color.mB = v.z * 255.0;
-        color.mA = v.w * 255.0;
+        color.mR = c.x * 255.0;
+        color.mG = c.y * 255.0;
+        color.mB = c.z * 255.0;
+        color.mA = c.w * 255.0;
+
         return color;
     }
         

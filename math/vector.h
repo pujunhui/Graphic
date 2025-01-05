@@ -325,6 +325,7 @@ namespace math
         Vector4() { x = y = z = w = 0; }
         Vector4(T x, T y, T z, T w) : x(x), y(y), z(z), w(w) {}
         Vector4(const Vector4<T>& v) : x(v.x), y(v.y), z(v.z), w(v.w) {}
+        Vector4(const Vector3<T>& v, T w) : x(v.x), y(v.y), z(v.z), w(w) {}
 
         /*
          * 取得向量某个元素

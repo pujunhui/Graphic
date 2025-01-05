@@ -28,7 +28,7 @@ LRESULT CALLBACK Wndproc(
     LPARAM lParam)   //消息参数
 {
     Application::getInstance()->handleMessage(hWnd, message, wParam, lParam);
-    return(DefWindowProc(hWnd, message, wParam, lParam));
+    return DefWindowProc(hWnd, message, wParam, lParam);
 }
 
 bool Application::initApplication(HINSTANCE hInstance, const uint32_t& width, const uint32_t& height) {
@@ -175,15 +175,15 @@ void Application::handleMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
         }
         break;
     }
-    case WM_RBUTTONDOWN: {
+    case WM_LBUTTONDOWN: {
         if (mCamera) {
-            mCamera->onRMouseDown(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+            mCamera->onLMouseDown(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
         }
         break;
     }
-    case WM_RBUTTONUP: {
+    case WM_LBUTTONUP: {
         if (mCamera) {
-            mCamera->onRMouseUp(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+            mCamera->onLMouseUp(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
         }
         break;
     }

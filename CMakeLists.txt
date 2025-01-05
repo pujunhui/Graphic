@@ -19,4 +19,8 @@ add_executable(Graphic "main.cpp")
 
 add_executable(testMath "testMath.cpp")
 
+add_executable(testLight "testLight.cpp")
+
 target_link_libraries(Graphic app gpu)
+
+target_link_libraries(testLight app gpu)
