@@ -125,6 +125,37 @@ void GPU::useProgram(Shader* shader) {
     mShader = shader;
 }
 
+
+void GPU::enable(const uint32_t& value) {
+    switch (value)
+    {
+    case CULL_FACE:
+        mEnableCullFace = true;
+        break;
+    default:
+        break;
+    }
+}
+
+void GPU::disable(const uint32_t& value) {
+    switch (value)
+    {
+    case CULL_FACE:
+        mEnableCullFace = false;
+        break;
+    default:
+        break;
+    }
+}
+
+void GPU::frontFace(const uint32_t& value) {
+    mForntFace = value;
+}
+
+void GPU::cullFace(const uint32_t& value) {
+    mCullFace = value;
+}
+
 void GPU::drawElement(const uint32_t& drawMode, const uint32_t& first, const uint32_t& count) {
     if (mCurrentVAO == 0 || mShader == nullptr || count == 0) {
         return;
@@ -152,7 +183,7 @@ void GPU::drawElement(const uint32_t& drawMode, const uint32_t& first, const uin
     /*
     * VertexShader处理阶段
     * 作用：
-    *   按照输入的EBO的index顺序来处理顶点，依次通过vsShader，得到的输出结果按序放入vsOutputs中。
+    *   从EBO中获取index，依次通过vsShader，得到的顶点数据按序放入vsOutputs中。
     */
     std::vector<VsOutput> vsOutputs;
     vertexShaderStage(vsOutputs, vao, ebo, first, count);
@@ -182,12 +213,26 @@ void GPU::drawElement(const uint32_t& drawMode, const uint32_t& first, const uin
         perspectiveDivision(output);
     }
 
+    std::vector<VsOutput> cullOutputs;
+    if (drawMode == DRAW_TRIANGLES && mEnableCullFace) {
+        for (uint32_t i = 0; i < clipOutputs.size() - 2; i += 3) {
+            if (Clipper::cullFace(mForntFace, mCullFace, clipOutputs[i], clipOutputs[i + 1], clipOutputs[i + 2])) {
+                auto start = clipOutputs.begin() + i;
+                auto end = clipOutputs.begin() + i + 3;
+                cullOutputs.insert(cullOutputs.end(), start, end);
+            }
+        }
+    }
+    else {
+        cullOutputs = clipOutputs;
+    }
+
     /*
     * 屏幕映射处理阶段
     * 作用：
     *   将NDC下的点，通过screenMatrix，转化为屏幕空间
     */
-    for (auto& output : clipOutputs) {
+    for (auto& output : cullOutputs) {
         screenMapping(output);
     }
 
@@ -197,9 +242,18 @@ void GPU::drawElement(const uint32_t& drawMode, const uint32_t& first, const uin
     *   离散出所有需要的Fragment
     */
     std::vector<VsOutput> rasterOutputs;
-    Raster::rasterize(rasterOutputs, drawMode, clipOutputs);
+    Raster::rasterize(rasterOutputs, drawMode, cullOutputs);
     if (rasterOutputs.empty()) {
         return;
+    }
+
+    /*
+    * 透视恢复处理阶段
+    * 作用：
+    *   离散出来的像素插值结果，需要乘以自身的w值恢复到正常态
+    */
+    for (auto& output : rasterOutputs) {
+        perspectiveRecover(output);
     }
 
     /*
@@ -227,26 +281,51 @@ void GPU::vertexShaderStage(
     byte* indicesData = ebo->getBuffer();
 
     uint32_t index = 0;
-    for (uint32_t i = 0; i < first + count; i++) {
-        //获取EBO中第i个index
+    for (uint32_t i = first; i < first + count; i++) {
+        //获取EBO中获取index
         size_t indicesOffset = i * sizeof(uint32_t);
         memcpy(&index, indicesData + indicesOffset, sizeof(uint32_t));
+        //根据index获取顶点数据
         VsOutput output = mShader->vertexShader(bindingMap, mBufferMap, index);
         vsOutputs.push_back(output);
     }
 }
 
 void GPU::perspectiveDivision(VsOutput& vsOutput) {
-    float oneOverW = 1.0f / vsOutput.mPosition.w;
-    vsOutput.mPosition *= oneOverW;
+    vsOutput.mOneOverW= 1.0f / vsOutput.mPosition.w;
+
+    vsOutput.mPosition *= vsOutput.mOneOverW;
     vsOutput.mPosition.w *= 1.0f;
 
+    vsOutput.mColor *= vsOutput.mOneOverW;
+    vsOutput.mUV *= vsOutput.mOneOverW;
+
     //修剪毛刺
-    /*if (vsOutput.mPosition.x < -1.0f) {
-        vsOutput.mPosition.x = 1.0f;
-    }*/
+    trim(vsOutput);
+}
+
+void GPU::perspectiveRecover(VsOutput& vsOutput) {
+    vsOutput.mColor /= vsOutput.mOneOverW;
+    vsOutput.mUV /= vsOutput.mOneOverW;
 }
 
 void GPU::screenMapping(VsOutput& vsOutput) {
     vsOutput.mPosition = mScreenMatrix * vsOutput.mPosition;
+}
+
+
+void GPU::trim(VsOutput& vsOutput) {
+    //修剪毛刺，边界求交点的时候，可能会产生超过-1-1现象
+    if (vsOutput.mPosition.x < -1.0f) {
+        vsOutput.mPosition.x = -1.0f;
+    }
+    if (vsOutput.mPosition.x > 1.0f) {
+        vsOutput.mPosition.x = 1.0f;
+    }
+    if (vsOutput.mPosition.y < -1.0f) {
+        vsOutput.mPosition.y = -1.0f;
+    }
+    if (vsOutput.mPosition.y > 1.0f) {
+        vsOutput.mPosition.y = 1.0f;
+    }
 }

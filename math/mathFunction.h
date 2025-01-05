@@ -145,11 +145,11 @@ namespace math
         double v0x = v0.x, v0y = v0.y, v0z = v0.z;
         double v1x = v1.x, v1y = v1.y, v1z = v1.z;
 
-        return  Vector3<T>(
+        return Vector3<T>(
             v0y * v1z - v0z * v1y,
             v0z * v1x - v0x * v1z,
             v0x * v1y - v0y * v1x
-        )
+        );
     }
 
     /*

@@ -12,6 +12,7 @@ struct BindingDescription {
 };
 
 struct VsOutput {
+    float mOneOverW{ 0.0f };
     math::vec4f mPosition{ 0.0f, 0.0f, 0.0f, 1.0f };
     math::vec4f mColor; //此处颜色改为0.0-1.0之间表达0-255的量
     math::vec2f mUV;

@@ -48,6 +48,13 @@ public:
 
     void useProgram(Shader* shader);
 
+    void enable(const uint32_t& value);
+    void disable(const uint32_t& value);
+
+    //cull face
+    void frontFace(const uint32_t& value);
+    void cullFace(const uint32_t& value);
+
     void drawElement(const uint32_t& drawMode, const uint32_t& first, const uint32_t& conut);
 
 private:
@@ -60,7 +67,10 @@ private:
     );
 
     void perspectiveDivision(VsOutput& vsOutput);
+    void perspectiveRecover(VsOutput& vsOutput);
     void screenMapping(VsOutput& vsOutput);
+
+    void trim(VsOutput& vsOutput);
 
 private:
     static GPU* mInstance;
@@ -79,4 +89,9 @@ private:
 
     Shader* mShader{ nullptr };
     math::mat4f mScreenMatrix;
+
+    //cull face
+    bool mEnableCullFace{ true };
+    uint32_t mForntFace{ FRONT_FACE_CCW };
+    uint32_t mCullFace{ BACK_FACE };
 };

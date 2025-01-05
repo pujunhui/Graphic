@@ -17,7 +17,7 @@ void Raster::rasterize(
 		for (uint32_t i = 0; i < inputs.size(); i+=2) {
 			rasterizeLine(results, inputs[i], inputs[i + 1]);
 		}
-	}else if (drawMode == DRAW_TRIANGLE) {
+	}else if (drawMode == DRAW_TRIANGLES) {
 		for (uint32_t i = 0; i < inputs.size(); i += 3) {
 			rasterizeTriangle(results, inputs[i], inputs[i + 1], inputs[i + 2]);
 		}
@@ -125,6 +125,13 @@ void Raster::interpolantLine(const VsOutput& v0, const VsOutput& v1, VsOutput& t
 	}
 
 	//std::cout << "weight=" << weight << "--" << static_cast<float>(result.mR) << "--" << static_cast<float>(result.mG) << "--" << static_cast<float>(result.mB) << std::endl;
+
+	//插值1/w，用于透视恢复
+	target.mOneOverW = math::lerp(v0.mOneOverW, v1.mOneOverW, weight);
+
+	//插值深度值
+	target.mPosition.z = math::lerp(v0.mPosition.z, v1.mPosition.z, weight);
+
 	target.mColor = math::lerp(v0.mColor, v1.mColor, weight);
 	target.mUV = math::lerp(v0.mUV, v1.mUV, weight);
 }
@@ -190,9 +197,15 @@ void Raster::interpolantTriangle(
 	float weight1 = v1Area / sumArea;
 	float weight2 = v2Area / sumArea;
 
+	//插值1/w，用于透视恢复
+	target.mOneOverW = math::lerp(v0.mOneOverW, v1.mOneOverW, v2.mOneOverW, weight0, weight1, weight2);
+
+	//插值深度值
+	target.mPosition.z = math::lerp(v0.mPosition.z, v1.mPosition.z, v2.mPosition.z, weight0, weight1, weight2);
+	
 	//对于颜色的插值
 	target.mColor = math::lerp(v0.mColor, v1.mColor, v2.mColor, weight0, weight1, weight2);
 
-	//对于uv坐标的差值
+	//对于uv坐标的插值
 	target.mUV = math::lerp(v0.mUV, v1.mUV, v2.mUV, weight0, weight1, weight2);
 }

@@ -63,8 +63,8 @@ float angle = 0.0f;
 float cameraZ = 3;
 
 void transform() {
-    angle += 0.1f;
-    cameraZ -= 0.01f;
+    angle += 0.001f;
+    //cameraZ -= 0.01f;
 
     //模型变换
     modelMatrix = math::rotate(math::mat4f(1.0f), angle, math::vec3f{ 0.0f, 1.0f, 0.0f });
@@ -86,13 +86,17 @@ void render() {
     sgl->useProgram(shader);
     sgl->bindVertexArray(vao);
     sgl->bindBuffer(ELEMENT_ARRAY_BUFFER, ebo);
-    sgl->drawElement(DRAW_TRIANGLE, 0, 3);
+    sgl->drawElement(DRAW_TRIANGLES, 0, 3);
 }
 
 void prepare() {
     shader = new DefaultShader();
 
     perspectiveMatrix = math::perspective(60.0f, (float)WIDTH / (float)HEIGHT, 0.1f, 100.0f);
+
+    sgl->enable(CULL_FACE);
+    sgl->frontFace(FRONT_FACE_CW);
+    sgl->cullFace(BACK_FACE);
 
     float positions[] = {
         -0.5f, -0.5f, 0.0f,
