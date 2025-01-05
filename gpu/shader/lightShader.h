@@ -1,10 +1,16 @@
 #include "../shader.h"
 #include "../../math/math.h"
 
-class TextureShader :public Shader {
+//平行光
+struct DirectionalLight {
+    math::vec3f color;
+    math::vec3f direction;
+};
+
+class LightShader :public Shader {
 public:
-    TextureShader();
-    ~TextureShader();
+    LightShader();
+    ~LightShader();
 
     VsOutput vertexShader(
         const std::map<uint32_t, BindingDescription>& bindingMap,
@@ -25,4 +31,6 @@ public:
     math::mat4f mProjectionMatrix;
 
     uint32_t mDiffuseTexture{ 0 };
+    DirectionalLight mDirectionalLight;
+    math::vec3f mEnvLight;
 };

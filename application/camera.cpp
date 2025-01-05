@@ -8,13 +8,13 @@ Camera::Camera(float fovy, float aspect, float n, float f, const math::vec3f& to
 
 Camera::~Camera() {}
 
-void Camera::onRMouseDown(const int& x, const int& y) {
+void Camera::onLMouseDown(const int& x, const int& y) {
     mMouseMoving = true;
     mCurrentMouseX = x;
     mCurrentMouseY = y;
 }
 
-void Camera::onRMouseUp(const int& x, const int& y) {
+void Camera::onLMouseUp(const int& x, const int& y) {
     mMouseMoving = false;
 }
 
@@ -100,6 +100,11 @@ void Camera::update() {
     }
 
     mViewMatrix = math::lookAt<float>(mPosition, mPosition + mFront, mTop);
+}
+
+
+void Camera::setSpeed(const float& speed) {
+    mSpeed = speed;
 }
 
 void Camera::pitch(int yoffset) {

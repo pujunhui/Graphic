@@ -26,8 +26,8 @@ Image* Image::createImage(const std::string& path) {
     //而我们绘制的坐标系，以左下角为原点，故需要翻转y轴
     stbi_set_flip_vertically_on_load(true);
 
-    //用于我们是BRGA的格式，图片是RGBA的格式，所以得交换R&B
     unsigned char* bits = stbi_load(path.c_str(), &width, &height, &picType, STBI_rgb_alpha);
+    //由于图片是RGBA的格式，而我们采用BRGA的格式显示，所以需要交换R&B
     for (int i = 0; i < width * height * 4; i += 4)
     {
         byte tmp = bits[i];

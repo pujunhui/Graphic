@@ -9,6 +9,8 @@
 class Application {
 private:
     Application();
+    //全局唯一的静态变量实例
+    static Application* mInstance;
 
 public:
 	~Application();
@@ -38,9 +40,6 @@ private:
     BOOL createWindow(HINSTANCE hInstance);
 
 private:
-	//全局唯一的静态变量实例
-	static Application* mInstance;
-
     Camera* mCamera{ nullptr };
 
     uint32_t mWidth{ 0 };

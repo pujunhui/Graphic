@@ -10,6 +10,7 @@ namespace math {
     class Matrix44;
 
     /*
+    * 注意：矩阵的数据存储方式采用列优先
     * m0 m3 m6
     * m1 m4 m7
     * m2 m5 m8
@@ -121,6 +122,7 @@ namespace math {
 
 
     /*
+    * 注意：矩阵的数据存储方式采用列优先
     * m0 m4 m8  m12
     * m1 m5 m9  m13
     * m2 m6 m10 m14

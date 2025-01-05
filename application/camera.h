@@ -19,9 +19,9 @@ public:
     ~Camera();
 
 public:
-    void onRMouseDown(const int& x, const int& y);
+    void onLMouseDown(const int& x, const int& y);
 
-    void onRMouseUp(const int& x, const int& y);
+    void onLMouseUp(const int& x, const int& y);
 
     void onMouseMove(const int& x, const int& y);
 
@@ -38,6 +38,8 @@ public:
     math::mat4f getProjectionMatrix() const {
         return mProjectionMatrix;
     }
+
+    void setSpeed(const float& speed);
 
 private:
     void pitch(int yoffset);

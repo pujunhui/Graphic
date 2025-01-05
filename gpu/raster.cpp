@@ -206,6 +206,9 @@ void Raster::interpolantTriangle(
 	//对于颜色的插值
 	target.mColor = math::lerp(v0.mColor, v1.mColor, v2.mColor, weight0, weight1, weight2);
 
+	//对于法线的插值
+	target.mNormal = math::lerp(v0.mNormal, v1.mNormal, v2.mNormal, weight0, weight1, weight2);
+
 	//对于uv坐标的插值
 	target.mUV = math::lerp(v0.mUV, v1.mUV, v2.mUV, weight0, weight1, weight2);
 }

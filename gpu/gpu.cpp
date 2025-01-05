@@ -26,7 +26,7 @@ GPU::~GPU() {
 
 void GPU::initSurface(const uint32_t& width, const uint32_t& height, void* buffer) {
     mFrameBuffer = new FrameBuffer(width, height, buffer);
-    mScreenMatrix = math::screenMatrix<float>(width - 1, height - 1);
+    mScreenMatrix = math::screenMatrix<float>(width, height);
 }
 
 void GPU::clear() {
@@ -112,7 +112,8 @@ void GPU::vertexAttributePointer(
     const uint32_t& binding,
     const uint32_t& itemSize,
     const uint32_t& stride,
-    const uint32_t& offset) {
+    const uint32_t& offset
+) {
     auto iter = mVaoMap.find(mCurrentVAO);
     if (iter == mVaoMap.end()) {
         assert(false);
@@ -125,7 +126,6 @@ void GPU::vertexAttributePointer(
 void GPU::useProgram(Shader* shader) {
     mShader = shader;
 }
-
 
 void GPU::enable(const uint32_t& value) {
     switch (value)
@@ -194,27 +194,21 @@ void GPU::bindTexture(const uint32_t& texId) {
 }
 
 void GPU::texImage2D(const uint32_t& width, const uint32_t& height, void* data) {
-    if (!mCurrentTexture) {
-        return;
-    }
-
     auto iter = mTextureMap.find(mCurrentTexture);
     if (iter == mTextureMap.end()) {
-        return;
+        assert(false);
     }
+
     auto texture = iter->second;
     texture->setBufferData(width, height, data);
 }
 
 void GPU::texParameter(const uint32_t& param, const uint32_t& value) {
-    if (!mCurrentTexture) {
-        return;
-    }
-
     auto iter = mTextureMap.find(mCurrentTexture);
     if (iter == mTextureMap.end()) {
-        return;
+        assert(false);
     }
+
     auto texture = iter->second;
     texture->setParameter(param, value);
 }
@@ -372,6 +366,7 @@ void GPU::perspectiveDivision(VsOutput& vsOutput) {
     vsOutput.mPosition.w *= 1.0f;
 
     vsOutput.mColor *= vsOutput.mOneOverW;
+    vsOutput.mNormal *= vsOutput.mOneOverW;
     vsOutput.mUV *= vsOutput.mOneOverW;
 
     //修剪毛刺
@@ -380,6 +375,7 @@ void GPU::perspectiveDivision(VsOutput& vsOutput) {
 
 void GPU::perspectiveRecover(VsOutput& vsOutput) {
     vsOutput.mColor /= vsOutput.mOneOverW;
+    vsOutput.mNormal /= vsOutput.mOneOverW;
     vsOutput.mUV /= vsOutput.mOneOverW;
 }
 
@@ -390,18 +386,8 @@ void GPU::screenMapping(VsOutput& vsOutput) {
 
 void GPU::trim(VsOutput& vsOutput) {
     //修剪毛刺，边界求交点的时候，可能会产生超过-1-1现象
-    if (vsOutput.mPosition.x < -1.0f) {
-        vsOutput.mPosition.x = -1.0f;
-    }
-    if (vsOutput.mPosition.x > 1.0f) {
-        vsOutput.mPosition.x = 1.0f;
-    }
-    if (vsOutput.mPosition.y < -1.0f) {
-        vsOutput.mPosition.y = -1.0f;
-    }
-    if (vsOutput.mPosition.y > 1.0f) {
-        vsOutput.mPosition.y = 1.0f;
-    }
+    vsOutput.mPosition.x = std::clamp(vsOutput.mPosition.x, -1.0f, 1.0f);
+    vsOutput.mPosition.y = std::clamp(vsOutput.mPosition.y, -1.0f, 1.0f);
 }
 
 bool GPU::depthTest(const FsOutput& output) {

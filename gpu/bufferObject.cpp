@@ -5,6 +5,7 @@ BufferObject::BufferObject() {}
 BufferObject::~BufferObject() {
     if (mBuffer) {
         delete[] mBuffer;
+        mBuffer = nullptr;
     }
 }
 
