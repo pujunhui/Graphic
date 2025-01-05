@@ -1,11 +1,9 @@
-#include "defaultShader.h"
+#include "textureShader.h"
 
+TextureShader::TextureShader() {}
+TextureShader::~TextureShader() {}
 
-DefaultShader::DefaultShader() {}
-DefaultShader::~DefaultShader() {}
-
-
-VsOutput& DefaultShader::vertexShader(
+VsOutput& TextureShader::vertexShader(
     const std::map<uint32_t, BindingDescription>& bindingMap,
     const std::map<uint32_t, BufferObject*>& bufferMap,
     const uint32_t& index
@@ -26,7 +24,7 @@ VsOutput& DefaultShader::vertexShader(
     return output;
 }
 
-void DefaultShader::fragmentShader(
+void TextureShader::fragmentShader(
     const VsOutput& input,
     FsOutput& output,
     const std::map<uint32_t, Texture*>& textures
@@ -34,5 +32,12 @@ void DefaultShader::fragmentShader(
     output.mPixelPos.x = static_cast<int>(input.mPosition.x);
     output.mPixelPos.y = static_cast<int>(input.mPosition.y);
     output.mDepth = input.mPosition.z;
-    output.mColor = vectorToRGBA(input.mColor);
+
+    //取出texture
+    auto iter = textures.find(mDiffuseTexture);
+    auto texture = iter->second;
+
+    //计算颜色
+    math::vec4f diffuseColor = texture->getColor(input.mUV.x, input.mUV.y);
+    output.mColor = vectorToRGBA(diffuseColor);
 }

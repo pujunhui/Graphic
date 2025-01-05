@@ -136,6 +136,9 @@ void GPU::enable(const uint32_t& value) {
     case DEPTH_TEST:
         mEnableDepthTest = true;
         break;
+    case BLENDING:
+        mEnableBlending = true;
+        break;
     default:
         break;
     }
@@ -149,6 +152,9 @@ void GPU::disable(const uint32_t& value) {
         break;
     case DEPTH_TEST:
         mEnableDepthTest = false;
+        break;
+    case BLENDING:
+        mEnableBlending = false;
         break;
     default:
         break;
@@ -165,6 +171,52 @@ void GPU::cullFace(const uint32_t& value) {
 
 void GPU::depthFunc(const uint32_t& depthFunc) {
     mDepthFunc = depthFunc;
+}
+
+uint32_t GPU::genTexture() {
+    mTextureCounter++;
+    mTextureMap.insert(std::make_pair(mTextureCounter, new Texture()));
+
+    return mTextureCounter;
+}
+
+void GPU::deleteTexture(const uint32_t& texId) {
+    auto iter = mTextureMap.find(texId);
+    if (iter == mTextureMap.end()) {
+        return;
+    }
+    delete iter->second;
+    mTextureMap.erase(iter);
+}
+
+void GPU::bindTexture(const uint32_t& texId) {
+    mCurrentTexture = texId;
+}
+
+void GPU::texImage2D(const uint32_t& width, const uint32_t& height, void* data) {
+    if (!mCurrentTexture) {
+        return;
+    }
+
+    auto iter = mTextureMap.find(mCurrentTexture);
+    if (iter == mTextureMap.end()) {
+        return;
+    }
+    auto texture = iter->second;
+    texture->setBufferData(width, height, data);
+}
+
+void GPU::texParameter(const uint32_t& param, const uint32_t& value) {
+    if (!mCurrentTexture) {
+        return;
+    }
+
+    auto iter = mTextureMap.find(mCurrentTexture);
+    if (iter == mTextureMap.end()) {
+        return;
+    }
+    auto texture = iter->second;
+    texture->setParameter(param, value);
 }
 
 void GPU::drawElement(const uint32_t& drawMode, const uint32_t& first, const uint32_t& count) {
@@ -275,15 +327,20 @@ void GPU::drawElement(const uint32_t& drawMode, const uint32_t& first, const uin
     FsOutput fsOutput;
     uint32_t pixelPos = 0;
     for (uint32_t i = 0; i < rasterOutputs.size(); i++) {
-        mShader->fragmentShader(rasterOutputs[i], fsOutput);
+        mShader->fragmentShader(rasterOutputs[i], fsOutput, mTextureMap);
 
         //深度测试
         if (mEnableDepthTest && !(depthTest(fsOutput))) {
             continue;
         }
 
+        RGBA color = fsOutput.mColor;
+        if (mEnableBlending) {
+            color = blend(fsOutput);
+        }
+
         pixelPos = fsOutput.mPixelPos.y * mFrameBuffer->mWidth + fsOutput.mPixelPos.x;
-        mFrameBuffer->mColorBuffer[pixelPos] = fsOutput.mColor;
+        mFrameBuffer->mColorBuffer[pixelPos] = color;
     }
 }
 
@@ -376,4 +433,14 @@ bool GPU::depthTest(const FsOutput& output) {
         return false;
         break;
     }
+}
+
+RGBA GPU::blend(const FsOutput& output) {
+    uint32_t pixelPos = output.mPixelPos.y * mFrameBuffer->mWidth + output.mPixelPos.x;
+    RGBA dst = mFrameBuffer->mColorBuffer[pixelPos];
+    RGBA src = output.mColor;
+
+    float weight = static_cast<float>(src.mA) / 255.0f;
+
+    return math::lerp(dst, src, weight);
 }

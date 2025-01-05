@@ -7,6 +7,7 @@
 #include <time.h>
 
 #include "gpu/shader/defaultShader.h"
+#include "gpu/shader/textureShader.h"
 
 #pragma comment(linker, "/subsystem:console /entry:wWinMainCRTStartup")
 //#pragma comment(linker, "/subsystem:windows /entry:wWinMainCRTStartup")
@@ -40,22 +41,20 @@ void printFps() {
 uint32_t WIDTH = 800;
 uint32_t HEIGHT = 600;
 
-//三个属性对应的vbo
-uint32_t positionVbo0 = 0;
-uint32_t positionVbo1 = 0;
-uint32_t colorVbo0 = 0;
-uint32_t colorVbo1 = 0;
-uint32_t uvVbo = 0;
-
-//三角形的indices
-uint32_t ebo;
-
 //两个三角形专属vao
 uint32_t vao0 = 0;
 uint32_t vao1 = 0;
 
+//三个属性对应的vbo
+uint32_t vbo0 = 0;
+uint32_t vbo1 = 0;
+
+//三角形的indices
+uint32_t ebo;
+
 //使用Shader
-DefaultShader* shader = nullptr;
+TextureShader* shader = nullptr;
+uint32_t texture = 0;
 
 //mvp变换矩阵
 math::mat4f modelMatrix;
@@ -63,10 +62,10 @@ math::mat4f viewMatrix;
 math::mat4f perspectiveMatrix;
 
 float angle = 0.0f;
-float cameraZ = 3;
+float cameraZ = 1;
 
 void transform() {
-    angle += 0.001f;
+    angle += 0.01f;
     //cameraZ -= 0.01f;
 
     //模型变换
@@ -84,6 +83,7 @@ void render() {
     shader->mModelMatrix = modelMatrix; 
     shader->mViewMatrix = viewMatrix;
     shader->mProjectionMatrix = perspectiveMatrix;
+    shader->mDiffuseTexture = texture;
 
     sgl->clear();
     sgl->useProgram(shader);
@@ -98,7 +98,19 @@ void render() {
 }
 
 void prepare() {
-    shader = new DefaultShader();
+    shader = new TextureShader();
+
+    texture = sgl->genTexture();
+    sgl->bindTexture(texture);
+
+    Image* image = Image::createImage("assets/textures/goku.jpg");
+    sgl->texImage2D(image->mWidth, image->mHeight, image->mData);
+    Image::destroyImage(image);
+
+    sgl->texParameter(TEXTURE_FILTER, TEXTURE_FILTER_LINEAR);
+    sgl->texParameter(TEXTURE_WRAP_U, TEXTURE_WRAP_REPEAT);
+    sgl->texParameter(TEXTURE_WRAP_V, TEXTURE_WRAP_REPEAT);
+    sgl->bindTexture(0);
 
     perspectiveMatrix = math::perspective(60.0f, (float)WIDTH / (float)HEIGHT, 0.1f, 100.0f);
 
@@ -108,36 +120,22 @@ void prepare() {
 
     //sgl->disable(DEPTH_TEST);
 
-    //第一个三角形
-    float positions0[] = {
-        -0.5f, 0.0f, 0.0f,
-        0.5f, 0.0f, 0.0f,
-        0.25f, 0.5f, 0.0f,
-    };
+    sgl->enable(BLENDING);
 
-    float colors0[] = {
-        1.0f, 0.0f, 0.0f, 1.0f,
-        0.0f, 1.0f, 0.0f, 1.0f,
-        0.0f, 0.0f, 1.0f, 1.0f,
+    //第一个三角形
+    float vertices0[] = {
+        //  position               color                 uv
+        -0.5f, 0.0f, 0.0f,   1.0f, 0.0f, 0.0f, 0.5f,  0.0f, 0.0f,
+         0.5f, 0.0f, 0.0f,   0.0f, 1.0f, 0.0f, 0.5f,  1.0f, 0.0f,
+        0.25f, 0.5f, 0.0f,   0.0f, 0.0f, 1.0f, 0.5f,  0.5f, 1.0f,
     };
 
     //第二个三角形
-    float positions1[] = {
-        0.3f, 0.0f, -0.3f,
-        0.8f, 0.0f, -0.3f,
-        0.45f, 0.5f, -0.3f,
-    };
-
-    float colors1[] = {
-        1.0f, 1.0f, 0.0f, 1.0f,
-        1.0f, 1.0f, 0.0f, 1.0f,
-        1.0f, 1.0f, 0.0f, 1.0f,
-    };
-
-    float uvs[] = {
-        0.0f, 0.0f,
-        0.0f, 1.0f,
-        1.0f, 0.0f,
+    float vertices1[] = {
+        //  position               color                 uv
+        0.3f, 0.0f, -0.3f,   1.0f, 1.0f, 0.0f, 0.5f,  0.0f, 0.0f,
+        0.8f, 0.0f, -0.3f,   1.0f, 1.0f, 0.0f, 0.5f,  1.0f, 0.0f,
+       0.45f, 0.5f, -0.3f,   1.0f, 1.0f, 0.0f, 0.5f,  0.5f, 1.0f,
     };
 
     uint32_t indices[] = { 0, 1, 2 };
@@ -148,56 +146,39 @@ void prepare() {
     sgl->bufferData(ELEMENT_ARRAY_BUFFER, sizeof(uint32_t) * 3, indices);
     sgl->bindBuffer(ELEMENT_ARRAY_BUFFER, 0);
 
-    uvVbo = sgl->sgl->genBuffer();
-    sgl->bindBuffer(ARRAY_BUFFER, uvVbo);
-    sgl->bufferData(ARRAY_BUFFER, sizeof(float) * 6, uvs);
-    sgl->bindBuffer(ARRAY_BUFFER, 0);
-
-
     //生成vao并绑定
     vao0 = sgl->genVertexArray();
     sgl->bindVertexArray(vao0);
 
     //生成每个vbo，绑定后，设置属性ID及读取参数
-    //position0
-    positionVbo0 = sgl->sgl->genBuffer();
-    sgl->bindBuffer(ARRAY_BUFFER, positionVbo0);
-    sgl->bufferData(ARRAY_BUFFER, sizeof(float) * 9, positions0);
-    sgl->vertexAttributePointer(0, 3, 3 * sizeof(float), 0);
+    vbo0 = sgl->sgl->genBuffer();
+    sgl->bindBuffer(ARRAY_BUFFER, vbo0);
+    sgl->bufferData(ARRAY_BUFFER, sizeof(float) * 9 * 3, vertices0);
 
-    //color0
-    colorVbo0 = sgl->sgl->genBuffer();
-    sgl->bindBuffer(ARRAY_BUFFER, colorVbo0);
-    sgl->bufferData(ARRAY_BUFFER, sizeof(float) * 12, colors0);
-    sgl->vertexAttributePointer(1, 4, 4 * sizeof(float), 0);
-
+    //position
+    sgl->vertexAttributePointer(0, 3, 9 * sizeof(float), 0);
+    //color
+    sgl->vertexAttributePointer(1, 4, 9 * sizeof(float), 3 * sizeof(float));
     //uv
-    sgl->bindBuffer(ARRAY_BUFFER, uvVbo);
-    sgl->vertexAttributePointer(2, 2, 2 * sizeof(float), 0);
+    sgl->vertexAttributePointer(2, 2, 9 * sizeof(float), 7 * sizeof(float));
 
-    sgl->bindBuffer(ARRAY_BUFFER, 0);
-    sgl->bindVertexArray(0);
+
 
     //生成vao并绑定
     vao1 = sgl->genVertexArray();
     sgl->bindVertexArray(vao1);
 
     //生成每个vbo，绑定后，设置属性ID及读取参数
-    //position1
-    positionVbo1 = sgl->sgl->genBuffer();
-    sgl->bindBuffer(ARRAY_BUFFER, positionVbo1);
-    sgl->bufferData(ARRAY_BUFFER, sizeof(float) * 9, positions1);
-    sgl->vertexAttributePointer(0, 3, 3 * sizeof(float), 0);
+    vbo1 = sgl->sgl->genBuffer();
+    sgl->bindBuffer(ARRAY_BUFFER, vbo1);
+    sgl->bufferData(ARRAY_BUFFER, sizeof(float) * 9 * 3, vertices1);
 
-    //color1
-    colorVbo1 = sgl->sgl->genBuffer();
-    sgl->bindBuffer(ARRAY_BUFFER, colorVbo1);
-    sgl->bufferData(ARRAY_BUFFER, sizeof(float) * 12, colors1);
-    sgl->vertexAttributePointer(1, 4, 4 * sizeof(float), 0);
-
+    //position
+    sgl->vertexAttributePointer(0, 3, 9 * sizeof(float), 0);
+    //color
+    sgl->vertexAttributePointer(1, 4, 9 * sizeof(float), 3 * sizeof(float));
     //uv
-    sgl->bindBuffer(ARRAY_BUFFER, uvVbo);
-    sgl->vertexAttributePointer(2, 2, 2 * sizeof(float), 0);
+    sgl->vertexAttributePointer(2, 2, 9 * sizeof(float), 7 * sizeof(float));
 
     sgl->bindBuffer(ARRAY_BUFFER, 0);
     sgl->bindVertexArray(0);
@@ -228,6 +209,7 @@ int APIENTRY wWinMain(
     }
 
     delete shader;
+    sgl->deleteTexture(texture);
 
     return 0;
 }

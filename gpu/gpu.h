@@ -7,6 +7,7 @@
 #include "bufferObject.h"
 #include "vao.h"
 #include "shader.h"
+#include "texture.h"
 
 #define sgl GPU::getInstance()
 
@@ -58,6 +59,13 @@ public:
     //depth test
     void depthFunc(const uint32_t& depthFunc);
 
+    //textures
+    uint32_t genTexture();
+    void deleteTexture(const uint32_t& texId);
+    void bindTexture(const uint32_t& texId);
+    void texImage2D(const uint32_t& width, const uint32_t& height, void* data);
+    void texParameter(const uint32_t& param, const uint32_t& value);
+
     void drawElement(const uint32_t& drawMode, const uint32_t& first, const uint32_t& conut);
 
 private:
@@ -76,6 +84,8 @@ private:
     void trim(VsOutput& vsOutput);
 
     bool depthTest(const FsOutput& output);
+
+    RGBA blend(const FsOutput& output);
 
 private:
     static GPU* mInstance;
@@ -103,4 +113,12 @@ private:
     //depth
     bool mEnableDepthTest{ true };
     uint32_t mDepthFunc{ DEPTH_LESS };
+
+    //blending
+    bool mEnableBlending{ false };
+
+    //texture
+    uint32_t mCurrentTexture{ 0 };
+    uint32_t mTextureCounter{ 0 };
+    std::map<uint32_t, Texture*> mTextureMap;
 };

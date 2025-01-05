@@ -39,6 +39,7 @@ struct RGBA {
 
 #define CULL_FACE 1
 #define DEPTH_TEST 2
+#define BLENDING 3
 
 #define FRONT_FACE 0
 #define BACK_FACE 1
@@ -47,3 +48,15 @@ struct RGBA {
 
 #define DEPTH_LESS 0
 #define DEPTH_GREATER 1
+
+//纹理参数类型选项
+#define TEXTURE_FILTER 0
+#define TEXTURE_WRAP_U 1
+#define TEXTURE_WRAP_V 2
+
+//纹理参数
+#define TEXTURE_FILTER_NEAREST 0
+#define TEXTURE_FILTER_LINEAR 1
+
+#define TEXTURE_WRAP_REPEAT 0
+#define TEXTURE_WRAP_MIRROR 1
