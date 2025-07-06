@@ -1,7 +1,5 @@
 #pragma once
 
-#include "../global/base.h"
-
 namespace math
 {
     template <typename T>
@@ -147,7 +145,7 @@ namespace math
          * 负号操作
          * v = -v1
          */
-        Vector2<T> operator-()
+        Vector2<T> operator-() const
         {
             return Vector2(-x, -y);
         }
@@ -304,7 +302,7 @@ namespace math
          * 负号操作
          * v = -v1
          */
-        Vector3<T> operator-()
+        Vector3<T> operator-() const
         {
             return Vector3(-x, -y, -z);
         }
@@ -466,7 +464,7 @@ namespace math
          * 负号操作
          * v = -v1
          */
-        Vector4<T> operator-()
+        Vector4<T> operator-() const
         {
             return Vector4(-x, -y, -z, -w);
         }

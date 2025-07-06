@@ -48,12 +48,12 @@ private:
     //为true表示当前窗体仍然在继续显示，程序一直在跑
     //为false表示窗体已经被命令关闭，程序需要退出
     bool mAlive{ true };
-    HINSTANCE mWindowInst;
-    WCHAR mWindowClassName[100] = L"AppWindow";
-    HWND  mHwnd;
+    HINSTANCE mWindowInst;  //程序的实例
+    WCHAR mWindowClassName[100] = L"AppWindow";  //窗口类型的名字
+    HWND  mHwnd;            //窗体的实例的句柄
 
     HDC mhDC;         //当前窗口主dc
     HDC mCanvasDC;    //创建的与mhDC相兼容的绘图用的dc
-    HBITMAP mhBmpl;   //mCanvasDC内部生成的bitmap
-    void* mCanvasBuffer{ nullptr }; //mhBmpl对应的内存起始位置指针
+    HBITMAP mhBmp;   //mCanvasDC内部生成的bitmap
+    void* mCanvasBuffer{ nullptr }; //mhBmp对应的内存起始位置指针
 };

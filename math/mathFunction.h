@@ -59,7 +59,7 @@ namespace math
     }
 
     /*
-    * 标量与向量
+    * 标量与向量相乘
     * v = s * v1
     */
     template<typename T, typename S>
@@ -78,7 +78,7 @@ namespace math
     }
 
     /*
-    * 向量与向量，元素乘积
+    * 向量与向量，对应元素相乘
     * v = v0 * v1
     */
     template<typename T>
@@ -367,8 +367,8 @@ namespace math
         result.setColumn(3, col3);
 
         //计算行列式
-        Vector4 row0(result.get(0, 0), result.get(0, 1), result.get(0, 2), result.get(0, 3));
-        Vector4 column0 = src.getColumn(0);
+        Vector4<T> row0(result.get(0, 0), result.get(0, 1), result.get(0, 2), result.get(0, 3));
+        Vector4<T> column0 = src.getColumn(0);
         T determinant = dot(row0, column0);
 
         assert(determinant != 0);
@@ -485,7 +485,7 @@ namespace math
         result.set(1, 1, static_cast<T>(2) / (top - bottom));
         result.set(1, 3, -(top + bottom) / (top - bottom));
         result.set(2, 2, -static_cast<T>(2) / (far - near));
-        result.set(1, 3, -(far + near) / (far - near));
+        result.set(2, 3, -(far + near) / (far - near));
 
         return result;
     }
@@ -528,9 +528,9 @@ namespace math
 
     template<typename T, typename V>
     Matrix44<T> lookAt(const Vector3<V>& eye, const Vector3<V>& center, const Vector3<V>& top) {
-        Vector3<T>& f = normalize(center - eye);
-        Vector3<T>& r = normalize(cross(f, top));
-        Vector3<T>& u = normalize(cross(r, f));
+        Vector3<T> f = normalize(center - eye);
+        Vector3<T> r = normalize(cross(f, top));
+        Vector3<T> u = normalize(cross(r, f));
 
         Matrix44<T> result(static_cast<T>(1));
 

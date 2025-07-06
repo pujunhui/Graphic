@@ -32,7 +32,7 @@ namespace math {
             m[2] = src.m[2]; m[5] = src.m[6]; m[8] = src.m[10];
         }
 
-        Matrix33<T> operator*(const T& s) {
+        Matrix33<T> operator*(const T& s) const {
             Matrix33<T> result;
 
             auto col0 = this->getColumn(0) * s;
@@ -46,21 +46,21 @@ namespace math {
             return result;
         }
 
-        Vector3<T> operator*(const Vector3<T>& v) {
+        Vector3<T> operator*(const Vector3<T>& v) const {
             return Vector3<T>(
-                v.x * m[0] + v.y * m[3], v.z * m[6],
-                v.x * m[1] + v.y * m[4], v.z * m[7],
-                v.x * m[2] + v.y * m[5], v.z * m[8],
+                v.x * m[0] + v.y * m[3] + v.z * m[6],
+                v.x * m[1] + v.y * m[4] + v.z * m[7],
+                v.x * m[2] + v.y * m[5] + v.z * m[8]
                 );
         }
 
         T get(const uint32_t& row, const uint32_t& col) const {
-            assert(row >= 0 && row < 3 && col >= 0 && col < 3);
+            assert(row < 3 && col < 3);
             return m[col * 3 + row];
         }
 
         void set(const uint32_t& row, const uint32_t& col, T t) {
-            assert(row >= 0 && row < 3 && col >= 0 && col < 3);
+            assert(row < 3 && col < 3);
             m[col * 3 + row] = t;
         }
 
@@ -74,7 +74,7 @@ namespace math {
             m[2] = m20; m[5] = m21; m[8] = m22;
         }
 
-        Matrix33<T>& indentity() {
+        Matrix33<T>& identity() {
             set(
                 1, 0, 0,
                 0, 1, 0,
@@ -88,8 +88,8 @@ namespace math {
             return Vector3<T>(m[col * 3], m[col * 3 + 1], m[col * 3 + 2]);
         }
 
-        void setColumn(const uint32_t& col, Vector3<T>& cvalue) {
-            assert(col >= 0 && col < 3);
+        void setColumn(const uint32_t& col, const Vector3<T>& cvalue) {
+            assert(col < 3);
             m[col * 3] = cvalue.x;
             m[col * 3 + 1] = cvalue.y;
             m[col * 3 + 2] = cvalue.z;
@@ -139,7 +139,7 @@ namespace math {
             memcpy((void*)m, (void*)src.m, sizeof(T) * 16);
         }
 
-        Matrix44<T> operator*(const T& s) {
+        Matrix44<T> operator*(const T& s) const {
             Matrix44<T> result;
 
             auto col0 = this->getColumn(0) * s;
@@ -155,7 +155,7 @@ namespace math {
             return result;
         }
 
-        Vector4<T> operator*(const Vector4<T>& v) {
+        Vector4<T> operator*(const Vector4<T>& v) const {
             return Vector4<T>(
                 v.x * m[0] + v.y * m[4] + v.z * m[8] + v.w * m[12],
                 v.x * m[1] + v.y * m[5] + v.z * m[9] + v.w * m[13],
@@ -165,12 +165,12 @@ namespace math {
         }
 
         T get(const uint32_t& row, const uint32_t& col) const {
-            assert(row >= 0 && row < 4 && col >= 0 && col < 4);
+            assert(row < 4 && col < 4);
             return m[col * 4 + row];
         }
 
         void set(const uint32_t& row, const uint32_t& col, T t) {
-            assert(row >= 0 && row < 4 && col >= 0 && col < 4);
+            assert(row < 4 && col < 4);
             m[col * 4 + row] = t;
         }
 
@@ -186,12 +186,12 @@ namespace math {
             m[3] = m30; m[7] = m31; m[11] = m32; m[15] = m33;
         }
 
-        Matrix33<T>& indentity() {
+        Matrix44<T>& identity() {
             set(
                 1, 0, 0, 0,
                 0, 1, 0, 0,
                 0, 0, 1, 0,
-                0, 0, 0, 1,
+                0, 0, 0, 1
                 );
             return *this;
         }
@@ -206,8 +206,8 @@ namespace math {
             );
         }
 
-        void setColumn(const uint32_t& col, Vector4<T>& cvalue) {
-            assert(col >= 0 && col < 4);
+        void setColumn(const uint32_t& col, const Vector4<T>& cvalue) {
+            assert(col < 4);
             m[col * 4] = cvalue.x;
             m[col * 4 + 1] = cvalue.y;
             m[col * 4 + 2] = cvalue.z;

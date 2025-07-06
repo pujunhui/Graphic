@@ -8,6 +8,7 @@ Raster::Raster()
 Raster::~Raster()
 {
 }
+
 void Raster::rasterize(
 	std::vector<VsOutput>& results,
 	const uint32_t& drawMode,

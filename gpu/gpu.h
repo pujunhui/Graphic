@@ -91,7 +91,7 @@ private:
 private:
     static GPU* mInstance;
     FrameBuffer* mFrameBuffer{ nullptr };
-    
+
     //VBO相关/EBO也存在内部
     uint32_t mCurrentVBO{ 0 };
     uint32_t mCurrentEBO{ 0 };

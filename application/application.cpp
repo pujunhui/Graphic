@@ -45,6 +45,7 @@ bool Application::initApplication(HINSTANCE hInstance, const uint32_t& width, co
 
     //初始化画布
     /*
+    * Windows GDI(Graphics Device Interface)图形设备接口，负责显示图形
     * DC：Device Context 设备上下文描述对象
     * 每个窗口都有自己对应的设备区域映射，即mhDc
     * 这里创建一个与本窗口兼容的DC，mCanvasDC
@@ -63,21 +64,21 @@ bool Application::initApplication(HINSTANCE hInstance, const uint32_t& width, co
     bmpInfo.bmiHeader.biBitCount = 32;
     bmpInfo.bmiHeader.biCompression = BI_RGB; //实际上存储方式为bgra
 
-    //创建与mhMem兼容的位图，其实是在mhMem指代的设备上划拨了一块内存，让mCanvasBuffer指向它
-    HBITMAP bmp = CreateDIBSection(
+    //创建与mCanvasDC兼容的位图，其实是在mCanvasDC指代的设备上划拨了一块内存，让mCanvasBuffer指向它
+    mhBmp = CreateDIBSection(
         mCanvasDC,
         &bmpInfo,
         DIB_RGB_COLORS,
         (void**)&mCanvasBuffer,
         0, 0);
 
-    if (!bmp) {
+    if (!mhBmp) {
         return false;
     }
 
-    //每个HDC虚拟设备都可以分配出来多个位图/画刷等资源，本操作是将bmp作为当前hDC2的操作对象，将来所有对hDC2的拷贝操作都是再拷贝bmp的数据
-    //一个设备可以创建多个位图，本设备使用mhBmp作为激活位图，对mCanvasDc的内存拷出，其实就是拷出了mhBmp的数据
-    SelectObject(mCanvasDC, bmp);
+    //每个HDC虚拟设备都可以分配出来多个位图/画刷等资源，本操作是将mhBmp作为当前hDC2的操作对象，将来所有对hDC2的拷贝操作都是在拷贝mhBmp的数据
+    //一个设备可以创建多个位图，本设备使用mhBmp作为激活位图，对mCanvasDC的内存拷出，其实就是拷出了mhBmp的数据
+    SelectObject(mCanvasDC, mhBmp);
 
     memset(mCanvasBuffer, 0, mWidth * mHeight * 4); //清空buffer为0
 
@@ -222,7 +223,7 @@ bool Application::peekMessage() {
 }
 
 void Application::show() {
-    //把hDC2对应内存的数据拷贝到hDC
+    //把mCanvasDC对应内存的数据拷贝到mhDC
     BitBlt(mhDC, 0, 0, mWidth, mHeight, mCanvasDC, 0, 0, SRCCOPY);
 }
 
