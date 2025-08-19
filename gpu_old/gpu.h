@@ -37,11 +37,19 @@ public:
     //设置颜色混合
     void setBlending(bool enable);
 
+    //设置双线性插值
+    void setBilinear(bool enable);
+
     //设置纹理
     void setTexture(const Image* image);
 
+    //设置纹理环绕方式
+    void setTextureWrap(uint32_t wrap);
+
 private:
     RGBA sampleNearest(const math::vec2f& uv);
+    RGBA sampleBilinear(const math::vec2f& uv);
+    void checkWrap(float& n);
 
 private:
     static GPU* mInstance;
@@ -52,4 +60,7 @@ private:
 
     //blending
     bool mEnableBlending{ false };
+    bool mEnableBilinear{ false };
+
+    uint32_t mWrap{ TEXTURE_WRAP_REPEAT };
 };

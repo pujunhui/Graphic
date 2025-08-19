@@ -85,10 +85,10 @@ void Raster::rasterizeLine(std::vector<Point>& results, const Point& v0, const P
 
 void Raster::rasterizeTriangle(std::vector<Point>& results, const Point& v0, const Point& v1, const Point& v2) {
 	//获取三角形最小包围矩形
-	int maxX = static_cast<int>(std::max(v0.x, std::max(v1.x, v2.x)));
 	int minX = static_cast<int>(std::min(v0.x, std::min(v1.x, v2.x)));
-	int maxY = static_cast<int>(std::max(v0.y, std::max(v1.y, v2.y)));
+	int maxX = static_cast<int>(std::max(v0.x, std::max(v1.x, v2.x)));
 	int minY = static_cast<int>(std::min(v0.y, std::min(v1.y, v2.y)));
+	int maxY = static_cast<int>(std::max(v0.y, std::max(v1.y, v2.y)));
 
 	math::vec2f pv0, pv1, pv2;
 	Point result;
@@ -102,8 +102,9 @@ void Raster::rasterizeTriangle(std::vector<Point>& results, const Point& v0, con
 			auto cross2 = math::cross(pv1, pv2);
 			auto cross3 = math::cross(pv2, pv0);
 
-			bool negativeAll = crossl < 0 && cross2 < 0 && cross3 < 0;
-			bool positiveAll = crossl > 0 && cross2 > 0 && cross3 > 0;
+			//为了包含边沿像素点，允许叉积为0，否则会导致相邻三角形连接处会出现未填充点
+			bool negativeAll = crossl <= 0 && cross2 <= 0 && cross3 <= 0;
+			bool positiveAll = crossl >= 0 && cross2 >= 0 && cross3 >= 0;
 
 			if (negativeAll || positiveAll) {
 				result.x = i;

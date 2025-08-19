@@ -32,8 +32,14 @@ target_link_libraries(DrawTriangle app gpu_old)
 add_executable(DrawImage "05_drawImage.cpp")
 target_link_libraries(DrawImage app gpu_old)
 
-add_executable(UVTexture "06_UVTexture.cpp")
-target_link_libraries(UVTexture app gpu_old)
+add_executable(renderUVTexture "06_renderUVTexture.cpp")
+target_link_libraries(renderUVTexture app gpu_old)
+
+add_executable(bilinear "07_bilinear.cpp")
+target_link_libraries(bilinear app gpu_old)
+
+add_executable(textureWrap "08_textureWrap.cpp")
+target_link_libraries(textureWrap app gpu_old)
 
 add_executable(Graphic "main.cpp")
 target_link_libraries(Graphic app gpu)

@@ -4,8 +4,6 @@
 //初始化Application的静态变量
 Application* Application::mInstance = nullptr;
 Application* Application::getInstance() {
-    //如果mInstance已经实例化了（new出来了），就直接返回
-    //否则需要先new出来，再返回
     if (mInstance == nullptr) {
         mInstance = new Application();
     }
@@ -53,7 +51,7 @@ bool Application::initApplication(HINSTANCE hInstance, const uint32_t& width, co
     */
     //获取当前窗体HDC
     mhDC = GetDC(mHwnd);
-    //创建与当前窗体兼容的HDC2(内存格式/分辨率等)
+    //创建与当前窗体兼容的HDC(内存格式/分辨率等)
     mCanvasDC = CreateCompatibleDC(mhDC);
 
     BITMAPINFO bmpInfo{};
@@ -64,7 +62,7 @@ bool Application::initApplication(HINSTANCE hInstance, const uint32_t& width, co
     bmpInfo.bmiHeader.biBitCount = 32;
     bmpInfo.bmiHeader.biCompression = BI_RGB; //实际上存储方式为bgra
 
-    //创建与mCanvasDC兼容的位图，其实是在mCanvasDC指代的设备上划拨了一块内存，让mCanvasBuffer指向它
+    //从mCanvasDC中创建位图，其实是在mCanvasDC指向的虚拟设备上分配了一块内存，让mCanvasBuffer指向它
     mhBmp = CreateDIBSection(
         mCanvasDC,
         &bmpInfo,
@@ -76,7 +74,7 @@ bool Application::initApplication(HINSTANCE hInstance, const uint32_t& width, co
         return false;
     }
 
-    //每个HDC虚拟设备都可以分配出来多个位图/画刷等资源，本操作是将mhBmp作为当前hDC2的操作对象，将来所有对hDC2的拷贝操作都是在拷贝mhBmp的数据
+    //每个HDC虚拟设备都可以分配出来多个位图/画刷等资源，本操作是将mhBmp作为当前mCanvasDC的操作对象，将来所有对mCanvasDC的拷贝操作都是在拷贝mhBmp的数据
     //一个设备可以创建多个位图，本设备使用mhBmp作为激活位图，对mCanvasDC的内存拷出，其实就是拷出了mhBmp的数据
     SelectObject(mCanvasDC, mhBmp);
 
@@ -223,7 +221,7 @@ bool Application::peekMessage() {
 }
 
 void Application::show() {
-    //把mCanvasDC对应内存的数据拷贝到mhDC
+    //把mCanvasDC对应内存的数据拷贝到mhDC，由于mCanvasDC的激活位图是mhBmp，也就是将mhBmp的内存数据拷贝到mhDC
     BitBlt(mhDC, 0, 0, mWidth, mHeight, mCanvasDC, 0, 0, SRCCOPY);
 }
 

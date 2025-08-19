@@ -16,6 +16,12 @@ int main() {
     auto v2_multi = v2_1 * v2_2;
     std::cout << "v1 * v2 = " << v2_multi << std::endl;
 
+    auto v2_dot = dot(v2_1, v2_2);
+    std::cout << "v1 dot v2: " << v2_dot << std::endl;
+
+    auto v2_cross = cross(v2_1, v2_2);
+    std::cout << "v1 cross v2: " << v2_cross << std::endl;
+
     auto ss = 2.0 * v2_2;
     std::cout << "2 * v2 = " << ss << std::endl;
 

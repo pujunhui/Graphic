@@ -3,6 +3,7 @@
 #include "application/application.h"
 #include "gpu_old/gpu.h"
 #include "util/helper.h"
+#include "application/image.h"
 
 #pragma comment(linker, "/subsystem:console /entry:wWinMainCRTStartup")
 //#pragma comment(linker, "/subsystem:windows /entry:wWinMainCRTStartup")
@@ -11,28 +12,36 @@
 uint32_t WIDTH = 800;
 uint32_t HEIGHT = 600;
 
+Image* texture;
+Point p1, p2, p3;
+
 void render() {
     printFps();
 
     sgl->clear();
 
-    //画渐变线
-    Point p1{ 100, 100, RGBA(255, 0, 0) };
-    Point p2{ 500, 600, RGBA(0, 255, 0) };
-    sgl->drawLine(p1, p2);
+    sgl->setBilinear(true);
+    sgl->setTexture(texture);
+    sgl->drawTriangle(p1, p2, p3);
+}
 
-    //画放射线圆形
-    int r = 200;
-    Point c{ 400, 300, RGBA(255, 0, 0) };
+void prepare() {
+    texture = Image::createImage("assets/textures/goku.jpg");
 
-    for (float i = 0; i < 360; i += 5) {
-        float radian = DEG2RAD(i);
-        int x = r * sin(radian) + c.x;
-        int y = r * cos(radian) + c.y;
+    p1.x = 0;
+    p1.y = 0;
+    p1.color = RGBA(255, 0, 0, 255);
+    p1.uv = math::vec2f(0.0f, 0.0f);
 
-        Point pt{ x, y, RGBA(0, 255, 255) };
-        sgl->drawLine(c, pt);
-    }
+    p2.x = 200;
+    p2.y = 300;
+    p2.color = RGBA(0, 255, 0, 255);
+    p2.uv = math::vec2f(0.5f, 1.0f);
+
+    p3.x = 400;
+    p3.y = 0;
+    p3.color = RGBA(0, 0, 255, 255);
+    p3.uv = math::vec2f(1.0f, 0.0f);
 }
 
 int APIENTRY wWinMain(
@@ -47,6 +56,8 @@ int APIENTRY wWinMain(
 
     //将bmp指向的内存配置到sgl当中
     sgl->initSurface(app->getWidth(), app->getHeight(), app->getCanvas());
+
+    prepare();
 
     bool alive = true;
     while (alive) {

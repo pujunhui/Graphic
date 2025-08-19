@@ -104,15 +104,14 @@ void Texture::setParameter(const uint32_t& type, const uint32_t& value) {
 
 void Texture::checkWrap(float& n, const uint32_t& type) {
     if (n > 1.0f || n < 0.0f) {
-        n = FRACTION(n);
-        auto m = FRACTION(n + 1);
+        auto m = FRACTION(FRACTION(n) + 1);
         switch (type)
         {
         case TEXTURE_WRAP_REPEAT:
             n = m;
             break;
         case TEXTURE_WRAP_MIRROR:
-            n = 1.0f - m;
+            n = (int)n % 2 == 0 ? m : (1 - m);
             break;
         default:
             break;
