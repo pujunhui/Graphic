@@ -44,6 +44,12 @@ target_link_libraries(textureWrap app gpu_old)
 add_executable(transform "09_transform.cpp")
 target_link_libraries(transform app gpu_old)
 
+add_executable(vao "10_vao.cpp")
+target_link_libraries(vao app gpu)
+
+add_executable(draw "11_draw.cpp")
+target_link_libraries(draw app gpu)
+
 add_executable(Graphic "main.cpp")
 target_link_libraries(Graphic app gpu)
 
