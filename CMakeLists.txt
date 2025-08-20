@@ -41,6 +41,9 @@ target_link_libraries(bilinear app gpu_old)
 add_executable(textureWrap "08_textureWrap.cpp")
 target_link_libraries(textureWrap app gpu_old)
 
+add_executable(transform "09_transform.cpp")
+target_link_libraries(transform app gpu_old)
+
 add_executable(Graphic "main.cpp")
 target_link_libraries(Graphic app gpu)
 
