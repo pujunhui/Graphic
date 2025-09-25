@@ -18,37 +18,37 @@ add_subdirectory(gpu_old)
 
 #本工程所有cpp文件编译链接，生成exe
 
-add_executable(DrawPoint "01_drawPoint.cpp")
-target_link_libraries(DrawPoint app gpu_old)
+add_executable(01_drawPoint "01_drawPoint.cpp")
+target_link_libraries(01_drawPoint app gpu_old)
 
-add_executable(DrawLine "02_drawLine.cpp")
-target_link_libraries(DrawLine app gpu_old)
+add_executable(02_drawLine "02_drawLine.cpp")
+target_link_libraries(02_drawLine app gpu_old)
 
-add_executable(TestMath "03_testMath.cpp")
+add_executable(03_testMath "03_testMath.cpp")
 
-add_executable(DrawTriangle "04_drawTriangle.cpp")
-target_link_libraries(DrawTriangle app gpu_old)
+add_executable(04_drawTriangle "04_drawTriangle.cpp")
+target_link_libraries(04_drawTriangle app gpu_old)
 
-add_executable(DrawImage "05_drawImage.cpp")
-target_link_libraries(DrawImage app gpu_old)
+add_executable(05_drawImage "05_drawImage.cpp")
+target_link_libraries(05_drawImage app gpu_old)
 
-add_executable(renderUVTexture "06_renderUVTexture.cpp")
-target_link_libraries(renderUVTexture app gpu_old)
+add_executable(06_uvTexture "06_uvTexture.cpp")
+target_link_libraries(06_uvTexture app gpu_old)
 
-add_executable(bilinear "07_bilinear.cpp")
-target_link_libraries(bilinear app gpu_old)
+add_executable(07_bilinear "07_bilinear.cpp")
+target_link_libraries(07_bilinear app gpu_old)
 
-add_executable(textureWrap "08_textureWrap.cpp")
-target_link_libraries(textureWrap app gpu_old)
+add_executable(08_textureWrap "08_textureWrap.cpp")
+target_link_libraries(08_textureWrap app gpu_old)
 
-add_executable(transform "09_transform.cpp")
-target_link_libraries(transform app gpu_old)
+add_executable(09_transform "09_transform.cpp")
+target_link_libraries(09_transform app gpu_old)
 
-add_executable(vao "10_vao.cpp")
-target_link_libraries(vao app gpu)
+add_executable(10_vao "10_vao.cpp")
+target_link_libraries(10_vao app gpu)
 
-add_executable(draw "11_draw.cpp")
-target_link_libraries(draw app gpu)
+add_executable(11_draw "11_draw.cpp")
+target_link_libraries(11_draw app gpu)
 
 add_executable(Graphic "main.cpp")
 target_link_libraries(Graphic app gpu)

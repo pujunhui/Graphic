@@ -79,7 +79,6 @@ void prepare() {
     sgl->printVAO(vao);
 }
 
-
 int APIENTRY wWinMain(
     _In_ HINSTANCE hInstance,            //本应用程序实例句柄，唯一指代当前程序
     _In_opt_ HINSTANCE hPrevInstance,    //本程序前一个实例，一般是null

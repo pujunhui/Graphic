@@ -14,15 +14,21 @@ uint32_t HEIGHT = 600;
 
 Image* texture;
 Point p1, p2, p3;
+Point p4, p5, p6;
 
 void render() {
     printFps();
 
     sgl->clear();
-
-    sgl->setBilinear(true);
     sgl->setTexture(texture);
+
+    // 邻近采样
+    sgl->setBilinear(false);
     sgl->drawTriangle(p1, p2, p3);
+
+    // 双线性采样
+    sgl->setBilinear(true);
+    sgl->drawTriangle(p4, p5, p6);
 }
 
 void prepare() {
@@ -42,6 +48,21 @@ void prepare() {
     p3.y = 0;
     p3.color = RGBA(0, 0, 255, 255);
     p3.uv = math::vec2f(1.0f, 0.0f);
+
+    p4.x = 400;
+    p4.y = 0;
+    p4.color = RGBA(255, 0, 0, 255);
+    p4.uv = math::vec2f(0.0f, 0.0f);
+
+    p5.x = 600;
+    p5.y = 300;
+    p5.color = RGBA(0, 255, 0, 255);
+    p5.uv = math::vec2f(0.5f, 1.0f);
+
+    p6.x = 800;
+    p6.y = 0;
+    p6.color = RGBA(0, 0, 255, 255);
+    p6.uv = math::vec2f(1.0f, 0.0f);
 }
 
 int APIENTRY wWinMain(

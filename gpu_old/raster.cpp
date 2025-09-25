@@ -102,7 +102,7 @@ void Raster::rasterizeTriangle(std::vector<Point>& results, const Point& v0, con
 			auto cross2 = math::cross(pv1, pv2);
 			auto cross3 = math::cross(pv2, pv0);
 
-			//为了包含边沿像素点，允许叉积为0，否则会导致相邻三角形连接处会出现未填充点
+			//为了包含边缘像素点，允许叉积为0，否则会导致相邻三角形连接处会出现未填充点
 			bool negativeAll = crossl <= 0 && cross2 <= 0 && cross3 <= 0;
 			bool positiveAll = crossl >= 0 && cross2 >= 0 && cross3 >= 0;
 
