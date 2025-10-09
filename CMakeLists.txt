@@ -47,8 +47,23 @@ target_link_libraries(09_transform app gpu_old)
 add_executable(10_vao "10_vao.cpp")
 target_link_libraries(10_vao app gpu)
 
-add_executable(11_draw "11_draw.cpp")
-target_link_libraries(11_draw app gpu)
+add_executable(11_renderTriangle "11_renderTriangle.cpp")
+target_link_libraries(11_renderTriangle app gpu)
+
+add_executable(12_clipSpace "12_clipSpace.cpp")
+target_link_libraries(12_clipSpace app gpu)
+
+add_executable(13_cullFace "13_cullFace.cpp")
+target_link_libraries(13_cullFace app gpu)
+
+add_executable(14_depthTest "14_depthTest.cpp")
+target_link_libraries(14_depthTest app gpu)
+
+add_executable(15_blending "15_blending.cpp")
+target_link_libraries(15_blending app gpu)
+
+add_executable(16_texture "16_texture.cpp")
+target_link_libraries(16_texture app gpu)
 
 add_executable(Graphic "main.cpp")
 target_link_libraries(Graphic app gpu)

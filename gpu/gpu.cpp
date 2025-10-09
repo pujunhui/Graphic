@@ -226,7 +226,6 @@ void GPU::drawElement(const uint32_t& drawMode, const uint32_t& first, const uin
     }
 
     const VertexArrayObject* vao = vaoIter->second;
-    auto bindingMap = vao->getBindingMap();
 
     //2 get ebo
     auto eboIter = mBufferMap.find(mCurrentEBO);
@@ -254,6 +253,8 @@ void GPU::drawElement(const uint32_t& drawMode, const uint32_t& first, const uin
     *   在剪裁空间，对所有输出的图元进行剪裁拼接等
     */
     std::vector<VsOutput> clipOutputs;
+    //如果不剪裁，可以通过观察FPS来区别不同的效果
+    //clipOutputs = vsOutputs;
     Clipper::doClipSpace(drawMode, vsOutputs, clipOutputs);
     if (clipOutputs.empty()) {
         return;
@@ -360,8 +361,9 @@ void GPU::vertexShaderStage(
 }
 
 void GPU::perspectiveDivision(VsOutput& vsOutput) {
-    vsOutput.mOneOverW= 1.0f / vsOutput.mPosition.w;
+    vsOutput.mOneOverW = 1.0f / vsOutput.mPosition.w;
 
+    // 将剪裁空间坐标（其次坐标）变成NDC坐标
     vsOutput.mPosition *= vsOutput.mOneOverW;
     vsOutput.mPosition.w *= 1.0f;
 

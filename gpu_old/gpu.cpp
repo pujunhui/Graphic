@@ -36,7 +36,7 @@ void GPU::drawPoint(const uint32_t& x, const uint32_t& y, const RGBA& color) {
         return;
     }
 
-    //从窗口左下角开始计算
+    //从窗口左下角开始绘制
     uint32_t pixelPos = y * mFrameBuffer->mWidth + x;
 
     RGBA result = color;
@@ -121,8 +121,8 @@ RGBA GPU::sampleNearest(const math::vec2f& uv) {
     checkWrap(myUV.y);
 
     //四舍五入到最近的整数
-    // u = 0 对应 x = 0，u = 1，对应 x = width -1
-    // v = 0 对应 y = 0，v = 1，对应 y = height -1
+    // u = 0 对应 x = 0，u = 1 对应 x = width -1
+    // v = 0 对应 y = 0，v = 1 对应 y = height -1
     int x = std::round(myUV.x * (mImage->mWidth - 1));
     int y = std::round(myUV.y * (mImage->mHeight - 1));
 
@@ -164,7 +164,7 @@ RGBA GPU::sampleBilinear(const math::vec2f& uv)
     RGBA leftColor = math::lerp(mImage->mData[positionLeftBottom], mImage->mData[positionLeftTop], yScale);
     RGBA rightColor = math::lerp(mImage->mData[positionRightBottom], mImage->mData[positionRightTop], yScale);
 
-    //对左右差值，得到结果
+    //对左右插值，得到结果
     float xScale = 0.0f;
     if (right == left) {
         xScale = 1.0f;
