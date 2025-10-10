@@ -30,9 +30,6 @@ uint32_t texture = 0;
 //使用的Shader
 TextureShader* shader = nullptr;
 
-//纹理图片
-Image* image = nullptr;
-
 //mvp变换矩阵
 math::mat4f modelMatrix;
 math::mat4f viewMatrix;
@@ -68,14 +65,24 @@ void prepare() {
     shader = new TextureShader();
 
     //制造纹理
-    image = Image::createImage("assets/textures/goku.jpg");
     texture = sgl->genTexture();
     sgl->bindTexture(texture);
+
+    Image* image = Image::createImage("assets/textures/goku.jpg");
     sgl->texImage2D(image->mWidth, image->mHeight, image->mData);
+    Image::destroyImage(image);
+
     sgl->texParameter(TEXTURE_FILTER, TEXTURE_FILTER_NEAREST);
     sgl->texParameter(TEXTURE_WRAP_U, TEXTURE_WRAP_REPEAT);
     sgl->texParameter(TEXTURE_WRAP_V, TEXTURE_WRAP_REPEAT);
     sgl->bindTexture(0);
+
+    sgl->enable(CULL_FACE);
+    sgl->frontFace(FRONT_FACE_CCW);
+    sgl->cullFace(BACK_FACE);
+
+    //sgl->disable(DEPTH_TEST);
+    sgl->enable(BLENDING);
 
     auto cameraMatrix = math::translate(math::mat4f(1.0f), math::vec3f{ 0.0f, 0.0f, 3.0f });
     viewMatrix = math::inverse(cameraMatrix);
@@ -134,8 +141,8 @@ int APIENTRY wWinMain(
         render();
         app->show();
     }
+
     delete shader;
-    Image::destroyImage(image);
     sgl->deleteTexture(texture);
 
     return 0;

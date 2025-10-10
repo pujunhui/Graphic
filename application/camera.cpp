@@ -1,4 +1,5 @@
 #include "camera.h"
+#include<algorithm>
 
 Camera::Camera(float fovy, float aspect, float n, float f, const math::vec3f& top) {
     mTop = top;
@@ -76,7 +77,7 @@ void Camera::update() {
     math::vec3f moveDirection = { 0.0f,0.0f,0.0f };
 
     math::vec3f front = mFront;
-    math::vec3f right = math::normalize(cross(mFront,mTop));
+    math::vec3f right = math::normalize(cross(mFront, mTop));
 
     if (mMoveState & MOVE_FRONT) {
         moveDirection += front;
@@ -110,12 +111,7 @@ void Camera::setSpeed(const float& speed) {
 void Camera::pitch(int yoffset) {
     mPitch += yoffset * mSensitivity;
 
-    if (mPitch >= 89.0f) {
-        mPitch = 89.0f;
-    }
-    if (mPitch <= -89.0f) {
-        mPitch = -89.0f;
-    }
+    mPitch = std::clamp(mPitch, -89.0f, 89.0f);
 
     mFront.y = sin(DEG2RAD(mPitch));
     mFront.x = cos(DEG2RAD(mYaw)) * cos(DEG2RAD(mPitch));

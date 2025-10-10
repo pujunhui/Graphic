@@ -526,6 +526,11 @@ namespace math
         return result;
     }
 
+    /**
+    * eye: 当前摄像机位置
+    * center: 摄像机看向哪个空间中的点
+    * top: 摄像机穹顶向量
+    */
     template<typename T, typename V>
     Matrix44<T> lookAt(const Vector3<V>& eye, const Vector3<V>& center, const Vector3<V>& top) {
         Vector3<T> f = normalize(center - eye);

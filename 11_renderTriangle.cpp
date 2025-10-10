@@ -18,8 +18,11 @@ uint32_t positionVbo = 0;
 uint32_t colorVbo = 0;
 uint32_t uvVbo = 0;
 
-//三角形的indices
+//实心三角形的indices
 uint32_t ebo = 0;
+
+//空心三角形的indices
+uint32_t ebo1 = 0;
 
 //本三角形专属vao
 uint32_t vao = 0;
@@ -52,8 +55,15 @@ void render() {
     sgl->clear();
     sgl->useProgram(shader);
     sgl->bindVertexArray(vao);
+
+    //渲染实心三角形
     sgl->bindBuffer(ELEMENT_ARRAY_BUFFER, ebo);
     sgl->drawElement(DRAW_TRIANGLES, 0, 3);
+
+    shader->mModelMatrix = math::translate(modelMatrix, math::vec3f{ 1.0f, 0.0f, 0.0f });
+    //渲染空心三角形
+    sgl->bindBuffer(ELEMENT_ARRAY_BUFFER, ebo1);
+    sgl->drawElement(DRAW_LINES, 0, 6);
 }
 
 void prepare() {
@@ -88,6 +98,12 @@ void prepare() {
     ebo = sgl->genBuffer();
     sgl->bindBuffer(ELEMENT_ARRAY_BUFFER, ebo);
     sgl->bufferData(ELEMENT_ARRAY_BUFFER, sizeof(uint32_t) * 3, indices);
+    sgl->bindBuffer(ELEMENT_ARRAY_BUFFER, 0);
+
+    uint32_t indices1[] = { 0, 1, 1, 2, 2, 0 };
+    ebo1 = sgl->genBuffer();
+    sgl->bindBuffer(ELEMENT_ARRAY_BUFFER, ebo1);
+    sgl->bufferData(ELEMENT_ARRAY_BUFFER, sizeof(uint32_t) * 6, indices1);
     sgl->bindBuffer(ELEMENT_ARRAY_BUFFER, 0);
 
     //生成vao并且绑定

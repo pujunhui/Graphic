@@ -21,8 +21,9 @@ VsOutput LightShader::vertexShader(
 
     output.mPosition = mProjectionMatrix * mViewMatrix * mModelMatrix * position;
     //output.mColor = color;
-    //添加法线矩阵，这样法线就会跟随模型旋转而变化
-    output.mNormal = math::transpose(math::inverse(mModelMatrix)) * math::vec4f(normal, 1.0f);
+    // 添加法线矩阵，这样法线就会跟随模型旋转而变化
+    // 变换法线使用模型矩阵的逆矩阵的转置；法线为方向向量，齐次坐标 w 必须为 0
+    output.mNormal = math::transpose(math::inverse(mModelMatrix)) * math::vec4f(normal, 0.0f);
     output.mUV = uv;
 
     return output;

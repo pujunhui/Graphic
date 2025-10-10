@@ -49,14 +49,14 @@ private:
     math::mat4f mViewMatrix;
     math::mat4f mProjectionMatrix;
 
-    math::vec3f mPosition{ 0.0f,0.0f,0.0f };
-    math::vec3f mFront{ 0.0f,0.0f,-1.0f };
-    math::vec3f mTop{ 0.0f,1.0f,0.0f };
-    float       mSpeed{ 0.01f };
+    math::vec3f mPosition{ 0.0f,0.0f,0.0f };    // 当前位置
+    math::vec3f mFront{ 0.0f,0.0f,-1.0f };      // 摄像机空间方向
+    math::vec3f mTop{ 0.0f,1.0f,0.0f };         // 摄像机穹顶方向
+    float       mSpeed{ 0.01f };                // 摄像机移到速度
 
-    float       mPitch{ 0.0f };
-    float       mYaw{ -90.0f };
-    float       mSensitivity{ 0.1f };
+    float       mPitch{ 0.0f };         // 摄像机当前仰角
+    float       mYaw{ -90.0f };         // 摄像机绕y轴旋转角度
+    float       mSensitivity{ 0.1f };   // 鼠标滑过屏幕距离对旋转角影响敏感度
 
     uint32_t    mMoveState{ NO_MOVE };
     bool        mMouseMoving{ false };

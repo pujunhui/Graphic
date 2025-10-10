@@ -45,10 +45,10 @@ public:
         c.w = std::clamp(c.w, 0.0f, 1.0f);
 
         RGBA color;
-        color.mR = c.x * 255.0;
-        color.mG = c.y * 255.0;
-        color.mB = c.z * 255.0;
-        color.mA = c.w * 255.0;
+        color.mR = static_cast<byte>(c.x * 255.0f);
+        color.mG = static_cast<byte>(c.y * 255.0f);
+        color.mB = static_cast<byte>(c.z * 255.0f);
+        color.mA = static_cast<byte>(c.w * 255.0f);
 
         return color;
     }

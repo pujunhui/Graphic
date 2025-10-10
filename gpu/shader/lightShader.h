@@ -1,3 +1,4 @@
+#pragma once
 #include "../shader.h"
 #include "../../math/math.h"
 

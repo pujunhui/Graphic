@@ -9,12 +9,13 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /utf-8")
 
 #将assets目录下的文件拷贝到可执行目录下
-file(GLOB ASSETS "./assets")
+file(GLOB ASSETS "./assets" "./thirdParty/assimp/bin/assimp-vc143-mtd.dll")
 file(COPY ${ASSETS} DESTINATION ${CMAKE_BINARY_DIR})
 
 add_subdirectory(application)
 add_subdirectory(gpu)
 add_subdirectory(gpu_old)
+add_subdirectory(thirdParty)
 
 #本工程所有cpp文件编译链接，生成exe
 
@@ -65,9 +66,11 @@ target_link_libraries(15_blending app gpu)
 add_executable(16_texture "16_texture.cpp")
 target_link_libraries(16_texture app gpu)
 
-add_executable(Graphic "main.cpp")
-target_link_libraries(Graphic app gpu)
+add_executable(17_camera "17_camera.cpp")
+target_link_libraries(17_camera app gpu)
 
-add_executable(TestLight "testLight.cpp")
-target_link_libraries(TestLight app gpu)
+add_executable(18_light "18_light.cpp")
+target_link_libraries(18_light app gpu)
 
+add_executable(19_model "19_model.cpp")
+target_link_libraries(19_model app gpu)
