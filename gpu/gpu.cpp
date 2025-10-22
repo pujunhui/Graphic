@@ -237,7 +237,7 @@ void GPU::drawElement(const uint32_t& drawMode, const uint32_t& first, const uin
     const BufferObject* ebo = eboIter->second;
 
     /*
-    * VertexShader处理阶段
+    * 一、顶点着色器(Vertex Shader)
     * 作用：
     *   从EBO中获取index，依次通过vsShader，得到的顶点数据按序放入vsOutputs中。
     */
@@ -248,14 +248,35 @@ void GPU::drawElement(const uint32_t& drawMode, const uint32_t& first, const uin
     }
 
     /*
-    * Clip Space处理阶段
+    * 二、图元装配
+    */
+
+    /*
+    * 三、背面剔除
+    */
+    std::vector<VsOutput> cullOutputs;
+    if (drawMode == DRAW_TRIANGLES && mEnableCullFace) {
+        for (uint32_t i = 0; i < vsOutputs.size() - 2; i += 3) {
+            if (Clipper::cullFace(mForntFace, mCullFace, vsOutputs[i], vsOutputs[i + 1], vsOutputs[i + 2])) {
+                auto start = vsOutputs.begin() + i;
+                auto end = vsOutputs.begin() + i + 3;
+                cullOutputs.insert(cullOutputs.end(), start, end);
+            }
+        }
+    }
+    else {
+        cullOutputs = vsOutputs;
+    }
+
+    /*
+    * 四、裁剪(Clipping)
     * 作用：
     *   在剪裁空间，对所有输出的图元进行剪裁拼接等
     */
     std::vector<VsOutput> clipOutputs;
     //如果不剪裁，可以通过观察FPS来区别不同的效果
     //clipOutputs = vsOutputs;
-    Clipper::doClipSpace(drawMode, vsOutputs, clipOutputs);
+    Clipper::doClipSpace(drawMode, cullOutputs, clipOutputs);
     if (clipOutputs.empty()) {
         return;
     }
@@ -263,50 +284,37 @@ void GPU::drawElement(const uint32_t& drawMode, const uint32_t& first, const uin
     vsOutputs.clear();
 
     /*
-    * NDC处理阶段
+    * 五、透视除法(Perspective Division)
     * 作用：
-    *   将顶点转化到NDC下
+    *   将剪裁坐标系的顶点转化到NDC坐标系下
     */
     for (auto& output : clipOutputs) {
         perspectiveDivision(output);
     }
 
-    std::vector<VsOutput> cullOutputs;
-    if (drawMode == DRAW_TRIANGLES && mEnableCullFace) {
-        for (uint32_t i = 0; i < clipOutputs.size() - 2; i += 3) {
-            if (Clipper::cullFace(mForntFace, mCullFace, clipOutputs[i], clipOutputs[i + 1], clipOutputs[i + 2])) {
-                auto start = clipOutputs.begin() + i;
-                auto end = clipOutputs.begin() + i + 3;
-                cullOutputs.insert(cullOutputs.end(), start, end);
-            }
-        }
-    }
-    else {
-        cullOutputs = clipOutputs;
-    }
-
     /*
+    * 六、视口变换(Viewport Transform)
     * 屏幕映射处理阶段
     * 作用：
     *   将NDC下的点，通过screenMatrix，转化为屏幕空间
     */
-    for (auto& output : cullOutputs) {
+    for (auto& output : clipOutputs) {
         screenMapping(output);
     }
 
     /*
-    * 光栅化处理阶段
+    * 七、光栅化(Rasterization)
     * 作用：
     *   离散出所有需要的Fragment
     */
     std::vector<VsOutput> rasterOutputs;
-    Raster::rasterize(rasterOutputs, drawMode, cullOutputs);
+    Raster::rasterize(rasterOutputs, drawMode, clipOutputs);
     if (rasterOutputs.empty()) {
         return;
     }
 
     /*
-    * 透视恢复处理阶段
+    * 八、透视恢复
     * 作用：
     *   离散出来的像素插值结果，需要乘以自身的w值恢复到正常态
     */
@@ -315,7 +323,7 @@ void GPU::drawElement(const uint32_t& drawMode, const uint32_t& first, const uin
     }
 
     /*
-    * 颜色处理阶段
+    * 九、片元着色器(Fragment Shader)
     * 作用：
     *   将颜色进行输出
     */

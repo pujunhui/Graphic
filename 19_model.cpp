@@ -69,6 +69,8 @@ void prepare() {
     envLight = { 0.2f, 0.2f, 0.2f };
 
     sgl->enable(CULL_FACE);
+    sgl->frontFace(FRONT_FACE_CCW);
+    sgl->cullFace(BACK_FACE);
 
     model = new Model();
     model->read("assets/model/dinosaur/Rampaging T-Rex.glb");
