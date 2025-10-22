@@ -9,6 +9,7 @@ Raster::~Raster()
 {
 }
 
+//bersenham直线绘制算法
 void Raster::rasterizeLine(std::vector<Point>& results, const Point& v0, const Point& v1) {
 	Point start = v0;
 	Point end = v1;

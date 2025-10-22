@@ -20,7 +20,7 @@ void Raster::rasterize(
 		}
 	}else if (drawMode == DRAW_TRIANGLES) {
 		for (uint32_t i = 0; i < inputs.size(); i += 3) {
-			rasterizeTriangle(results, inputs[i], inputs[i + 1], inputs[i + 2]);
+			rasterizeTriangle1(results, inputs[i], inputs[i + 1], inputs[i + 2]);
 		}
 	}
 }
@@ -212,4 +212,69 @@ void Raster::interpolantTriangle(
 
 	//对于uv坐标的插值
 	target.mUV = math::lerp(v0.mUV, v1.mUV, v2.mUV, weight0, weight1, weight2);
+}
+
+//优化光栅化三角形，减少叉乘次数
+void Raster::rasterizeTriangle1(
+	std::vector<VsOutput>& results,
+	const VsOutput& v0,
+	const VsOutput& v1,
+	const VsOutput& v2
+) {
+	//获取三角形最小包围矩形
+	int maxX = static_cast<int>(std::max(v0.mPosition.x, std::max(v1.mPosition.x, v2.mPosition.x)));
+	int minX = static_cast<int>(std::min(v0.mPosition.x, std::min(v1.mPosition.x, v2.mPosition.x)));
+	int maxY = static_cast<int>(std::max(v0.mPosition.y, std::max(v1.mPosition.y, v2.mPosition.y)));
+	int minY = static_cast<int>(std::min(v0.mPosition.y, std::min(v1.mPosition.y, v2.mPosition.y)));
+
+	auto e1 = math::vec2f(v1.mPosition.x - v0.mPosition.x, v1.mPosition.y - v0.mPosition.y);
+	auto e2 = math::vec2f(v2.mPosition.x - v0.mPosition.x, v2.mPosition.y - v0.mPosition.y);
+	float sumArea = std::abs(math::cross(e1, e2));
+
+	math::vec2f pv0, pv1, pv2;
+	VsOutput result;
+	for (int i = minX; i <= maxX; ++i) {
+		for (int j = minY; j <= maxY; ++j) {
+			pv0 = math::vec2f(v0.mPosition.x - i, v0.mPosition.y - j);
+			pv1 = math::vec2f(v1.mPosition.x - i, v1.mPosition.y - j);
+			pv2 = math::vec2f(v2.mPosition.x - i, v2.mPosition.y - j);
+
+			auto cross0 = math::cross(pv0, pv1);
+			auto cross1 = math::cross(pv1, pv2);
+			auto cross2 = math::cross(pv2, pv0);
+
+			bool negativeAll = cross0 < 0 && cross1 < 0 && cross2 < 0;
+			bool positiveAll = cross0 > 0 && cross1 > 0 && cross2 > 0;
+
+			if (negativeAll || positiveAll) {
+				float vOArea = std::abs(cross1);
+				float v1Area = std::abs(cross2);
+				float v2Area = std::abs(cross0);
+
+				float weight0 = vOArea / sumArea;
+				float weight1 = v1Area / sumArea;
+				float weight2 = v2Area / sumArea;
+
+				result.mPosition.x = i;
+				result.mPosition.y = j;
+
+				//插值1/w，用于透视恢复
+				result.mOneOverW = math::lerp(v0.mOneOverW, v1.mOneOverW, v2.mOneOverW, weight0, weight1, weight2);
+
+				//插值深度值
+				result.mPosition.z = math::lerp(v0.mPosition.z, v1.mPosition.z, v2.mPosition.z, weight0, weight1, weight2);
+
+				//对于颜色的插值
+				result.mColor = math::lerp(v0.mColor, v1.mColor, v2.mColor, weight0, weight1, weight2);
+
+				//对于法线的插值
+				result.mNormal = math::lerp(v0.mNormal, v1.mNormal, v2.mNormal, weight0, weight1, weight2);
+
+				//对于uv坐标的插值
+				result.mUV = math::lerp(v0.mUV, v1.mUV, v2.mUV, weight0, weight1, weight2);
+
+				results.push_back(result);
+			}
+		}
+	}
 }

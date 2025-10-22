@@ -51,11 +51,11 @@ target_link_libraries(10_vao app gpu)
 add_executable(11_renderTriangle "11_renderTriangle.cpp")
 target_link_libraries(11_renderTriangle app gpu)
 
-add_executable(12_clipSpace "12_clipSpace.cpp")
-target_link_libraries(12_clipSpace app gpu)
+add_executable(12_cullFace "12_cullFace.cpp")
+target_link_libraries(12_cullFace app gpu)
 
-add_executable(13_cullFace "13_cullFace.cpp")
-target_link_libraries(13_cullFace app gpu)
+add_executable(13_clipSpace "13_clipSpace.cpp")
+target_link_libraries(13_clipSpace app gpu)
 
 add_executable(14_depthTest "14_depthTest.cpp")
 target_link_libraries(14_depthTest app gpu)

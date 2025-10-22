@@ -51,6 +51,11 @@ void transform() {
     sp3 /= sp3.w;
     sp4 /= sp4.w;
 
+    sp1.w = 1.0f;
+    sp2.w = 1.0f;
+    sp3.w = 1.0f;
+    sp4.w = 1.0f;
+
     //фад╩©у╪Д
     sp1 = screenMatrix * sp1;
     sp2 = screenMatrix * sp2;

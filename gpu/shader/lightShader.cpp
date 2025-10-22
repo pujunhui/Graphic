@@ -53,9 +53,9 @@ void LightShader::fragmentShader(
 
     //计算漫反射光
     math::vec4f diffuseColor;
-    float diff = math::dot(noraml, -lightDirection);
-    diff = std::clamp(diff, 0.0f, 1.0f);
-    diffuseColor = texColor * diff * math::vec4f(mDirectionalLight.color, 1.0f);
+    float diffuse = math::dot(noraml, -lightDirection);
+    diffuse = std::clamp(diffuse, 0.0f, 1.0f);
+    diffuseColor = texColor * diffuse * math::vec4f(mDirectionalLight.color, 1.0f);
 
     //计算环境光
     math::vec4f envColor;

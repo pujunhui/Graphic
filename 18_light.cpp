@@ -45,7 +45,7 @@ void transform() {
 
     //模型变换
     modelMatrix = math::translate(math::mat4f(), 0.0f, 0.0f, -4.0f);
-    modelMatrix = math::rotate(modelMatrix, angle, math::vec3f{ 0.0f, 1.0f, 0.0f });
+    modelMatrix = math::rotate(modelMatrix, angle, math::vec3f{ 1.0f, 1.0f, 1.0f });
 }
 
 void render() {

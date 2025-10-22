@@ -77,6 +77,10 @@ private:
         const uint32_t first,
         const uint32_t count
     );
+    void fragmentShaderStage(
+        std::vector<FsOutput>& fsOutputs,
+        const std::vector<VsOutput>& rasterOutputs
+    );
 
     void perspectiveDivision(VsOutput& vsOutput);
     void perspectiveRecover(VsOutput& vsOutput);
