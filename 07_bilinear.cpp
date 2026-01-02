@@ -22,11 +22,11 @@ void render() {
     sgl->clear();
     sgl->setTexture(texture);
 
-    // ÁÚ½ü²ÉÑù
+    // é‚»è¿‘é‡‡æ ·
     sgl->setBilinear(false);
     sgl->drawTriangle(p1, p2, p3);
 
-    // Ë«ÏßĞÔ²ÉÑù
+    // åŒçº¿æ€§é‡‡æ ·
     sgl->setBilinear(true);
     sgl->drawTriangle(p4, p5, p6);
 }
@@ -66,16 +66,16 @@ void prepare() {
 }
 
 int APIENTRY wWinMain(
-    _In_ HINSTANCE hInstance,            //±¾Ó¦ÓÃ³ÌĞòÊµÀı¾ä±ú£¬Î¨Ò»Ö¸´úµ±Ç°³ÌĞò
-    _In_opt_ HINSTANCE hPrevInstance,    //±¾³ÌĞòÇ°Ò»¸öÊµÀı£¬Ò»°ãÊÇnull
-    _In_ LPWSTR lpCmdLine,               //Ó¦ÓÃ³ÌĞòÔËĞĞ²ÎÊı
-    _In_ int nCmdShow)                   //´°¿ÚÈçºÎÏÔÊ¾(×î´ó»¯¡¢×îĞ¡»¯¡¢Òş²Ø)£¬²»ĞèÀí»á
+    _In_ HINSTANCE hInstance,            //æœ¬åº”ç”¨ç¨‹åºå®ä¾‹å¥æŸ„ï¼Œå”¯ä¸€æŒ‡ä»£å½“å‰ç¨‹åº
+    _In_opt_ HINSTANCE hPrevInstance,    //æœ¬ç¨‹åºå‰ä¸€ä¸ªå®ä¾‹ï¼Œä¸€èˆ¬æ˜¯null
+    _In_ LPWSTR lpCmdLine,               //åº”ç”¨ç¨‹åºè¿è¡Œå‚æ•°
+    _In_ int nCmdShow)                   //çª—å£å¦‚ä½•æ˜¾ç¤º(æœ€å¤§åŒ–ã€æœ€å°åŒ–ã€éšè—)ï¼Œä¸éœ€ç†ä¼š
 {
     if (!app->initApplication(hInstance, WIDTH, HEIGHT)) {
         return -1;
     }
 
-    //½«bmpÖ¸ÏòµÄÄÚ´æÅäÖÃµ½sglµ±ÖĞ
+    //å°†bmpæŒ‡å‘çš„å†…å­˜é…ç½®åˆ°sglå½“ä¸­
     sgl->initSurface(app->getWidth(), app->getHeight(), app->getCanvas());
 
     prepare();

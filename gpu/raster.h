@@ -46,17 +46,11 @@ private:
         VsOutput& target
     );
 
+    //光栅化三角形优化版本，减少叉乘次数
     static void rasterizeTriangle1(
         std::vector<VsOutput>& results,
         const VsOutput& v0,
         const VsOutput& v1,
         const VsOutput& v2
-    );
-
-    static void interpolantTriangle1(
-        const VsOutput& v0,
-        const VsOutput& v1,
-        const VsOutput& v2,
-        VsOutput& target
     );
 };

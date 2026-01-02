@@ -37,7 +37,7 @@ public:
 
 private:
     ATOM registerWindowClass(HINSTANCE hInstance);
-    BOOL createWindow(HINSTANCE hInstance);
+    HWND createWindow(HINSTANCE hInstance);
 
 private:
     Camera* mCamera{ nullptr };
