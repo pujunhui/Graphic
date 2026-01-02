@@ -29,23 +29,23 @@ void transform() {
     angle += 0.01f;
     //cameraPos += 0.01f;
 
-    //Ä£ĞÍ±ä»»
-    //ÈÆÄ£ĞÍ×ø±êyÖáĞı×ª
+    //æ¨¡å‹å˜æ¢
+    //ç»•æ¨¡å‹åæ ‡yè½´æ—‹è½¬
     modelMatrix = math::rotate(math::mat4f(1.0f), angle, math::vec3f{ 1.0f, 1.0f, 1.0f });
 
     modelMatrix = math::scale(modelMatrix, 0.5f, 1.0f, 1.0f);
 
-    //Ä£ÄâÉãÏñ»úÍùºóÍË
+    //æ¨¡æ‹Ÿæ‘„åƒæœºå¾€åé€€
     auto cameraMatrix = math::translate(math::mat4f(1.0f), math::vec3f{ 0.0f, 0.0f, cameraPos });
     viewMatrix = math::inverse(cameraMatrix);
 
-    //mvp¾ØÕóÏà³Ë
+    //mvpçŸ©é˜µç›¸ä¹˜
     auto sp1 = perspectiveMatrix * viewMatrix * modelMatrix * pos1;
     auto sp2 = perspectiveMatrix * viewMatrix * modelMatrix * pos2;
     auto sp3 = perspectiveMatrix * viewMatrix * modelMatrix * pos3;
     auto sp4 = perspectiveMatrix * viewMatrix * modelMatrix * pos4;
 
-    //Í¸ÊÓ³ı·¨£¨´Ë´Î¹ÊÒâÉè¼Æz!=0£©
+    //é€è§†é™¤æ³•ï¼ˆæ­¤æ¬¡æ•…æ„è®¾è®¡z!=0ï¼‰
     sp1 /= sp1.w;
     sp2 /= sp2.w;
     sp3 /= sp3.w;
@@ -56,7 +56,7 @@ void transform() {
     sp3.w = 1.0f;
     sp4.w = 1.0f;
 
-    //ÆÁÄ»¿Õ¼ä
+    //å±å¹•ç©ºé—´
     sp1 = screenMatrix * sp1;
     sp2 = screenMatrix * sp2;
     sp3 = screenMatrix * sp3;
@@ -101,26 +101,26 @@ void prepare() {
     p4.color = RGBA(0, 0, 255, 255);
     p4.uv = math::vec2f(1.0f, 1.0f);
 
-    pos1 = { -2.0f, -1.0f, 0.0f, 1.0f }; //×óÏÂ
-    pos2 = { 2.0f, -1.0f, 0.0f, 1.0f };  //ÓÒÏÂ
-    pos3 = { -2.0f, 1.0f, 0.0f, 1.0f };  //×óÉÏ
-    pos4 = { 2.0f, 1.0f, 0.0f, 1.0f };   //ÓÒÉÏ
+    pos1 = { -2.0f, -1.0f, 0.0f, 1.0f }; //å·¦ä¸‹
+    pos2 = { 2.0f, -1.0f, 0.0f, 1.0f };  //å³ä¸‹
+    pos3 = { -2.0f, 1.0f, 0.0f, 1.0f };  //å·¦ä¸Š
+    pos4 = { 2.0f, 1.0f, 0.0f, 1.0f };   //å³ä¸Š
 
     perspectiveMatrix = math::perspective(60.0f, (float)WIDTH / (float)HEIGHT, 0.1f, 100.0f);
     screenMatrix = math::screenMatrix<float>(WIDTH, HEIGHT);
 }
 
 int APIENTRY wWinMain(
-    _In_ HINSTANCE hInstance,            //±¾Ó¦ÓÃ³ÌĞòÊµÀı¾ä±ú£¬Î¨Ò»Ö¸´úµ±Ç°³ÌĞò
-    _In_opt_ HINSTANCE hPrevInstance,    //±¾³ÌĞòÇ°Ò»¸öÊµÀı£¬Ò»°ãÊÇnull
-    _In_ LPWSTR lpCmdLine,               //Ó¦ÓÃ³ÌĞòÔËĞĞ²ÎÊı
-    _In_ int nCmdShow)                   //´°¿ÚÈçºÎÏÔÊ¾(×î´ó»¯¡¢×îĞ¡»¯¡¢Òş²Ø)£¬²»ĞèÀí»á
+    _In_ HINSTANCE hInstance,            //æœ¬åº”ç”¨ç¨‹åºå®ä¾‹å¥æŸ„ï¼Œå”¯ä¸€æŒ‡ä»£å½“å‰ç¨‹åº
+    _In_opt_ HINSTANCE hPrevInstance,    //æœ¬ç¨‹åºå‰ä¸€ä¸ªå®ä¾‹ï¼Œä¸€èˆ¬æ˜¯null
+    _In_ LPWSTR lpCmdLine,               //åº”ç”¨ç¨‹åºè¿è¡Œå‚æ•°
+    _In_ int nCmdShow)                   //çª—å£å¦‚ä½•æ˜¾ç¤º(æœ€å¤§åŒ–ã€æœ€å°åŒ–ã€éšè—)ï¼Œä¸éœ€ç†ä¼š
 {
     if (!app->initApplication(hInstance, WIDTH, HEIGHT)) {
         return -1;
     }
 
-    //½«bmpÖ¸ÏòµÄÄÚ´æÅäÖÃµ½sglµ±ÖĞ
+    //å°†bmpæŒ‡å‘çš„å†…å­˜é…ç½®åˆ°sglå½“ä¸­
     sgl->initSurface(app->getWidth(), app->getHeight(), app->getCanvas());
 
     prepare();

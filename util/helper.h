@@ -1,26 +1,26 @@
 #include <iostream>
 
 void printFps() {
-    static int frameCount = 0;  // Ö¡Êı
-    static clock_t startTime = 0; // ¿ªÊ¼Ê±¼ä
+    static int frameCount = 0;  // å¸§æ•°
+    static clock_t startTime = 0; // å¼€å§‹æ—¶é—´
     clock_t currentTime;
 
-    // ³õÊ¼»¯¿ªÊ¼Ê±¼ä
+    // åˆå§‹åŒ–å¼€å§‹æ—¶é—´
     if (startTime == 0) {
         startTime = clock();
     }
 
-    // Ä£ÄâäÖÈ¾Ö¡
+    // æ¨¡æ‹Ÿæ¸²æŸ“å¸§
     frameCount++;
 
-    // ¼ÆËãÊ±¼ä
+    // è®¡ç®—æ—¶é—´
     currentTime = clock();
     double elapsedTime = (double)(currentTime - startTime) / CLOCKS_PER_SEC;
 
-    // Ã¿Ò»Ãë¼ÆËãÒ»´ÎFPS
+    // æ¯ä¸€ç§’è®¡ç®—ä¸€æ¬¡FPS
     if (elapsedTime >= 1.0) {
         printf("FPS: %d\n", frameCount);
-        frameCount = 0; // ÖØÖÃÖ¡¼ÆÊı
-        startTime = clock(); // ÖØÖÃ¿ªÊ¼Ê±¼ä
+        frameCount = 0; // é‡ç½®å¸§è®¡æ•°
+        startTime = clock(); // é‡ç½®å¼€å§‹æ—¶é—´
     }
 }

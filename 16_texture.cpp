@@ -13,24 +13,24 @@
 uint32_t WIDTH = 800;
 uint32_t HEIGHT = 600;
 
-//Èı¸öÊôĞÔ¶ÔÓ¦µÄvbo
+//ä¸‰ä¸ªå±æ€§å¯¹åº”çš„vbo
 uint32_t positionVbo = 0;
 uint32_t colorVbo = 0;
 uint32_t uvVbo = 0;
 
-//Èı½ÇĞÎµÄindices
+//ä¸‰è§’å½¢çš„indices
 uint32_t ebo = 0;
 
-//±¾Èı½ÇĞÎµÄvao
+//æœ¬ä¸‰è§’å½¢çš„vao
 uint32_t vao = 0;
 
-//ÎÆÀí
+//çº¹ç†
 uint32_t texture = 0;
 
-//Ê¹ÓÃµÄShader
+//ä½¿ç”¨çš„Shader
 TextureShader* shader = nullptr;
 
-//mvp±ä»»¾ØÕó
+//mvpå˜æ¢çŸ©é˜µ
 math::mat4f modelMatrix;
 math::mat4f viewMatrix;
 math::mat4f perspectiveMatrix;
@@ -40,7 +40,7 @@ float angle = 0.01f;
 void transform() {
     angle += 0.01f;
 
-    //Ä£ĞÍ±ä»»
+    //æ¨¡å‹å˜æ¢
     modelMatrix = math::rotate(math::mat4f(1.0f), angle, math::vec3f{ 0.0f, 1.0f, 0.0f });
 }
 
@@ -64,7 +64,7 @@ void render() {
 void prepare() {
     shader = new TextureShader();
 
-    //ÖÆÔìÎÆÀí
+    //åˆ¶é€ çº¹ç†
     texture = sgl->genTexture();
     sgl->bindTexture(texture);
 
@@ -98,17 +98,17 @@ void prepare() {
 
     uint32_t indices[] = { 0, 1, 2 };
 
-    //Éú³Éindices¶ÔÓ¦µÄebo
+    //ç”Ÿæˆindiceså¯¹åº”çš„ebo
     ebo = sgl->genBuffer();
     sgl->bindBuffer(ELEMENT_ARRAY_BUFFER, ebo);
     sgl->bufferData(ELEMENT_ARRAY_BUFFER, sizeof(uint32_t) * 3, indices);
     sgl->bindBuffer(ELEMENT_ARRAY_BUFFER, 0);
 
-    //Éú³Évao²¢ÇÒ°ó¶¨
+    //ç”Ÿæˆvaoå¹¶ä¸”ç»‘å®š
     vao = sgl->genVertexArray();
     sgl->bindVertexArray(vao);
 
-    //Éú³Évbo£¬°ó¶¨ºó£¬ÉèÖÃÊôĞÔID¼°¶ÁÈ¡²ÎÊı
+    //ç”Ÿæˆvboï¼Œç»‘å®šåï¼Œè®¾ç½®å±æ€§IDåŠè¯»å–å‚æ•°
     auto triangle0Vbo = sgl->genBuffer();
     sgl->bindBuffer(ARRAY_BUFFER, triangle0Vbo);
     sgl->bufferData(ARRAY_BUFFER, sizeof(float) * 27, vertices);
@@ -121,16 +121,16 @@ void prepare() {
 }
 
 int APIENTRY wWinMain(
-    _In_ HINSTANCE hInstance,            //±¾Ó¦ÓÃ³ÌĞòÊµÀı¾ä±ú£¬Î¨Ò»Ö¸´úµ±Ç°³ÌĞò
-    _In_opt_ HINSTANCE hPrevInstance,    //±¾³ÌĞòÇ°Ò»¸öÊµÀı£¬Ò»°ãÊÇnull
-    _In_ LPWSTR lpCmdLine,               //Ó¦ÓÃ³ÌĞòÔËĞĞ²ÎÊı
-    _In_ int nCmdShow)                   //´°¿ÚÈçºÎÏÔÊ¾(×î´ó»¯¡¢×îĞ¡»¯¡¢Òş²Ø)£¬²»ĞèÀí»á
+    _In_ HINSTANCE hInstance,            //æœ¬åº”ç”¨ç¨‹åºå®ä¾‹å¥æŸ„ï¼Œå”¯ä¸€æŒ‡ä»£å½“å‰ç¨‹åº
+    _In_opt_ HINSTANCE hPrevInstance,    //æœ¬ç¨‹åºå‰ä¸€ä¸ªå®ä¾‹ï¼Œä¸€èˆ¬æ˜¯null
+    _In_ LPWSTR lpCmdLine,               //åº”ç”¨ç¨‹åºè¿è¡Œå‚æ•°
+    _In_ int nCmdShow)                   //çª—å£å¦‚ä½•æ˜¾ç¤º(æœ€å¤§åŒ–ã€æœ€å°åŒ–ã€éšè—)ï¼Œä¸éœ€ç†ä¼š
 {
     if (!app->initApplication(hInstance, WIDTH, HEIGHT)) {
         return -1;
     }
 
-    //½«bmpÖ¸ÏòµÄÄÚ´æÅäÖÃµ½sglµ±ÖĞ
+    //å°†bmpæŒ‡å‘çš„å†…å­˜é…ç½®åˆ°sglå½“ä¸­
     sgl->initSurface(app->getWidth(), app->getHeight(), app->getCanvas());
 
     prepare();

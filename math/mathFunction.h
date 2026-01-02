@@ -7,20 +7,23 @@
 
 namespace math
 {
-    //各类lerp函数
+    //各类lerp（线性插值）函数
     static float lerp(const float& v1, const float& v2, float weight) {
         return v2 * weight + v1 * (1.0f - weight);
     }
 
-    static vec2f lerp(const vec2f& v1, const vec2f& v2, float weight) {
+    template<typename T>
+    static Vector2<T> lerp(const Vector2<T>& v1, const Vector2<T>& v2, float weight) {
         return v2 * weight + v1 * (1.0f - weight);
     }
 
-    static vec3f lerp(const vec3f& v1, const vec3f& v2, float weight) {
+    template<typename T>
+    static Vector3<T> lerp(const Vector3<T>& v1, const Vector3<T>& v2, float weight) {
         return v2 * weight + v1 * (1.0f - weight);
     }
 
-    static vec4f lerp(const vec4f& v1, const vec4f& v2, float weight) {
+    template<typename T>
+    static Vector4<T> lerp(const Vector4<T>& v1, const Vector4<T>& v2, float weight) {
         return v2 * weight + v1 * (1.0f - weight);
     }
 
@@ -41,11 +44,13 @@ namespace math
         return v1 * weight1 + v2 * weight2 + v3 * weight3;
     }
 
-    static vec3f lerp(const vec3f& v1, const vec3f& v2, const vec3f& v3, float weight1, float weight2, float weight3) {
+    template<typename T>
+    static Vector3<T> lerp(const Vector3<T>& v1, const Vector3<T>& v2, const Vector3<T>& v3, float weight1, float weight2, float weight3) {
         return v1 * weight1 + v2 * weight2 + v3 * weight3;
     }
 
-    static vec4f lerp(const vec4f& v1, const vec4f& v2, const vec4f& v3, float weight1, float weight2, float weight3) {
+    template<typename T>
+    static Vector4<T> lerp(const Vector4<T>& v1, const Vector4<T>& v2, const Vector4<T>& v3, float weight1, float weight2, float weight3) {
         return v1 * weight1 + v2 * weight2 + v3 * weight3;
     }
 

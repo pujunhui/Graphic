@@ -413,7 +413,6 @@ void GPU::screenMapping(VsOutput& vsOutput) {
     vsOutput.mPosition = mScreenMatrix * vsOutput.mPosition;
 }
 
-
 void GPU::trim(VsOutput& vsOutput) {
     //修剪毛刺，边界求交点的时候，可能会产生超过-1-1现象
     vsOutput.mPosition.x = std::clamp(vsOutput.mPosition.x, -1.0f, 1.0f);

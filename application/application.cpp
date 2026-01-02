@@ -30,16 +30,23 @@ LRESULT CALLBACK Wndproc(
 }
 
 bool Application::initApplication(HINSTANCE hInstance, const uint32_t& width, const uint32_t& height) {
+    mWindowInst = hInstance;
     mWidth = width;
     mHeight = height;
 
     //初始化窗口类型，并且注册
     registerWindowClass(hInstance);
 
-    //生成一个窗体，并且显示
-    if (!createWindow(hInstance)) {
+    //生成一个窗口
+    mHwnd = createWindow(hInstance);
+    if (!mHwnd) {
         return false;
     }
+
+    //显示窗口
+    ShowWindow(mHwnd, SW_SHOWNORMAL);
+    //立即强制重绘
+    UpdateWindow(mHwnd);
 
     //初始化画布
     /*
@@ -49,33 +56,34 @@ bool Application::initApplication(HINSTANCE hInstance, const uint32_t& width, co
     * 这里创建一个与本窗口兼容的DC，mCanvasDC
     * 可以从mCanvasDC向mhDC拷贝绘图数据内容
     */
-    //获取当前窗体HDC
+    //获取当前窗口设备上下文（Device Context）。（屏幕画架）
     mhDC = GetDC(mHwnd);
-    //创建与当前窗体兼容的HDC(内存格式/分辨率等)
+    //创建与当前窗口兼容的HDC(内存格式/分辨率等)。（另一个画架）
     mCanvasDC = CreateCompatibleDC(mhDC);
 
+    //设置位图信息结构
     BITMAPINFO bmpInfo{};
     bmpInfo.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
     bmpInfo.bmiHeader.biWidth = mWidth;
-    bmpInfo.bmiHeader.biHeight = mHeight;
-    bmpInfo.bmiHeader.biPlanes = 1;
-    bmpInfo.bmiHeader.biBitCount = 32;
-    bmpInfo.bmiHeader.biCompression = BI_RGB; //实际上存储方式为bgra
+    bmpInfo.bmiHeader.biHeight = mHeight;     // 正数表示自底向上，原点在左下角
+    bmpInfo.bmiHeader.biPlanes = 1;           // 必须为1
+    bmpInfo.bmiHeader.biBitCount = 32;        // 每像素32位（RGBA各8位）
+    bmpInfo.bmiHeader.biCompression = BI_RGB; // 未压缩格式
 
-    //从mCanvasDC中创建位图，其实是在mCanvasDC指向的虚拟设备上分配了一块内存，让mCanvasBuffer指向它
+    //从mCanvasDC中创建DIB段（设备无关位图），其实是在mCanvasDC指向的虚拟设备上分配了一块内存，让mCanvasBuffer指向它。（实际画布）
     mhBmp = CreateDIBSection(
         mCanvasDC,
         &bmpInfo,
         DIB_RGB_COLORS,
-        (void**)&mCanvasBuffer,
+        (void**)&mCanvasBuffer,  // 获取指向像素数据的指针
         0, 0);
 
     if (!mhBmp) {
         return false;
     }
 
-    //每个HDC虚拟设备都可以分配出来多个位图/画刷等资源，本操作是将mhBmp作为当前mCanvasDC的操作对象，将来所有对mCanvasDC的拷贝操作都是在拷贝mhBmp的数据
-    //一个设备可以创建多个位图，本设备使用mhBmp作为激活位图，对mCanvasDC的内存拷出，其实就是拷出了mhBmp的数据
+    //将GDI对象选入设备上下文，成为当前活动对象。（把画布装到画架上）
+    //每个HDC虚拟设备都可以分配出来多个位图/画刷等资源，本操作是将mhBmp作为当前mCanvasDC的操作对象，将来所有对mCanvasDC的操作都是在操作mhBmp的数据
     SelectObject(mCanvasDC, mhBmp);
 
     memset(mCanvasBuffer, 0, mWidth * mHeight * 4); //清空buffer为0
@@ -101,9 +109,7 @@ ATOM Application::registerWindowClass(HINSTANCE hInstance) {
     return RegisterClassExW(&wndClass);
 }
 
-BOOL Application::createWindow(HINSTANCE hInstance) {
-    mWindowInst = hInstance;
-
+HWND Application::createWindow(HINSTANCE hInstance) {
     /*
     * WS_POPUP : 不需要标题栏，则不需要边框
     * WS_OVERLAPPEDWINDOW : 拥有普通程序主窗口的所有特点，必须有标题且有边框
@@ -126,7 +132,7 @@ BOOL Application::createWindow(HINSTANCE hInstance) {
         FALSE,       //是否使用Menu
         dwExStyle);
 
-    mHwnd = CreateWindowW(
+    HWND hwnd = CreateWindowW(
         mWindowClassName,
         (LPCWSTR)"GraphicLearning",   //窗体标题
         dwStyle,
@@ -139,14 +145,7 @@ BOOL Application::createWindow(HINSTANCE hInstance) {
         hInstance,       //程序实例
         nullptr);        //额外参数
 
-    if (!mHwnd) {
-        return FALSE;
-    }
-
-    ShowWindow(mHwnd, true);
-    UpdateWindow(mHwnd);
-
-    return TRUE;
+    return hwnd;
 }
 
 void Application::handleMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
@@ -221,7 +220,7 @@ bool Application::peekMessage() {
 }
 
 void Application::show() {
-    //把mCanvasDC对应内存的数据拷贝到mhDC，由于mCanvasDC的激活位图是mhBmp，也就是将mhBmp的内存数据拷贝到mhDC
+    //把mCanvasDC对应内存的数据拷贝到mhDC，由于mCanvasDC的激活位图是mhBmp，也就是将mhBmp的内存数据拷贝到mhDC。（把画布内容复制到屏幕画架）
     BitBlt(mhDC, 0, 0, mWidth, mHeight, mCanvasDC, 0, 0, SRCCOPY);
 }
 

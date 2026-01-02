@@ -71,7 +71,7 @@ void render() {
 void prepare() {
     camera = new Camera(60.0f, (float)WIDTH / (float)HEIGHT, 0.1f, 100.0f, math::vec3f(0.0f, 1.0f, 0.0f));
     app->setCamera(camera);
-    camera->setSpeed(0.03);
+    camera->setSpeed(0.03f);
 
     shader = new LightShader();
     diractionalLight.color = { 1.0f, 1.0f, 1.0f };
