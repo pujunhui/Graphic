@@ -11,41 +11,49 @@
 uint32_t WIDTH = 800;
 uint32_t HEIGHT = 600;
 
+float degreeOffset = 0;
+
 void render() {
     printFps();
 
     sgl->clear();
 
-    //»­½¥±äÏß
+    //ç”»æ¸å˜çº¿
     Point p1{ 100, 100, RGBA(255, 0, 0) };
     Point p2{ 500, 600, RGBA(0, 255, 0) };
     sgl->drawLine(p1, p2);
 
-    //»­·ÅÉäÏßÔ²ÐÎ
+    //ç”»æ”¾å°„çº¿åœ†å½¢
     int r = 200;
     Point c{ 400, 300, RGBA(255, 0, 0) };
 
+    degreeOffset += 0.01;
+
     for (float i = 0; i < 360; i += 5) {
-        float radian = DEG2RAD(i);
+        float degress = i + degreeOffset;
+        if (degress >= 360) {
+            degress -= 360;
+        }
+        float radian = DEG2RAD(degress);
         int x = r * sin(radian) + c.x;
         int y = r * cos(radian) + c.y;
 
-        Point pt{ x, y, RGBA(0, 255, 255) };
+        Point pt{ x, y, RGBA(0, 125, 255) };
         sgl->drawLine(c, pt);
     }
 }
 
 int APIENTRY wWinMain(
-    _In_ HINSTANCE hInstance,            //±¾Ó¦ÓÃ³ÌÐòÊµÀý¾ä±ú£¬Î¨Ò»Ö¸´úµ±Ç°³ÌÐò
-    _In_opt_ HINSTANCE hPrevInstance,    //±¾³ÌÐòÇ°Ò»¸öÊµÀý£¬Ò»°ãÊÇnull
-    _In_ LPWSTR lpCmdLine,               //Ó¦ÓÃ³ÌÐòÔËÐÐ²ÎÊý
-    _In_ int nCmdShow)                   //´°¿ÚÈçºÎÏÔÊ¾(×î´ó»¯¡¢×îÐ¡»¯¡¢Òþ²Ø)£¬²»ÐèÀí»á
+    _In_ HINSTANCE hInstance,            //æœ¬åº”ç”¨ç¨‹åºå®žä¾‹å¥æŸ„ï¼Œå”¯ä¸€æŒ‡ä»£å½“å‰ç¨‹åº
+    _In_opt_ HINSTANCE hPrevInstance,    //æœ¬ç¨‹åºå‰ä¸€ä¸ªå®žä¾‹ï¼Œä¸€èˆ¬æ˜¯null
+    _In_ LPWSTR lpCmdLine,               //åº”ç”¨ç¨‹åºè¿è¡Œå‚æ•°
+    _In_ int nCmdShow)                   //çª—å£å¦‚ä½•æ˜¾ç¤º(æœ€å¤§åŒ–ã€æœ€å°åŒ–ã€éšè—)ï¼Œä¸éœ€ç†ä¼š
 {
     if (!app->initApplication(hInstance, WIDTH, HEIGHT)) {
         return -1;
     }
 
-    //½«bmpÖ¸ÏòµÄÄÚ´æÅäÖÃµ½sglµ±ÖÐ
+    //å°†bmpæŒ‡å‘çš„å†…å­˜é…ç½®åˆ°sglå½“ä¸­
     sgl->initSurface(app->getWidth(), app->getHeight(), app->getCanvas());
 
     bool alive = true;
