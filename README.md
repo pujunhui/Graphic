@@ -23,7 +23,7 @@
 - `gpu/`：GPU 抽象（raster、shader、texture、vao、bufferObject、frameBuffer）
 - `math/`：向量/矩阵/数学函数与常用变换
 - `assets/`：纹理与模型资源
-- `docs/`：算法与实现文档（Bresenham、重心插值、双线性插值、CMake 等）
+- `docs/`：分类知识库（包含 cmake、工程与系统、数学、算法、渲染管线等专题文档及实例索引）
 - 根目录若干示例可执行：`01_drawPoint` ~ `19_model`
 
 ### 依赖
