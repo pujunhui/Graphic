@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" width="100%" height="100%">
+  <defs>
+    <marker id="arr-axis" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#475569"/>
+    </marker>
+    <marker id="arr-front" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#dc2626"/>
+    </marker>
+  </defs>
+
+  <rect width="720" height="320" rx="12" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
+
+  <!-- 左图：球面视线分解 -->
+  <text x="190" y="30" text-anchor="middle" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="15" font-weight="bold" fill="#1e293b">1. 欧拉角 Pitch(俯仰) 与 Yaw(偏航) 视线分解</text>
+
+  <!-- 3D 坐标轴: 原点(160, 210) -->
+  <!-- Y轴向上 -->
+  <line x1="160" y1="250" x2="160" y2="65" stroke="#475569" stroke-width="2" marker-end="url(#arr-axis)"/>
+  <text x="160" y="55" text-anchor="middle" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="12" font-weight="bold" fill="#334155">+Y (Top)</text>
+  <!-- X轴向右 -->
+  <line x1="80" y1="210" x2="320" y2="210" stroke="#475569" stroke-width="2" marker-end="url(#arr-axis)"/>
+  <text x="340" y="214" font-family="Segoe UI, sans-serif" font-size="12" font-weight="bold" fill="#334155">+X</text>
+  <!-- Z轴向左下 -->
+  <line x1="210" y1="170" x2="75" y2="278" stroke="#475569" stroke-width="2" marker-end="url(#arr-axis)"/>
+  <text x="60" y="292" font-family="Segoe UI, sans-serif" font-size="12" font-weight="bold" fill="#334155">+Z</text>
+
+  <!-- XZ 平面投影与视线 Front: P(265, 115), 底面投影 P_xz(265, 245) -->
+  <polygon points="160,210 265,245 265,115" fill="#fee2e2" fill-opacity="0.45"/>
+  <line x1="160" y1="210" x2="265" y2="245" stroke="#0284c7" stroke-width="2" stroke-dasharray="4,3"/>
+  <line x1="265" y1="245" x2="265" y2="115" stroke="#16a34a" stroke-width="2" stroke-dasharray="4,3"/>
+  <line x1="160" y1="210" x2="265" y2="115" stroke="#dc2626" stroke-width="3" marker-end="url(#arr-front)"/>
+
+  <text x="272" y="112" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="13" font-weight="bold" fill="#dc2626">视线 Front (长度=1)</text>
+  <text x="272" y="185" font-family="Segoe UI, sans-serif" font-size="12" font-weight="bold" fill="#16a34a">y = sin(Pitch)</text>
+  <text x="175" y="248" font-family="Segoe UI, sans-serif" font-size="12" font-weight="bold" fill="#0284c7">L_xz = cos(Pitch)</text>
+  <text x="202" y="202" font-family="Segoe UI, sans-serif" font-size="12" font-weight="bold" fill="#dc2626">Pitch</text>
+  <text x="195" y="224" font-family="Segoe UI, sans-serif" font-size="11" font-weight="bold" fill="#0284c7">Yaw</text>
+
+  <!-- 分割线 -->
+  <line x1="380" y1="40" x2="380" y2="290" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="5,5"/>
+
+  <!-- 右图：三轴嵌套陀螺仪与万向节死锁 -->
+  <text x="550" y="30" text-anchor="middle" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="15" font-weight="bold" fill="#1e293b">2. 航海三轴嵌套陀螺仪 (Gimbal)</text>
+
+  <!-- 外环 Pitch (红) -->
+  <circle cx="550" cy="170" r="105" fill="none" stroke="#ef4444" stroke-width="6"/>
+  <line x1="430" y1="170" x2="445" y2="170" stroke="#ef4444" stroke-width="5"/>
+  <line x1="655" y1="170" x2="670" y2="170" stroke="#ef4444" stroke-width="5"/>
+  <text x="550" y="82" text-anchor="middle" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="12" font-weight="bold" fill="#dc2626">外层环: Pitch (绕X轴俯仰)</text>
+
+  <!-- 中环 Yaw (蓝) -->
+  <ellipse cx="550" cy="170" rx="76" ry="76" fill="none" stroke="#0284c7" stroke-width="6"/>
+  <line x1="550" y1="65" x2="550" y2="94" stroke="#0284c7" stroke-width="5"/>
+  <line x1="550" y1="246" x2="550" y2="275" stroke="#0284c7" stroke-width="5"/>
+  <text x="550" y="114" text-anchor="middle" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="12" font-weight="bold" fill="#0284c7">中层环: Yaw (绕Y轴偏航)</text>
+
+  <!-- 内环 Roll (绿) -->
+  <ellipse cx="550" cy="170" rx="48" ry="26" fill="none" stroke="#16a34a" stroke-width="5"/>
+  <circle cx="550" cy="170" r="7" fill="#16a34a"/>
+  <text x="550" y="160" text-anchor="middle" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="12" font-weight="bold" fill="#15803d">内层环: Roll</text>
+
+  <text x="550" y="298" text-anchor="middle" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="12" fill="#475569">当 Pitch = ±90° 时，内外两环旋转轴共面重合 → 丢失1个自由度(死锁)</text>
+</svg>

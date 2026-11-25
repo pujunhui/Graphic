@@ -29,14 +29,15 @@
 1. **定义与注册窗口类（`registerWindowClass`）**：
    填充 `WNDCLASSEXW`，指定窗口事件处理回调函数指针 `lpfnWndProc = Wndproc`，设置类名 `mWindowClassName`，调用 `RegisterClassExW` 注册。
 2. **窗口样式声明**：
-   ```cpp
+
+```cpp
    auto dwExStyle = WS_EX_APPWINDOW;
    auto dwStyle = WS_OVERLAPPEDWINDOW | WS_CLIPSIBLINGS | WS_CLIPCHILDREN;
-   ```
+```
    `WS_OVERLAPPEDWINDOW` 包含标准窗口所需的主标题栏、系统菜单、可拖拽边框与最大化/最小化按钮。
 
 ### 2.2 客户区（Client Area）精确尺寸换算
-若直接在 `CreateWindowW` 中指定传入宽高为 $800 \times 600$，系统会将其作为**包含标题栏与四周边框的窗口外部总尺寸**，导致实际可供像素绘制的**客户区**尺寸小于 $800 \times 600$。
+若直接在 `CreateWindowW` 中指定传入宽高为 $800 \times 600$ ，系统会将其作为**包含标题栏与四周边框的窗口外部总尺寸**，导致实际可供像素绘制的**客户区**尺寸小于 $800 \times 600$ 。
 ```cpp
 RECT windowRect;
 windowRect.left = 0L;
@@ -102,7 +103,8 @@ while (alive) {
 1. `GetDC(mHwnd)`：获取当前窗口客户区的屏幕设备上下文 `mhDC`。
 2. `CreateCompatibleDC(mhDC)`：在内存中创建一个与屏幕 DC 兼容的离屏内存 DC `mCanvasDC`。
 3. 配置 `BITMAPINFO`：
-   ```cpp
+
+```cpp
    BITMAPINFO bmpInfo{};
    bmpInfo.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
    bmpInfo.bmiHeader.biWidth = mWidth;
@@ -110,7 +112,7 @@ while (alive) {
    bmpInfo.bmiHeader.biPlanes = 1;
    bmpInfo.bmiHeader.biBitCount = 32;        // 32 位真彩色（BGRA，每通道 8 位）
    bmpInfo.bmiHeader.biCompression = BI_RGB; // 未压缩 RGB 格式
-   ```
+```
    > **关键知识点**：`biHeight` 为正数时，位图在内存中的存储顺序为**自底向上**——即数组下标 0 对应图像的**左下角**第一行，Y 轴向上生长。这正好与 OpenGL 的标准屏幕空间坐标系一致！
 4. `CreateDIBSection(...)`：系统分配一块物理连续的堆内存，并将首地址写入指针 `mCanvasBuffer`。
 5. `SelectObject(mCanvasDC, mhBmp)`：将位图绑定到内存 DC，使其成为内存 DC 的绘制目标。
@@ -125,8 +127,12 @@ struct RGBA {
     byte mA; // 高地址
 };
 ```
-在二维屏幕空间中，已知左下角为原点的坐标 $(x, y)$，其在内存中的一维线性偏移量为：
-$$\text{Offset} = (y \times \text{Width} + x) \times 4 \quad \text{Bytes}$$
+在二维屏幕空间中，已知左下角为原点的坐标 $(x, y)$ ，其在内存中的一维线性偏移量为：
+
+$$
+\text{Offset} = (y \times \text{Width} + x) \times 4 \quad \text{Bytes}
+$$
+
 通过强转 `RGBA* colorBuffer = (RGBA*)mCanvasBuffer`，画点操作简化为极速的单次指针赋值：
 ```cpp
 mFrameBuffer->mColorBuffer[y * mWidth + x] = color;

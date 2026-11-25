@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 260" width="100%" height="100%">
+  <defs>
+    <marker id="arr-ccw" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#16a34a"/>
+    </marker>
+    <marker id="arr-cw" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#dc2626"/>
+    </marker>
+  </defs>
+
+  <rect width="680" height="260" rx="12" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
+
+  <!-- 左图：正面观察（逆时针 CCW） -->
+  <text x="170" y="32" text-anchor="middle" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="15" font-weight="bold" fill="#15803d">1. 从正面看：逆时针绕圈 (CCW) → ✅ 保留绘制</text>
+
+  <!-- 三角形 V0(170, 65), V1(95, 195), V2(245, 195) -->
+  <polygon points="170,65 95,195 245,195" fill="#dcfce7" stroke="#86efac" stroke-width="1.5"/>
+  <!-- 三条有向边 V0->V1, V1->V2, V2->V0 -->
+  <line x1="163" y1="77" x2="103" y2="181" stroke="#16a34a" stroke-width="3" marker-end="url(#arr-ccw)"/>
+  <line x1="110" y1="195" x2="230" y2="195" stroke="#16a34a" stroke-width="3" marker-end="url(#arr-ccw)"/>
+  <line x1="237" y1="181" x2="177" y2="77" stroke="#16a34a" stroke-width="3" marker-end="url(#arr-ccw)"/>
+
+  <circle cx="170" cy="65" r="6" fill="#15803d"/>
+  <circle cx="95" cy="195" r="6" fill="#15803d"/>
+  <circle cx="245" cy="195" r="6" fill="#15803d"/>
+  <text x="170" y="53" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="13" font-weight="bold" fill="#15803d">V₀</text>
+  <text x="78" y="205" text-anchor="end" font-family="Segoe UI, sans-serif" font-size="13" font-weight="bold" fill="#15803d">V₁</text>
+  <text x="262" y="205" font-family="Segoe UI, sans-serif" font-size="13" font-weight="bold" fill="#15803d">V₂</text>
+  <text x="170" y="155" text-anchor="middle" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="13" font-weight="bold" fill="#15803d">逆时针 (normal.z &gt; 0)</text>
+  <text x="170" y="235" text-anchor="middle" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="12" fill="#475569">连接顺序：V₀ → V₁ → V₂（正对摄像机）</text>
+
+  <!-- 分割线 -->
+  <line x1="340" y1="40" x2="340" y2="240" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="5,5"/>
+
+  <!-- 右图：绕到背面观察（变成顺时针 CW） -->
+  <text x="510" y="32" text-anchor="middle" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="15" font-weight="bold" fill="#dc2626">2. 绕到背面看：变成顺时针 (CW) → ❌ 直接剔除</text>
+
+  <!-- 背面看到的水平镜像位置: V0(510, 65), V2(435, 195), V1(585, 195) -->
+  <polygon points="510,65 435,195 585,195" fill="#fee2e2" stroke="#fca5a5" stroke-width="1.5"/>
+  <!-- 有向边依然是 V0->V1, V1->V2, V2->V0 (此时在屏幕上呈顺时针！) -->
+  <line x1="517" y1="77" x2="577" y2="181" stroke="#dc2626" stroke-width="3" marker-end="url(#arr-cw)"/>
+  <line x1="570" y1="195" x2="450" y2="195" stroke="#dc2626" stroke-width="3" marker-end="url(#arr-cw)"/>
+  <line x1="443" y1="181" x2="503" y2="77" stroke="#dc2626" stroke-width="3" marker-end="url(#arr-cw)"/>
+
+  <circle cx="510" cy="65" r="6" fill="#dc2626"/>
+  <circle cx="435" cy="195" r="6" fill="#dc2626"/>
+  <circle cx="585" cy="195" r="6" fill="#dc2626"/>
+  <text x="510" y="53" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="13" font-weight="bold" fill="#dc2626">V₀</text>
+  <text x="418" y="205" text-anchor="end" font-family="Segoe UI, sans-serif" font-size="13" font-weight="bold" fill="#dc2626">V₂</text>
+  <text x="602" y="205" font-family="Segoe UI, sans-serif" font-size="13" font-weight="bold" fill="#dc2626">V₁</text>
+  <text x="510" y="155" text-anchor="middle" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="13" font-weight="bold" fill="#dc2626">顺时针 (normal.z &lt; 0)</text>
+  <text x="510" y="235" text-anchor="middle" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="12" fill="#475569">连接顺序依然是 V₀ → V₁ → V₂，但视觉方向反转了！</text>
+</svg>

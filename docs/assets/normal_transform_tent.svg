@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 740 310" width="100%" height="100%">
+  <defs>
+    <marker id="arr-blue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#0284c7"/>
+    </marker>
+    <marker id="arr-green" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#16a34a"/>
+    </marker>
+    <marker id="arr-red" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#dc2626"/>
+    </marker>
+  </defs>
+
+  <rect width="740" height="310" rx="12" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
+
+  <!-- 左侧：原45度帐篷 -->
+  <text x="175" y="32" text-anchor="middle" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="15" font-weight="bold" fill="#1e293b">1. 原始状态：45° 帐篷斜坡与垂直法线</text>
+
+  <!-- 帐篷三角形: 左底(70, 240), 顶(180, 130), 右底(180, 240) -->
+  <polygon points="70,240 180,130 180,240" fill="#e0f2fe" stroke="#0284c7" stroke-width="2.5"/>
+  <line x1="40" y1="240" x2="260" y2="240" stroke="#94a3b8" stroke-width="2"/>
+  <text x="142" y="215" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="12" fill="#0369a1">切线 t = (1, 1)</text>
+
+  <!-- 斜坡中点 (125, 185)，法线 n=(-1, 1) 指向左上 (65, 125) -->
+  <line x1="125" y1="185" x2="65" y2="125" stroke="#0284c7" stroke-width="3" marker-end="url(#arr-blue)"/>
+  <!-- 垂直直角符号 -->
+  <polyline points="115,175 125,165 135,175" fill="none" stroke="#0284c7" stroke-width="1.8"/>
+  <text x="55" y="112" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="13" font-weight="bold" fill="#0284c7">原法线 n = (-1, 1)</text>
+  <text x="175" y="275" text-anchor="middle" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="13" fill="#334155">n · t = 0 （严格 90° 垂直 ✅）</text>
+
+  <!-- 分割线 -->
+  <line x1="330" y1="40" x2="330" y2="285" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="5,5"/>
+
+  <!-- 右侧：横向拉宽 2 倍 -->
+  <text x="535" y="32" text-anchor="middle" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="15" font-weight="bold" fill="#1e293b">2. 横向拉宽 2 倍 (X×2, Y×1)：斜坡变平缓</text>
+
+  <!-- 拉宽后的帐篷: 左底(370, 240), 顶(590, 130), 右底(590, 240)  dx=220, dy=-110 (斜率 1/2) -->
+  <polygon points="370,240 590,130 590,240" fill="#e0f2fe" stroke="#0284c7" stroke-width="2.5"/>
+  <line x1="350" y1="240" x2="700" y2="240" stroke="#94a3b8" stroke-width="2"/>
+  <text x="515" y="215" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="12" fill="#0369a1">新切线 t' = (2, 1)</text>
+
+  <!-- 斜坡中点 (480, 185) -->
+  <!-- 正确法线 n' = (-0.5, 1) -> 方向 (-45, -90) 终点 (435, 95) -->
+  <line x1="480" y1="185" x2="435" y2="95" stroke="#16a34a" stroke-width="3" marker-end="url(#arr-green)"/>
+  <text x="415" y="82" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="13" font-weight="bold" fill="#16a34a">✅ 正确法线 (M⁻¹)ᵀn = (-0.5, 1)</text>
+  <text x="430" y="100" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="11" fill="#15803d">（往竖直方向立起来，保持90°垂直）</text>
+
+  <!-- 错误法线 M*n = (-2, 1) -> 方向 (-110, -55) 终点 (370, 130) -->
+  <line x1="480" y1="185" x2="370" y2="130" stroke="#dc2626" stroke-width="3" stroke-dasharray="5,3" marker-end="url(#arr-red)"/>
+  <text x="345" y="152" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="13" font-weight="bold" fill="#dc2626">❌ 错误法线 M·n = (-2, 1)</text>
+  <text x="345" y="170" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="11" fill="#b91c1c">（跟着横向拉长，反而趴下了！）</text>
+
+  <text x="535" y="275" text-anchor="middle" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="13" font-weight="bold" fill="#1e293b">核心规律：表面横向拉宽 2 倍，法线横向必须缩窄为 1/2（即求逆矩阵 M⁻¹）</text>
+</svg>

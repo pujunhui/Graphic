@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 280" width="100%" height="100%">
+  <rect width="760" height="280" rx="12" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
+
+  <!-- 步骤 1: 伸出相框的三角形 -->
+  <text x="130" y="30" text-anchor="middle" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14" font-weight="bold" fill="#1e293b">1. 伸出相框左边界的三角形</text>
+  <!-- 相框左边界 x=110 -->
+  <rect x="110" y="55" width="120" height="175" fill="#f1f5f9" stroke="#64748b" stroke-width="2" stroke-dasharray="4,4"/>
+  <line x1="110" y1="45" x2="110" y2="240" stroke="#dc2626" stroke-width="2.5"/>
+  <!-- 三角形: 外顶点 V_out(45, 145), 内顶点 V1(185, 75), V2(205, 205) -->
+  <!-- 交点: I1 在 (45,145)-(185,75) x=110 处 -> t=65/140=0.464 -> y=145 - 70*0.464 = 112.5 -->
+  <!-- 交点: I2 在 (45,145)-(205,205) x=110 处 -> t=65/160=0.406 -> y=145 + 60*0.406 = 169.4 -->
+  <polygon points="45,145 185,75 205,205" fill="#bae6fd" fill-opacity="0.55" stroke="#0284c7" stroke-width="2"/>
+  <circle cx="45" cy="145" r="4.5" fill="#dc2626"/>
+  <circle cx="185" cy="75" r="4.5" fill="#0284c7"/>
+  <circle cx="205" cy="205" r="4.5" fill="#0284c7"/>
+  <text x="42" y="133" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="11" font-weight="bold" fill="#dc2626">界外点(待剪)</text>
+  <text x="110" y="258" text-anchor="middle" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="12" fill="#dc2626">裁剪刀(左边界)</text>
+
+  <!-- 步骤 2: 剪一刀变成四边形 -->
+  <text x="380" y="30" text-anchor="middle" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14" font-weight="bold" fill="#1e293b">2. 咔嚓剪一刀 → 产生交点 I₁, I₂ (变四边形)</text>
+  <rect x="350" y="55" width="120" height="175" fill="#f1f5f9" stroke="#64748b" stroke-width="2" stroke-dasharray="4,4"/>
+  <line x1="350" y1="45" x2="350" y2="240" stroke="#dc2626" stroke-width="2.5"/>
+  <!-- 剪完的四边形: I1(350, 112.5), V1(425, 75), V2(445, 205), I2(350, 169.4) -->
+  <polygon points="350,113 425,75 445,205 350,169" fill="#dcfce7" stroke="#16a34a" stroke-width="2.5"/>
+  <circle cx="350" cy="113" r="5" fill="#dc2626"/>
+  <circle cx="350" cy="169" r="5" fill="#dc2626"/>
+  <circle cx="425" cy="75" r="4.5" fill="#16a34a"/>
+  <circle cx="445" cy="205" r="4.5" fill="#16a34a"/>
+  <text x="338" y="115" text-anchor="end" font-family="Segoe UI, sans-serif" font-size="12" font-weight="bold" fill="#dc2626">I₁(新交点)</text>
+  <text x="338" y="173" text-anchor="end" font-family="Segoe UI, sans-serif" font-size="12" font-weight="bold" fill="#dc2626">I₂(新交点)</text>
+  <text x="432" y="72" font-family="Segoe UI, sans-serif" font-size="12" font-weight="bold" fill="#15803d">V₁</text>
+  <text x="452" y="212" font-family="Segoe UI, sans-serif" font-size="12" font-weight="bold" fill="#15803d">V₂</text>
+
+  <!-- 步骤 3: 切披萨扇形三角剖分 -->
+  <text x="630" y="30" text-anchor="middle" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="14" font-weight="bold" fill="#1e293b">3. 扇形缝补(Triangle Fan) → 切回2个三角形</text>
+  <rect x="590" y="55" width="120" height="175" fill="#f1f5f9" stroke="#64748b" stroke-width="2" stroke-dasharray="4,4"/>
+  <!-- 四边形拆为两个三角形: (590,113)-(665,75)-(685,205) 和 (590,113)-(685,205)-(590,169) -->
+  <polygon points="590,113 665,75 685,205" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+  <polygon points="590,113 685,205 590,169" fill="#fde68a" stroke="#d97706" stroke-width="2"/>
+  <!-- 扇形分割对角线 I1 -> V2 -->
+  <line x1="590" y1="113" x2="685" y2="205" stroke="#dc2626" stroke-width="2.5" stroke-dasharray="5,3"/>
+  <circle cx="590" cy="113" r="6" fill="#dc2626"/>
+  <text x="580" y="108" text-anchor="end" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="12" font-weight="bold" fill="#dc2626">扇心[0]</text>
+  <text x="645" y="128" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="12" font-weight="bold" fill="#b45309">△1</text>
+  <text x="615" y="168" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="12" font-weight="bold" fill="#b45309">△2</text>
+  <text x="630" y="258" text-anchor="middle" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="12" fill="#475569">从 0 号顶点向其余顶点连线切分</text>
+</svg>

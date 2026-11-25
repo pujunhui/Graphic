@@ -49,28 +49,32 @@ add_subdirectory(thirdParty)
 
 每个子目录内均包含独立的 `CMakeLists.txt`，分别负责编译静态库（Static Library）：
 - `application`：窗口封装、相机、图片加载与模型数据结构，生成静态库 `app`：
-  ```cmake
+
+```cmake
   add_library(app STATIC application.cpp camera.cpp image.cpp model.cpp)
-  ```
+```
 - `gpu_old`：阶段一基础光栅化渲染器，生成静态库 `gpu_old`：
-  ```cmake
+
+```cmake
   add_library(gpu_old STATIC gpu.cpp raster.cpp frameBuffer.cpp)
-  ```
+```
 - `gpu`：阶段二现代软光栅可编程管线，生成静态库 `gpu`：
-  ```cmake
+
+```cmake
   add_library(gpu STATIC
       gpu.cpp raster.cpp frameBuffer.cpp bufferObject.cpp vao.cpp texture.cpp shader.cpp clipper.cpp
       shader/defaultShader.cpp shader/textureShader.cpp shader/lightShader.cpp
   )
-  ```
+```
 - `thirdParty`：第三方库集成（导入 Assimp 静态/动态库）：
-  ```cmake
+
+```cmake
   add_library(assimp STATIC IMPORTED)
   set_target_properties(assimp PROPERTIES
       IMPORTED_LOCATION "${CMAKE_CURRENT_SOURCE_DIR}/assimp/lib/assimp-vc143-mtd.lib"
       INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_CURRENT_SOURCE_DIR}/assimp/include"
   )
-  ```
+```
 
 ---
 

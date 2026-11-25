@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 300" width="100%" height="100%">
+  <rect width="720" height="300" rx="12" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
+
+  <!-- 左侧：经典扫描线法 -->
+  <text x="180" y="32" text-anchor="middle" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="15" font-weight="bold" fill="#1e293b">1. 经典扫描线法 (Scanline：中切拆分为平底+平顶)</text>
+
+  <!-- 三角形顶点: Top(160, 60), Mid(80, 160), Bot(220, 245) -->
+  <!-- 分割点 P_split 在 Top-Bot 连线上 y=160 处: x = 160 + (220-160)*(160-60)/(245-60) = 192.4 -->
+  <polygon points="160,60 80,160 192,160" fill="#dbeafe" stroke="#0284c7" stroke-width="2"/>
+  <polygon points="80,160 192,160 220,245" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+
+  <!-- 扫描线 Span 示例 -->
+  <line x1="128" y1="100" x2="173" y2="100" stroke="#0284c7" stroke-width="2.5"/>
+  <line x1="104" y1="130" x2="183" y2="130" stroke="#0284c7" stroke-width="2.5"/>
+  <line x1="115" y1="185" x2="200" y2="185" stroke="#16a34a" stroke-width="2.5"/>
+  <line x1="158" y1="215" x2="210" y2="215" stroke="#16a34a" stroke-width="2.5"/>
+
+  <!-- 水平中切线 -->
+  <line x1="50" y1="160" x2="275" y2="160" stroke="#dc2626" stroke-width="2" stroke-dasharray="5,3"/>
+  <circle cx="160" cy="60" r="4" fill="#1e293b"/>
+  <circle cx="80" cy="160" r="4" fill="#dc2626"/>
+  <circle cx="192" cy="160" r="4" fill="#dc2626"/>
+  <circle cx="220" cy="245" r="4" fill="#1e293b"/>
+
+  <text x="160" y="50" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="12" font-weight="bold" fill="#1e293b">V_top</text>
+  <text x="72" y="153" text-anchor="end" font-family="Segoe UI, sans-serif" font-size="12" font-weight="bold" fill="#dc2626">V_mid</text>
+  <text x="200" y="153" font-family="Segoe UI, sans-serif" font-size="12" font-weight="bold" fill="#dc2626">P_split</text>
+  <text x="220" y="263" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="12" font-weight="bold" fill="#1e293b">V_bot</text>
+  <text x="245" y="118" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="12" font-weight="bold" fill="#0284c7">上半：平底三角形</text>
+  <text x="255" y="205" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="12" font-weight="bold" fill="#16a34a">下半：平顶三角形</text>
+  <text x="180" y="285" text-anchor="middle" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="12" fill="#475569">按行串行求交点 [x_left, x_right]，分支多，难并行</text>
+
+  <!-- 分割线 -->
+  <line x1="360" y1="40" x2="360" y2="280" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="5,5"/>
+
+  <!-- 右侧：现代 AABB 包围盒法 -->
+  <text x="540" y="32" text-anchor="middle" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="15" font-weight="bold" fill="#1e293b">2. 现代包围盒法 (AABB + 重心坐标并行判定)</text>
+
+  <!-- AABB 矩形: x in [440, 620], y in [60, 240] -->
+  <rect x="440" y="60" width="180" height="180" fill="#f1f5f9" stroke="#64748b" stroke-width="2" stroke-dasharray="4,4"/>
+  <!-- 三角形: (520, 60), (440, 180), (620, 240) -->
+  <polygon points="520,60 440,180 620,240" fill="#fef3c7" stroke="#d97706" stroke-width="2.5"/>
+
+  <!-- 采样像素网格点 -->
+  <!-- 第一行 y=85 -->
+  <circle cx="465" cy="85" r="4" fill="#94a3b8"/>
+  <circle cx="500" cy="85" r="4" fill="#94a3b8"/>
+  <circle cx="535" cy="85" r="4.5" fill="#16a34a"/>
+  <circle cx="570" cy="85" r="4" fill="#94a3b8"/>
+  <circle cx="605" cy="85" r="4" fill="#94a3b8"/>
+  <!-- 第二行 y=125 -->
+  <circle cx="465" cy="125" r="4" fill="#94a3b8"/>
+  <circle cx="500" cy="125" r="4.5" fill="#16a34a"/>
+  <circle cx="535" cy="125" r="4.5" fill="#16a34a"/>
+  <circle cx="570" cy="125" r="4" fill="#94a3b8"/>
+  <circle cx="605" cy="125" r="4" fill="#94a3b8"/>
+  <!-- 第三行 y=165 -->
+  <circle cx="465" cy="165" r="4.5" fill="#16a34a"/>
+  <circle cx="500" cy="165" r="4.5" fill="#16a34a"/>
+  <circle cx="535" cy="165" r="4.5" fill="#16a34a"/>
+  <circle cx="570" cy="165" r="4.5" fill="#16a34a"/>
+  <circle cx="605" cy="165" r="4" fill="#94a3b8"/>
+  <!-- 第四行 y=205 -->
+  <circle cx="465" cy="205" r="4" fill="#94a3b8"/>
+  <circle cx="500" cy="205" r="4" fill="#94a3b8"/>
+  <circle cx="535" cy="205" r="4.5" fill="#16a34a"/>
+  <circle cx="570" cy="205" r="4.5" fill="#16a34a"/>
+  <circle cx="605" cy="205" r="4" fill="#94a3b8"/>
+
+  <text x="628" y="72" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="11" fill="#64748b">AABB 外框</text>
+  <text x="540" y="285" text-anchor="middle" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="12" fill="#475569">无分支统一叉积测试（绿点在内，灰点在外），完美契合 GPU 并行</text>
+</svg>

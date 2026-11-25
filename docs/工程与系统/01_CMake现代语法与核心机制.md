@@ -51,19 +51,21 @@ set(MY_LIST a b c d)         # 列表变量（分号分隔的分词字符串 "a;
 - **普通变量展开**：`${MY_VAR}`
 - **环境变量读取/设置**：`$ENV{PATH}`、`set(ENV{MY_ENV} "value")`
 - **缓存变量（Cache Variable）**：存储在 `CMakeCache.txt` 中，通常用于用户配置选项：
-  ```cmake
+
+```cmake
   set(ENABLE_DEBUG ON CACHE BOOL "Enable debug logging")
   option(BUILD_TESTS "Build test suite" ON) # option 是 bool 缓存变量的简写
-  ```
+```
 
 ### 1.2 作用域传递规则（Scope）
 CMake 的作用域是树状继承的：
 - 父目录调用 `add_subdirectory(child)` 时，子目录会**复制一份**当前父作用域的变量。
 - 子目录内部修改变量默认**仅在当前作用域生效**，不会影响父目录。
 - 若需向父作用域传递变量，必须显式添加 `PARENT_SCOPE`：
-  ```cmake
+
+```cmake
   set(RESULT_LIB "MyEngine" PARENT_SCOPE)
-  ```
+```
 
 ---
 
@@ -90,11 +92,15 @@ add_library(header_only INTERFACE)          # 纯头文件接口库 (如 glm, st
 | **`PUBLIC`**   | **是** | **是** | 既在目标内部代码中使用，又在其暴露的头文件函数签名中使用 |
 
 #### 属性传播数学模型
-设目标 $A$ 依赖于目标 $B$（`target_link_libraries(A PUBLIC/PRIVATE B)`）：
-$$\text{Property}_A \longleftarrow \text{Property}_A \cup \begin{cases} 
+设目标 $A$ 依赖于目标 $B$ （`target_link_libraries(A PUBLIC/PRIVATE B)`）：
+
+$$
+\text{Property}_A \longleftarrow \text{Property}_A \cup \begin{cases}
 \text{Property}_B, & \text{if Visibility}(B) \in \{\text{PUBLIC}, \text{INTERFACE}\} \\
 \emptyset, & \text{if Visibility}(B) = \text{PRIVATE}
-\end{cases}$$
+\end{cases}
+$$
+
 传递性闭包计算：所有使用者递归继承其直接依赖与间接依赖的 `PUBLIC` / `INTERFACE` 属性集合。
 
 ---
@@ -148,7 +154,10 @@ endif()
 ## 4. 生成器表达式（Generator Expressions）
 
 生成器表达式在 **构建阶段（Build Time，即实际编译执行时）** 求值，而非 CMake 配置阶段。通用语法为：
-$$\$<CONDITION:TRUE\_VALUE:FALSE\_VALUE>$$
+
+```cmake
+$<CONDITION:TRUE_VALUE:FALSE_VALUE>
+```
 
 ### 4.1 常用生成器表达式分类
 1. **多配置构建类型（Debug/Release 区分）**：

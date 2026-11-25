@@ -50,14 +50,20 @@ const aiScene* scene = importer.ReadFile(
 - 子节点：肘关节、手指等部件；
 - 每个节点包含自身的局部变换矩阵 `mTransformation`，以及挂载在该节点下的若干网格索引（`mMeshes`）。
 
-```
-           [ Root Mesh / Node ] (mLocalMatrix)
-                 /          \
-    [ Child Mesh 1 ]      [ Child Mesh 2 ]
-       (肩部关节)            (武器部件)
-         /
-   [ SubChild Mesh ]
-       (手部末端)
+```mermaid
+graph TD
+    Root["Root Mesh / Node<br/>(根节点局部矩阵 M_root)"]
+    C1["Child Mesh 1: 肩部关节<br/>(累积矩阵 = M_root × M_shoulder)"]
+    C2["Child Mesh 2: 武器挂件<br/>(累积矩阵 = M_root × M_weapon)"]
+    Sub["SubChild Mesh: 手部末端<br/>(累积矩阵 = M_root × M_shoulder × M_hand)"]
+
+    Root --> C1
+    Root --> C2
+    C1 --> Sub
+    style Root fill:#dbeafe,stroke:#0284c7,color:#0f172a
+    style C1 fill:#dcfce7,stroke:#16a34a,color:#0f172a
+    style C2 fill:#dcfce7,stroke:#16a34a,color:#0f172a
+    style Sub fill:#fef3c7,stroke:#d97706,color:#0f172a
 ```
 
 ### 3.1 矩阵格式转换（行主序 $\to$ 列主序）

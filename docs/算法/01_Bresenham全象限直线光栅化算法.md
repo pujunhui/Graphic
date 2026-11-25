@@ -4,51 +4,91 @@
 
 ---
 
-## 1. 朴素 DDA 算法与浮点弊端
+## 1. 朴素斜截式、DDA 算法与浮点运算瓶颈
 
-朴素的数字微分分析器（DDA）算法：
+在解析几何中，经过 $(x_0, y_0)$ 与 $(x_1, y_1)$ 的直线方程可写为斜截式：
+
+$$
+y = kx + b, \quad k = \frac{y_1 - y_0}{x_1 - x_0}, \quad b = y_0 - k x_0
+$$
+
+### 1.1 朴素算法的性能灾难
+若直接在循环中按照 $x$ 递增计算 $y$ ：
 ```cpp
+// 极慢且存在精度问题的写法
 float k = (float)(y1 - y0) / (x1 - x0);
-float y = y0;
+float b = y0 - k * x0;
 for (int x = x0; x <= x1; x++) {
-    plot(x, std::round(y));
-    y += k; // 浮点累加与四舍五入
+    float y_real = k * x + b;           // 每次循环均进行浮点乘法与加法
+    plot(x, (int)std::round(y_real));   // 昂贵的四舍五入与类型转换
 }
 ```
-- **弊端**：每步循环包含浮点加法与 `std::round` 浮点截断；随步数增加，浮点舍入误差可能不断累积，造成像素偏离。
+即便改用数字微分分析器（DDA）进行增量累加（`y += k`），在早期没有硬件浮点运算单元（FPU）的 CPU 上，浮点指令需要几十个时钟周期模拟；即使在现代 CPU 上，浮点指令的能耗与流水线吞吐量也远逊于整数 ALU。此外，浮点累加还会产生舍入误差积累，导致绘制长线时像素严重偏离中心轴。
+
+因此，**将图元光栅化完全转换为纯整数加减法**，是图形学先驱最核心的优化目标。
 
 ---
 
-## 2. Bresenham 算法推导（第一象限 $0 \le k \le 1$）
+## 2. Bresenham 算法推导（第一象限 $0 \le k \le 1$ ）
 
-考虑起点 $(x_0, y_0)$ 到终点 $(x_1, y_1)$，设 $\Delta x = x_1 - x_0 > 0$，$\Delta y = y_1 - y_0 \ge 0$，斜率 $k = \frac{\Delta y}{\Delta x} \in [0, 1]$。
+考虑起点 $(x_0, y_0)$ 到终点 $(x_1, y_1)$ ，设 $\Delta x = x_1 - x_0 > 0$ ， $\Delta y = y_1 - y_0 \ge 0$ ，斜率 $k = \frac{\Delta y}{\Delta x} \in [0, 1]$ 。
 
-### 2.1 候选像素选择与误差定义
-当前像素已确定绘制在 $(x_i, y_i)$。步进至下一个列 $x_{i+1} = x_i + 1$ 时，理论直线上的纵坐标为：
-$$y_{\text{real}} = k (x_i + 1 - x_0) + y_0$$
+### 2.1 候选像素选择与垂直距离差几何模型
+当前像素已确定绘制在 $(x_i, y_i)$ 。步进至下一个列 $x_{i+1} = x_i + 1$ 时，真实直线穿过了两像素网格之间：
+
+![Bresenham 候选像素距离 d1 与 d2](../assets/bresenham_grid.svg)
+
+此时理论直线上的纵坐标为：
+
+$$
+y_{\text{real}} = k (x_i + 1 - x_0) + y_0
+$$
+
 离散像素只有两个选择：
-- **当前行像素**：$(x_i + 1, y_i)$，离理论直线的竖直距离为 $d_1 = y_{\text{real}} - y_i$
-- **上方像素**：$(x_i + 1, y_i + 1)$，离理论直线的竖直距离为 $d_2 = (y_i + 1) - y_{\text{real}}$
+- **当前行像素**： $(x_i + 1, y_i)$ ，离理论直线的竖直距离为 $d_1 = y_{\text{real}} - y_i$ ；
+- **上方像素**： $(x_i + 1, y_i + 1)$ ，离理论直线的竖直距离为 $d_2 = (y_i + 1) - y_{\text{real}}$ 。
 
 为了使得绘制的像素离理论直线最近，比较 $d_1$ 与 $d_2$ 的大小：
-$$d_1 - d_2 = 2 y_{\text{real}} - 2 y_i - 1 = 2 \left( k(x_i + 1 - x_0) + y_0 \right) - 2 y_i - 1$$
-- 若 $d_1 - d_2 < 0$：说明 $d_1 < d_2$，当前行像素更近，选 $y_{i+1} = y_i$。
-- 若 $d_1 - d_2 \ge 0$：说明 $d_2 \le d_1$，上方像素更近，选 $y_{i+1} = y_i + 1$。
+
+$$
+d_1 - d_2 = 2 y_{\text{real}} - 2 y_i - 1 = 2 \left( k(x_i + 1 - x_0) + y_0 \right) - 2 y_i - 1
+$$
+
+- 若 $d_1 - d_2 < 0$ ：说明 $d_1 < d_2$ ，当前行像素更近，选 $y_{i+1} = y_i$ ；
+- 若 $d_1 - d_2 \ge 0$ ：说明 $d_2 \le d_1$ ，上方像素更近，选 $y_{i+1} = y_i + 1$ 。
 
 ### 2.2 消除浮点数：定义整数判别式 $p_i$
-将斜率 $k = \frac{\Delta y}{\Delta x}$ 代入，两边同时乘以正整数 $\Delta x$，定义判别式：
-$$p_i = \Delta x (d_1 - d_2) = 2 \Delta y \cdot x_i - 2 \Delta x \cdot y_i + C$$
+将斜率 $k = \frac{\Delta y}{\Delta x}$ 代入，两边同时乘以正整数 $\Delta x$ ，定义判别式：
+
+$$
+p_i = \Delta x (d_1 - d_2) = 2 \Delta y \cdot x_i - 2 \Delta x \cdot y_i + C
+$$
+
 （其中 $C = 2 \Delta y + \Delta x (2 y_0 - 2 k x_0 - 1)$ 为常数）。
 在起点 $(x_0, y_0)$ 处，计算初始判别式：
-$$p_0 = 2 \Delta y - \Delta x$$
+
+$$
+p_0 = 2 \Delta y - \Delta x
+$$
 
 ### 2.3 判别式的增量递推
 考察从第 $i$ 步到第 $i+1$ 步判别式的变化量：
-$$p_{i+1} - p_i = 2 \Delta y (x_{i+1} - x_i) - 2 \Delta x (y_{i+1} - y_i) = 2 \Delta y - 2 \Delta x (y_{i+1} - y_i)$$
-- **情况 A（$p_i < 0$）**：选择当前行像素（$y_{i+1} = y_i$），$y_{i+1} - y_i = 0$：
-  $$p_{i+1} = p_i + 2 \Delta y$$
-- **情况 B（$p_i \ge 0$）**：选择上方像素（$y_{i+1} = y_i + 1$），$y_{i+1} - y_i = 1$：
-  $$p_{i+1} = p_i + 2 \Delta y - 2 \Delta x$$
+
+$$
+p_{i+1} - p_i = 2 \Delta y (x_{i+1} - x_i) - 2 \Delta x (y_{i+1} - y_i) = 2 \Delta y - 2 \Delta x (y_{i+1} - y_i)
+$$
+
+- **情况 A（ $p_i < 0$ ）**：选择当前行像素（ $y_{i+1} = y_i$ ）， $y_{i+1} - y_i = 0$ ：
+
+$$
+p_{i+1} = p_i + 2 \Delta y
+$$
+
+- **情况 B（ $p_i \ge 0$ ）**：选择上方像素（ $y_{i+1} = y_i + 1$ ）， $y_{i+1} - y_i = 1$ ：
+
+$$
+p_{i+1} = p_i + 2 \Delta y - 2 \Delta x
+$$
 
 **关键特点**：每步循环仅需 1 次比较与 1~2 次整数加法，极其高效！
 
@@ -60,27 +100,30 @@ $$p_{i+1} - p_i = 2 \Delta y (x_{i+1} - x_i) - 2 \Delta x (y_{i+1} - y_i) = 2 \D
 
 ### 3.1 预处理：映射至第一象限
 1. **水平/垂直线快速通道**：
-   若 $x_0 == x_1$ 或 $y_0 == y_1$，直接单轴循环填充。
-2. **保证 X 正向递增（$\Delta x \ge 0$）**：
-   ```cpp
+   若 $x_0 == x_1$ 或 $y_0 == y_1$ ，直接单轴循环填充。
+2. **保证 X 正向递增（ $\Delta x \ge 0$ ）**：
+
+```cpp
    if (start.x > end.x) std::swap(start, end);
-   ```
+```
 3. **消除负斜率（处理向下走向的直线）**：
    若 `start.y > end.y`，将两点的 $y$ 坐标翻转取反：
-   ```cpp
+
+```cpp
    start.y *= -1.0f;
    end.y *= -1.0f;
    flipY = true;
-   ```
-4. **保证斜率 $k \le 1$（处理陡峭直线 $\Delta y > \Delta x$）**：
-   若 $\Delta x < \Delta y$，交换 $x$ 与 $y$ 坐标轴（相当于关于直线 $y = x$ 做对称镜像）：
-   ```cpp
+```
+4. **保证斜率 $k \le 1$ （处理陡峭直线 $\Delta y > \Delta x$ ）**：
+   若 $\Delta x < \Delta y$ ，交换 $x$ 与 $y$ 坐标轴（相当于关于直线 $y = x$ 做对称镜像）：
+
+```cpp
    std::swap(start.x, start.y);
    std::swap(end.x, end.y);
    std::swap(deltaX, deltaY);
    swapXY = true;
-   ```
-经过上述三步，任意倾斜方向的线段均被等价变换到**第一象限且 $0 \le k \le 1$** 的标准状态，统一执行基础 Bresenham 循环。
+```
+经过上述三步，任意倾斜方向的线段均被等价变换到**第一象限且** $0 \le k \le 1$ 的标准状态，统一执行基础 Bresenham 循环。
 
 ### 3.2 逆序还原物理屏幕坐标
 循环中产生的当前离散坐标 `(currentX, currentY)` 必须严格按照变换的**逆顺序**还原：
@@ -102,33 +145,40 @@ if (flipY) resultY *= -1;
 在光栅化输出每个像素点时，顶点的颜色、深度和 UV 必须平滑过渡（`Raster::interpolantLine`）：
 - **不能传入 `start, end`**：变换后的坐标系仅用于推算像素几何位置，插值必须使用原始端点 `v0, v1`。
 - **主轴权重选择**：
-  若直线较平缓（$|\Delta x| \ge |\Delta y|$），以 $x$ 坐标计算行进比例；若直线较陡峭（$|\Delta x| < |\Delta y|$），以 $y$ 坐标计算比例：
-  $$t = \begin{cases} \dfrac{\text{target}.x - v_0.x}{v_1.x - v_0.x}, & |\Delta x| \ge |\Delta y| \\[8pt] \dfrac{\text{target}.y - v_0.y}{v_1.y - v_0.y}, & |\Delta x| < |\Delta y| \end{cases}$$
+  若直线较平缓（ $|\Delta x| \ge |\Delta y|$ ），以 $x$ 坐标计算行进比例；若直线较陡峭（ $|\Delta x| < |\Delta y|$ ），以 $y$ 坐标计算比例：
+
+$$
+t = \begin{cases}
+\dfrac{\text{target}.x - v_0.x}{v_1.x - v_0.x}, & |\Delta x| \ge |\Delta y| \\[8pt]
+\dfrac{\text{target}.y - v_0.y}{v_1.y - v_0.y}, & |\Delta x| < |\Delta y|
+\end{cases}
+$$
+
   有效防止了斜率无限大或接近 0 时除以接近 0 的数引发数值不稳定。
-- 最终对属性执行线性插值：$\text{color} = \text{lerp}(v_0.\text{color}, v_1.\text{color}, t)$。
+- 最终对属性执行线性插值： $\text{color} = \text{lerp}(v_0.\text{color}, v_1.\text{color}, t)$ 。
 
 ---
 
-## 5. 手动推导验证算例（从 $(0,0)$ 到 $(6,3)$）
+## 5. 手动推导验证算例（从 $(0,0)$ 到 $(6,3)$ ）
 
 为清晰理解整数判别式递推过程，以线段 $(0,0) \to (6,3)$ 为例：
-- $\Delta x = 6, \Delta y = 3$，斜率 $k = 0.5$；
-- 初始判别式：$p_0 = 2\Delta y - \Delta x = 2 \times 3 - 6 = 0$；
+- $\Delta x = 6, \Delta y = 3$ ，斜率 $k = 0.5$ ；
+- 初始判别式： $p_0 = 2\Delta y - \Delta x = 2 \times 3 - 6 = 0$ ；
 - 递推量：
-  - 若 $p \ge 0$：$p \leftarrow p + 2(\Delta y - \Delta x) = p + 2(3 - 6) = p - 6$
-  - 若 $p < 0$：$p \leftarrow p + 2\Delta y = p + 6$
+  - 若 $p \ge 0$ ： $p \leftarrow p + 2(\Delta y - \Delta x) = p + 2(3 - 6) = p - 6$
+  - 若 $p < 0$ ： $p \leftarrow p + 2\Delta y = p + 6$
 
 | 步数 $i$ | 当前像素 $(x_i, y_i)$ | 判别式 $p_i$ | 判断与动作 | 下一步判别式 $p_{i+1}$ | 理论真实 $y = 0.5x$ |
 | :---: | :---: | :---: | :---: | :---: | :---: |
 | 0 | $(0, 0)$ | 0 | $p \ge 0 \implies y++$ | $0 - 6 = -6$ | $y = 0.0$ |
-| 1 | $(1, 1)$ | -6 | $p < 0 \implies y$ 不变 | $-6 + 6 = 0$ | $y = 0.5$（四舍五入选 1） |
+| 1 | $(1, 1)$ | -6 | $p < 0 \implies y$ 不变 | $-6 + 6 = 0$ | $y = 0.5$ （四舍五入选 1） |
 | 2 | $(2, 1)$ | 0 | $p \ge 0 \implies y++$ | $0 - 6 = -6$ | $y = 1.0$ |
-| 3 | $(3, 2)$ | -6 | $p < 0 \implies y$ 不变 | $-6 + 6 = 0$ | $y = 1.5$（四舍五入选 2） |
+| 3 | $(3, 2)$ | -6 | $p < 0 \implies y$ 不变 | $-6 + 6 = 0$ | $y = 1.5$ （四舍五入选 2） |
 | 4 | $(4, 2)$ | 0 | $p \ge 0 \implies y++$ | $0 - 6 = -6$ | $y = 2.0$ |
-| 5 | $(5, 3)$ | -6 | $p < 0 \implies y$ 不变 | $-6 + 6 = 0$ | $y = 2.5$（四舍五入选 3） |
+| 5 | $(5, 3)$ | -6 | $p < 0 \implies y$ 不变 | $-6 + 6 = 0$ | $y = 2.5$ （四舍五入选 3） |
 | 6 | $(6, 3)$ | - | 终点绘制 | - | $y = 3.0$ |
 
-最终输出像素序列：$(0,0), (1,1), (2,1), (3,2), (4,2), (5,3), (6,3)$，完全契合理论直线的四舍五入最优近似。
+最终输出像素序列： $(0,0), (1,1), (2,1), (3,2), (4,2), (5,3), (6,3)$ ，完全契合理论直线的四舍五入最优近似。
 
 ---
 
@@ -137,5 +187,9 @@ if (flipY) resultY *= -1;
 Bresenham 算法绘制的直线虽然精准，但本质是二值化（非黑即白）的，在低分辨率下会呈现锯齿（Aliasing）。
 - **Xiaolin Wu 算法（吴小林线算法）**：
   同样基于增量思想，但它在每个 $x$ 位置同时对上下两个相邻像素着色，并**根据理论直线到两个像素中心的竖直距离作为透明度（Alpha 权重）**反向混合：
-  $$A_{\text{floor}} = 1 - \text{fraction}(y), \quad A_{\text{ceil}} = \text{fraction}(y)$$
+
+$$
+A_{\text{floor}} = 1 - \text{fraction}(y), \quad A_{\text{ceil}} = \text{fraction}(y)
+$$
+
   使人眼产生线条边缘平滑模糊的视觉效果，实现开销极低的全屏直线抗锯齿。

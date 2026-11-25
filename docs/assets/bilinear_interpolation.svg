@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 310" width="100%" height="100%">
+  <rect width="600" height="310" rx="12" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
+  <text x="300" y="32" text-anchor="middle" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="15" font-weight="bold" fill="#1e293b">双线性插值滤波 (Bilinear Filtering)：两次一维 Lerp 合成二维采样</text>
+
+  <!-- 四邻域矩形框: left=170, right=430, top=80, bottom=240 -->
+  <rect x="170" y="80" width="260" height="160" fill="#f1f5f9" stroke="#64748b" stroke-width="2"/>
+
+  <!-- 辅助插值线: P 在 x=265 (dx=95/260), y=140 (dy=100/160 from bottom) -->
+  <!-- 垂直插值线与水平插值线 -->
+  <line x1="170" y1="140" x2="430" y2="140" stroke="#16a34a" stroke-width="2.5" stroke-dasharray="5,3"/>
+  <line x1="265" y1="80" x2="265" y2="240" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="3,3"/>
+
+  <!-- 四个角点 Q12, Q22, Q11, Q21 -->
+  <circle cx="170" cy="80" r="8" fill="#0284c7"/>
+  <circle cx="430" cy="80" r="8" fill="#0284c7"/>
+  <circle cx="170" cy="240" r="8" fill="#0284c7"/>
+  <circle cx="430" cy="240" r="8" fill="#0284c7"/>
+
+  <text x="155" y="75" text-anchor="end" font-family="Segoe UI, sans-serif" font-size="13" font-weight="bold" fill="#0284c7">Q₁₂ (left, top)</text>
+  <text x="445" y="75" font-family="Segoe UI, sans-serif" font-size="13" font-weight="bold" fill="#0284c7">Q₂₂ (right, top)</text>
+  <text x="155" y="250" text-anchor="end" font-family="Segoe UI, sans-serif" font-size="13" font-weight="bold" fill="#0284c7">Q₁₁ (left, bottom)</text>
+  <text x="445" y="250" font-family="Segoe UI, sans-serif" font-size="13" font-weight="bold" fill="#0284c7">Q₂₁ (right, bottom)</text>
+
+  <!-- 第一步 Y 方向插值点 R1(170, 140), R2(430, 140) -->
+  <circle cx="170" cy="140" r="7" fill="#16a34a"/>
+  <circle cx="430" cy="140" r="7" fill="#16a34a"/>
+  <text x="155" y="145" text-anchor="end" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="13" font-weight="bold" fill="#16a34a">① R₁ (左列Y插值)</text>
+  <text x="445" y="145" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="13" font-weight="bold" fill="#16a34a">① R₂ (右列Y插值)</text>
+
+  <!-- 第二步 X 方向插值点 P(265, 140) -->
+  <circle cx="265" cy="140" r="9" fill="#dc2626" stroke="#fff" stroke-width="2"/>
+  <text x="265" y="122" text-anchor="middle" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="13" font-weight="bold" fill="#dc2626">② 最终采样点 P(x, y)</text>
+
+  <!-- 比例标注 -->
+  <text x="217" y="262" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="12" font-weight="bold" fill="#d97706">x_scale</text>
+  <text x="182" y="195" font-family="Segoe UI, sans-serif" font-size="12" font-weight="bold" fill="#d97706">y_scale</text>
+  <text x="300" y="290" text-anchor="middle" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="12" fill="#475569">先沿竖直 Y 轴算出 R₁、R₂，再沿水平 X 轴在 R₁ 与 R₂ 之间插值出 P</text>
+</svg>
